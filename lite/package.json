@@ -1,0 +1,11 @@
+{
+  "name": "openterminal-lite",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "bun ./dev.sh",
+    "build": "cd web && bun install && bun run build && cd ../server && bun install && bun run build",
+    "build:binary": "cd server && bun run build:binary",
+    "start": "NODE_ENV=production bun server/src/index.ts"
+  }
+}
