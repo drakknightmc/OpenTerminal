@@ -119,6 +119,7 @@ export async function computeNetWorth(
         nativeTotal: summary.nativeTotal,
         inrValue,
         usdValue,
+        holdingCount: summary.count,
       };
     })
   );
