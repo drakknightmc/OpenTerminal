@@ -23,7 +23,7 @@ export async function getRate(from: string, to: string): Promise<number> {
     throw new Error(`exchangerate.host: ${data.error?.info ?? "request failed"}`);
   }
   const rate = data.rates?.[symbol];
-  if (typeof rate !== "number" || !isFinite(rate)) {
+  if (typeof rate !== "number" || !Number.isFinite(rate)) {
     throw new Error(`exchangerate.host returned no rate for ${base}/${symbol}`);
   }
   return rate;
