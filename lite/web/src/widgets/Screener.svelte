@@ -93,11 +93,12 @@
     }
   }
 
-  function sortBy(key: SortKey): void {
-    if (sortKey === key) {
+  function sortBy(key: string): void {
+    const typedKey = key as SortKey;
+    if (sortKey === typedKey) {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
     } else {
-      sortKey = key;
+      sortKey = typedKey;
       sortDirection = "asc";
     }
   }
@@ -128,8 +129,8 @@
     return `${formatNumber(value / 1_000_000, 1)}M`;
   }
 
-  function sortIndicator(key: SortKey): string {
-    if (sortKey !== key) return "";
+  function sortIndicator(key: string): string {
+    if (sortKey !== (key as SortKey)) return "";
     return sortDirection === "asc" ? " ↑" : " ↓";
   }
 </script>
@@ -187,8 +188,8 @@
             ["sector", "Sector"],
             ["exchange", "Exchange"],
           ] as [key, label]}
-            <button class="header-cell" type="button" on:click={() => sortBy(key as SortKey)} aria-label={`Sort by ${label}`}>
-              {label}<span class="sort-indicator">{sortIndicator(key as SortKey)}</span>
+            <button class="header-cell" type="button" on:click={() => sortBy(key)} aria-label={`Sort by ${label}`}>
+              {label}<span class="sort-indicator">{sortIndicator(key)}</span>
             </button>
           {/each}
         </div>

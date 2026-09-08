@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { createChart, ColorType } from "lightweight-charts";
+  import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
 
   type CryptoAsset = {
     id: string;
@@ -185,7 +185,7 @@
         timeScale: { timeVisible: true, secondsVisible: true },
       });
 
-      const candleSeries = chartInstance.addCandlestickSeries({
+      const candleSeries = chartInstance.addSeries(CandlestickSeries, {
         upColor: "#51cf66",
         downColor: "#ff3d3d",
         borderUpColor: "#51cf66",

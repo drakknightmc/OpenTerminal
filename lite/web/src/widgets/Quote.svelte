@@ -56,6 +56,11 @@
   let refreshTimer: ReturnType<typeof setInterval> | undefined;
   let flashTimers: ReturnType<typeof setTimeout>[] = [];
 
+  function fieldValue(q: Quote, key: keyof Quote): number | null {
+    const value = q[key];
+    return typeof value === "number" ? value : null;
+  }
+
   const fields: { key: keyof Quote; label: string; format: (value: number | null) => string }[] = [
     { key: "open", label: "Open", format: formatPrice },
     { key: "high", label: "High", format: formatPrice },
@@ -149,7 +154,7 @@
       {#each fields as field}
         <div class:flash={flashing.has(field.key)} class="metric">
           <span class="label">{field.label}</span>
-          <strong>{field.format(quote[field.key] as number | null)}</strong>
+          <strong>{field.format(fieldValue(quote, field.key))}</strong>
         </div>
       {/each}
     </div>
