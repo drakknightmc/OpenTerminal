@@ -128,6 +128,7 @@ marked DONE, oldest first, verifying each with `git diff` against
 | Task | Owner (branch) | Status | Notes |
 |---|---|---|---|
 | Scaffold: Bun server skeleton + Vite/Svelte skeleton + build pipeline | (coordinator, first task, no parallelism until this merges) | pending | Everything else depends on this landing first |
+| Macro and news providers | lite/macro-news | done | FRED yields/VIX, Yahoo/Google RSS, deferred IPO/Reddit stubs |
 
 Add rows below this one as tasks are claimed. Never edit another agent's row
 except to note a merge conflict the coordinator needs to resolve.
