@@ -1,12 +1,16 @@
 {
   "name": "openterminal-lite-server",
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "build": "bun build --compile --outfile dist/terminal src/index.ts",
     "build:binary": "bun build --compile --outfile dist/terminal src/index.ts",
     "start": "bun src/index.ts"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.1"
   },
   "devDependencies": {
     "bun-types": "latest",
