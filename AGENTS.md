@@ -127,8 +127,32 @@ marked DONE, oldest first, verifying each with `git diff` against
 
 | Task | Owner (branch) | Status | Notes |
 |---|---|---|---|
-| Scaffold: Bun server skeleton + Vite/Svelte skeleton + build pipeline | (coordinator, first task, no parallelism until this merges) | pending | Everything else depends on this landing first |
-| Macro and news providers | lite/macro-news | done | FRED yields/VIX, Yahoo/Google RSS, deferred IPO/Reddit stubs |
+| Scaffold: Bun server skeleton + Vite/Svelte skeleton + build pipeline | coordinator | done | Merged |
+| US/India/Crypto/MF/Macro+News/FX providers, portfolio engine | various lite/* branches | done | All merged into lite-rewrite, bundle-verified together |
+| 13 widgets + app shell (Chart, Quote, Watchlist, News, Macro, Screener, Heatmap, Crypto, Options, IndiaMarket, MutualFund, Portfolio, AiAssistant, WorkspaceGrid, CommandPalette, TopBar, Sidebar) | various lite/w-* branches | done | Merged; found and fixed 2 real bugs only visible once all widgets built together (lightweight-charts v4/v5 API mismatch, Svelte template `as`-cast parse errors) — see commit 99fd4a3 |
+
+## Known reliability issue (read before assigning more parallel work)
+
+In both Phase 2 and Phase 3, most opencode-coder agents did NOT actually
+work in their assigned isolated worktree despite explicit instructions —
+they defaulted to running shell commands in the COORDINATOR's own worktree
+(linear-growing-wilkes) instead. Several also invented their own branch
+names via `git checkout -b` run inside that shared directory, which at one
+point hijacked the coordinator's own branch away from `lite-rewrite` mid-run.
+No work was lost, but it took significant manual recovery (reading files
+directly out of whatever worktree they actually landed in, or off whatever
+branch they self-invented, then re-committing by hand) to reconstruct.
+
+**Until this is fixed at the tool level, treat "work in your own worktree"
+instructions as best-effort, not guaranteed.** After any batch of parallel
+agents, the coordinator must: check `git status` in its own worktree for
+stray uncommitted files, check `git branch --show-current` in case it got
+switched, and check `git log <every-expected-branch-name>` — self-reported
+"committed" or "blocked" claims have both turned out to be wrong at least
+once each. Also always do a combined build (not just each agent's isolated
+smoke test) before trusting a batch is really done — that's what caught the
+lightweight-charts and template-cast bugs above; no single widget's own
+isolated test would have found either.
 
 Add rows below this one as tasks are claimed. Never edit another agent's row
 except to note a merge conflict the coordinator needs to resolve.
