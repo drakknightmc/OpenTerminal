@@ -1,5 +1,5 @@
 import { nseHistory, nseIndices, nseQuote } from "./nse.js";
-import { yahooIndiaHistory, yahooIndiaQuote } from "./yahooIndia.js";
+import { yahooIndicesQuote, yahooIndiaHistory, yahooIndiaQuote } from "./yahooIndia.js";
 
 export type IndiaQuote = {
   symbol: string;
@@ -66,5 +66,13 @@ export async function getHistoricalCandles(symbol: string, timeframe: string): P
 }
 
 export async function getIndices(): Promise<IndiaIndex[]> {
-  return nseIndices();
+  try {
+    return await nseIndices();
+  } catch {
+    try {
+      return await yahooIndicesQuote();
+    } catch {
+      return [];
+    }
+  }
 }

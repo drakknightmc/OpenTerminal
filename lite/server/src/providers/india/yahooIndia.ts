@@ -1,4 +1,4 @@
-import type { Candle, IndiaQuote } from "./index.js";
+import type { Candle, IndiaIndex, IndiaQuote } from "./index.js";
 
 const UA =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
@@ -52,6 +52,33 @@ export async function yahooIndiaQuote(symbol: string): Promise<IndiaQuote> {
     time: number(row.regularMarketTime),
     source: "yahoo-india",
   };
+}
+
+export async function yahooIndicesQuote(): Promise<IndiaIndex[]> {
+  const symbols = new Map([
+    ["^NSEI", "NIFTY 50"],
+    ["^BSESN", "SENSEX"],
+  ]);
+  const json = await yfetch(
+    `https://query1.finance.yahoo.com/v1/finance/quote?symbols=${encodeURIComponent([...symbols.keys()].join(","))}`,
+  );
+  const rows = json?.quoteResponse?.result;
+  if (!Array.isArray(rows)) throw new Error("yahoo india: no indices");
+
+  const indices: IndiaIndex[] = [];
+  for (const row of rows) {
+    const symbol = typeof row?.symbol === "string" ? row.symbol.toUpperCase() : "";
+    const value = number(row?.regularMarketPrice);
+    if (!symbols.has(symbol) || value === null) continue;
+    indices.push({
+      name: symbols.get(symbol)!,
+      value,
+      change: number(row.regularMarketChange) ?? 0,
+      changePercent: number(row.regularMarketChangePercent) ?? 0,
+    });
+  }
+  if (indices.length === 0) throw new Error("yahoo india: no index quotes");
+  return indices;
 }
 
 export async function yahooIndiaHistory(symbol: string, range: string, interval: string): Promise<Candle[]> {
