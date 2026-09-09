@@ -13,6 +13,10 @@ export interface Holding {
   avg_cost: number;
   created_at: string;
   updated_at: string;
+  source?: string;
+  sourceLabel?: string;
+  last_price?: number | null;
+  market_value?: number | null;
 }
 
 export interface Transaction {

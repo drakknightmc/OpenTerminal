@@ -14,6 +14,8 @@
     avg_cost: number;
     created_at: string;
     updated_at: string;
+    source?: string;
+    sourceLabel?: string;
     nativeValue: number;
     convertedValue: number;
     unrealizedPnl: number;
@@ -22,6 +24,8 @@
 
   interface MarketSummary {
     market: Market;
+    source: string;
+    sourceLabel: string;
     nativeCurrency: Currency;
     nativeTotal: number;
     inrValue: number;
@@ -61,10 +65,10 @@
     totalUsd: 22112.34,
     computedAt: new Date().toISOString(),
     byMarket: [
-      { market: "us", nativeCurrency: "USD", nativeTotal: 12450, inrValue: 1039800, usdValue: 12450, holdingCount: 2 },
-      { market: "india", nativeCurrency: "INR", nativeTotal: 545000, inrValue: 545000, usdValue: 6526, holdingCount: 2 },
-      { market: "crypto", nativeCurrency: "USD", nativeTotal: 2820, inrValue: 235620, usdValue: 2820, holdingCount: 1 },
-      { market: "mf", nativeCurrency: "INR", nativeTotal: 228450, inrValue: 228450, usdValue: 2736, holdingCount: 1 },
+      { market: "us", source: "demo", sourceLabel: "Demo", nativeCurrency: "USD", nativeTotal: 12450, inrValue: 1039800, usdValue: 12450, holdingCount: 2 },
+      { market: "india", source: "demo", sourceLabel: "Demo", nativeCurrency: "INR", nativeTotal: 545000, inrValue: 545000, usdValue: 6526, holdingCount: 2 },
+      { market: "crypto", source: "demo", sourceLabel: "Demo", nativeCurrency: "USD", nativeTotal: 2820, inrValue: 235620, usdValue: 2820, holdingCount: 1 },
+      { market: "mf", source: "demo", sourceLabel: "Demo", nativeCurrency: "INR", nativeTotal: 228450, inrValue: 228450, usdValue: 2736, holdingCount: 1 },
     ],
     holdings: [],
   };
@@ -157,6 +161,15 @@
   }
 
   $: primaryTotal = primaryCurrency === "INR" ? summary?.totalInr ?? 0 : summary?.totalUsd ?? 0;
+  $: holdingGroups = summary ? Array.from(
+    summary.holdings.reduce((groups, holding) => {
+      const key = `${holding.sourceLabel ?? "Manual"}/${marketLabels[holding.market]}`;
+      const group = groups.get(key) ?? { key, label: key, holdings: [] as HoldingWithValue[] };
+      group.holdings.push(holding);
+      groups.set(key, group);
+      return groups;
+    }, new Map<string, { key: string; label: string; holdings: HoldingWithValue[] }>()).values()
+  ) : [];
 
   onMount(loadPortfolio);
 </script>
@@ -205,8 +218,10 @@
           <tbody>
             {#if summary.holdings.length === 0}
               <tr><td class="empty" colspan="6">No holdings yet. Add a transaction below.</td></tr>
-            {:else}
-              {#each summary.holdings as holding}
+             {:else}
+              {#each holdingGroups as group}
+                <tr class="group-row"><td colspan="6">{group.label}</td></tr>
+                {#each group.holdings as holding}
                 <tr>
                   <td><span class="tag">{holding.market}</span></td>
                   <td class="symbol">{holding.symbol}</td>
@@ -218,6 +233,7 @@
                     <small>{(holding.unrealizedPnlPercent * 100).toFixed(2)}%</small>
                   </td>
                 </tr>
+                {/each}
               {/each}
             {/if}
           </tbody>
@@ -262,6 +278,7 @@
   th { color: #888; font-size: 10px; font-weight: normal; text-align: left; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #333; }
   td { padding: 10px 8px; border-bottom: 1px solid #292929; white-space: nowrap; } tr:last-child td { border-bottom: 0; }
   .tag { border: 1px solid #444; padding: 3px 5px; } .symbol { font-weight: bold; color: #fff; } small { display: block; color: #555; font-size: 10px; margin-top: 3px; }
+  .group-row td { background: #111; color: #aaa; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding-top: 14px; }
   .pnl-gain { color: #51cf66; } .pnl-loss { color: #ff6b6b; } .empty, .state { color: #888; text-align: center; padding: 28px; }
   .pulse { color: #51cf66; } .error, .form-error { color: #ff6b6b; }
   form { display: grid; grid-template-columns: repeat(6, minmax(90px, 1fr)); gap: 10px; align-items: end; }
