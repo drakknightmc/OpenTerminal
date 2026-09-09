@@ -25,6 +25,7 @@ export async function handlePortfolio(req: Request, url: URL): Promise<Response 
       if (!Number.isFinite(body.quantity) || body.quantity <= 0) return json({ error: "quantity must be positive" }, 400);
       if (!Number.isFinite(body.price) || body.price < 0) return json({ error: "price must be non-negative" }, 400);
       if (typeof body.date !== "string" || !body.date.trim()) return json({ error: "date is required" }, 400);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(body.date)) return json({ error: "date must be YYYY-MM-DD format" }, 400);
       const tx = addTransaction(db, { market: body.market!, symbol: body.symbol.trim(), type: body.type!, quantity: body.quantity!, price: body.price!, date: body.date, notes: body.notes });
       return json(tx, 201);
     }

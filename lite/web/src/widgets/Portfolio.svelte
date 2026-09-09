@@ -175,8 +175,14 @@
     if (!summary) return null;
     const holdings = summary.holdings.filter((h) => h.source === sourceId);
     if (holdings.length === 0) return null;
-    const inr = holdings.reduce((total, h) => total + (h.currency === "INR" ? h.nativeValue : h.convertedValue), 0);
-    const usd = holdings.reduce((total, h) => total + (h.currency === "USD" ? h.nativeValue : h.convertedValue), 0);
+    const inr = holdings.reduce((total, h) => {
+      if (!h.currency) return total;
+      return total + (h.currency === "INR" ? h.nativeValue : h.convertedValue);
+    }, 0);
+    const usd = holdings.reduce((total, h) => {
+      if (!h.currency) return total;
+      return total + (h.currency === "USD" ? h.nativeValue : h.convertedValue);
+    }, 0);
     const nativeTotal = primaryCurrency === "INR" ? inr : usd;
     return { nativeTotal, nativeCurrency: primaryCurrency, count: holdings.length };
   }

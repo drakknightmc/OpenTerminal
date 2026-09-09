@@ -72,21 +72,6 @@
   $: callsForExpiry = data?.calls ?? [];
   $: putsForExpiry = data?.puts ?? [];
 
-  $: {
-    // Build strike → row map
-    const byStrike = new Map<number, { call?: OptionRow; put?: OptionRow }>();
-    for (const c of callsForExpiry) {
-      if (c.strike !== null) {
-        byStrike.set(c.strike, { ...byStrike.get(c.strike), call: c });
-      }
-    }
-    for (const p of putsForExpiry) {
-      if (p.strike !== null) {
-        byStrike.set(p.strike, { ...byStrike.get(p.strike), put: p });
-      }
-    }
-  }
-
   function getStrikePairs(): Array<{ strike: number; call?: OptionRow; put?: OptionRow }> {
     const byStrike = new Map<number, { call?: OptionRow; put?: OptionRow }>();
     for (const c of callsForExpiry) {

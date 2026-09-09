@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
+  import { createChart, ColorType, CandlestickSeries, type IChartApi } from "lightweight-charts";
 
   type CryptoAsset = {
     id: string;
@@ -27,7 +27,7 @@
   let candleData: Candle[] = [];
   let selectedTimeframe = "1W";
   let chartContainer: HTMLDivElement;
-  let chartInstance: any = null;
+  let chartInstance: IChartApi | null = null;
 
   const timeframes = ["1D", "5D", "1W", "1M", "3M", "6M", "YTD", "1Y", "5Y", "MAX"];
 
@@ -137,9 +137,10 @@
   }
 
   async function changeTimeframe(tf: string) {
+    if (!selectedAsset) return;
     selectedTimeframe = tf;
     try {
-      candleData = await getOHLCV(selectedAsset!.symbol, tf);
+      candleData = await getOHLCV(selectedAsset.symbol, tf);
       loadChart();
     } catch (e) {
       error = e instanceof Error ? e.message : "Failed to load chart data";
