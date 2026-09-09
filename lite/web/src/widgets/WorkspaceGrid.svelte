@@ -105,6 +105,9 @@
     close.type = "button";
     close.className = "close-btn";
     close.textContent = "✕";
+    close.addEventListener("mousedown", (e) => e.stopPropagation());
+    close.addEventListener("pointerdown", (e) => e.stopPropagation());
+    close.addEventListener("touchstart", (e) => e.stopPropagation());
     close.addEventListener("click", () => widgets.removeWidget(widget.id));
     title.append(label, close);
 
@@ -192,11 +195,14 @@
   });
 </script>
 
-<div class="workspace-grid grid-stack" bind:this={gridElement}></div>
+<div class="workspace-scroll">
+  <div class="grid-stack" bind:this={gridElement}></div>
+</div>
 
 <style>
-  .workspace-grid {
+  .workspace-scroll {
     flex: 1;
+    min-height: 0;
     overflow: auto;
     padding: 12px;
     background: #0a0a0a;
