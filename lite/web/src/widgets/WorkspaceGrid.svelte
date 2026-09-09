@@ -15,10 +15,11 @@
   import Portfolio from "./Portfolio.svelte";
   import AiAssistant from "./AiAssistant.svelte";
 
-  let dragging: { id: string; startX: number; startY: number; startX0: number; startY0: number } | null = null;
-  let resizing: { id: string; startX: number; startY: number; startW: number; startH: number } | null = null;
+  let dragging: { id: string; startX: number; startY: number; startX0: number; startY0: number; colWidth?: number; rowHeight?: number } | null = null;
+  let resizing: { id: string; startX: number; startY: number; startW: number; startH: number; colWidth?: number; rowHeight?: number } | null = null;
   let gridContainer: HTMLElement | null = null;
-  let liveWidgets = $widgets.widgets;
+  let pendingFrame: number | null = null;
+  $: liveWidgets = $widgets.widgets;
 
   const WIDGET_LABELS: Record<string, string> = {
     chart: "Chart",
@@ -52,7 +53,8 @@
     if ((e.target as HTMLElement).classList.contains("resize-handle")) return;
     const widget = $widgets.widgets.find((w) => w.id === id);
     if (widget) {
-      dragging = { id, startX: e.clientX, startY: e.clientY, startX0: widget.x, startY0: widget.y };
+      const { colWidth, rowHeight } = getGridMetrics();
+      dragging = { id, startX: e.clientX, startY: e.clientY, startX0: widget.x, startY0: widget.y, colWidth, rowHeight };
     }
   }
 
@@ -60,15 +62,16 @@
     e.stopPropagation();
     const widget = $widgets.widgets.find((w) => w.id === id);
     if (widget) {
-      resizing = { id, startX: e.clientX, startY: e.clientY, startW: widget.w, startH: widget.h };
+      const { colWidth, rowHeight } = getGridMetrics();
+      resizing = { id, startX: e.clientX, startY: e.clientY, startW: widget.w, startH: widget.h, colWidth, rowHeight };
     }
   }
 
   function onMouseMove(e: MouseEvent) {
-    if (dragging) {
+    if (dragging && dragging.colWidth && dragging.rowHeight) {
       const dx = e.clientX - dragging.startX;
       const dy = e.clientY - dragging.startY;
-      const { colWidth, rowHeight } = getGridMetrics();
+      const { colWidth, rowHeight } = dragging;
 
       const widget = liveWidgets.find((w) => w.id === dragging!.id);
       if (widget) {
@@ -84,13 +87,20 @@
 
         widget.x = newX;
         widget.y = newY;
-        liveWidgets = liveWidgets;
+
+        // Batch visual updates with requestAnimationFrame instead of triggering on every mousemove
+        if (pendingFrame === null) {
+          pendingFrame = requestAnimationFrame(() => {
+            liveWidgets = liveWidgets;
+            pendingFrame = null;
+          });
+        }
       }
     }
-    if (resizing) {
+    if (resizing && resizing.colWidth && resizing.rowHeight) {
       const dx = e.clientX - resizing.startX;
       const dy = e.clientY - resizing.startY;
-      const { colWidth, rowHeight } = getGridMetrics();
+      const { colWidth, rowHeight } = resizing;
 
       const widget = liveWidgets.find((w) => w.id === resizing!.id);
       if (widget) {
@@ -105,13 +115,25 @@
 
         widget.w = newW;
         widget.h = newH;
-        liveWidgets = liveWidgets;
+
+        // Batch visual updates with requestAnimationFrame instead of triggering on every mousemove
+        if (pendingFrame === null) {
+          pendingFrame = requestAnimationFrame(() => {
+            liveWidgets = liveWidgets;
+            pendingFrame = null;
+          });
+        }
       }
     }
   }
 
   function onMouseUp() {
+    if (pendingFrame !== null) {
+      cancelAnimationFrame(pendingFrame);
+      pendingFrame = null;
+    }
     if (dragging || resizing) {
+      liveWidgets = liveWidgets;
       widgets.updateLayout(liveWidgets);
     }
     dragging = null;
