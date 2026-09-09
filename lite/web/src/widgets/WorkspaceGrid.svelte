@@ -138,7 +138,7 @@
     const entry = mounted[id];
     if (!entry) return;
     entry.component.$destroy();
-    if (grid?.getGridElement().contains(entry.element)) grid.removeWidget(entry.element, true, false);
+    if (entry.element.isConnected) grid?.removeWidget(entry.element, true, false);
     delete mounted[id];
   }
 
