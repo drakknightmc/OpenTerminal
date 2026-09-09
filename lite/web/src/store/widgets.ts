@@ -35,8 +35,8 @@ interface WidgetStore {
 const STORAGE_KEY = "openterminal-layout";
 const DEFAULT_WIDGETS: WidgetInstance[] = [
   { id: "w-chart-1", type: "chart", x: 0, y: 0, w: 6, h: 8, symbol: "AAPL", linked: true },
-  { id: "w-quote-1", type: "quote", x: 6, y: 0, w: 6, h: 3, symbol: "AAPL", linked: true },
-  { id: "w-watchlist-1", type: "watchlist", x: 6, y: 3, w: 6, h: 5 },
+  { id: "w-quote-1", type: "quote", x: 6, y: 0, w: 6, h: 10, symbol: "AAPL", linked: true },
+  { id: "w-watchlist-1", type: "watchlist", x: 6, y: 10, w: 6, h: 6 },
 ];
 
 function loadState(): WidgetStore {
@@ -62,13 +62,16 @@ function createWidgetStore() {
     addWidget: (type: WidgetType) => {
       update((state) => {
         const id = `w-${type}-${Date.now()}`;
+        // Stack new widgets below everything else — avoids spawning on top of
+        // existing widgets, since this grid has no other collision handling.
+        const nextY = state.widgets.reduce((max, w) => Math.max(max, w.y + w.h), 0);
         const newWidget: WidgetInstance = {
           id,
           type,
           x: 0,
-          y: 0,
-          w: 4,
-          h: 4,
+          y: nextY,
+          w: 6,
+          h: 8,
           linked: ["chart", "quote", "news", "options"].includes(type),
         };
         const newState = { ...state, widgets: [...state.widgets, newWidget] };
