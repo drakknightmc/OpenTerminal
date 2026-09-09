@@ -80,6 +80,7 @@ async function serveStatic(path: string): Promise<Response | null> {
 
 export default Bun.serve({
   port,
+  hostname: process.env.HOST || "0.0.0.0",
   async fetch(req: Request) {
     const url = new URL(req.url);
     const pathname = url.pathname;
