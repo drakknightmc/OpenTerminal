@@ -34,6 +34,8 @@ type TerminalState = {
   layout: LayoutItem[];
   watchlist: string[];
   commandOpen: boolean;
+  financeAgentOpen: boolean;
+  toggleFinanceAgent: () => void;
   setActiveSymbol: (s: string) => void;
   setCommandOpen: (open: boolean) => void;
   addWidget: (type: WidgetType, symbol?: string) => void;
@@ -87,6 +89,8 @@ export const useTerminal = create<TerminalState>()(
       layout: DEFAULT_LAYOUT,
       watchlist: ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL", "META", "SPY"],
       commandOpen: false,
+      financeAgentOpen: false,
+      toggleFinanceAgent: () => set((st) => ({ financeAgentOpen: !st.financeAgentOpen })),
       setActiveSymbol: (s) => set({ activeSymbol: s.toUpperCase() }),
       setCommandOpen: (open) => set({ commandOpen: open }),
       addWidget: (type, symbol) =>

@@ -13,8 +13,10 @@
   --text-dim: #808080;
 }
 
-html,
-body {
+/* Scoped (not on html/body) so the new Nocturne-themed finance shell can
+   live on the same page — only the Markets route wraps its tree in
+   .legacy-terminal to keep the original Bloomberg-style look untouched. */
+.legacy-terminal {
   background: var(--bg);
   color: var(--text);
   font-family: "SF Mono", "Menlo", "Consolas", "Liberation Mono", monospace;

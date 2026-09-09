@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="app">
+<link rel="stylesheet" href="_ds/nocturne-261cfce1-daca-4e35-bfa4-88112db2def7/styles.css">
+<script src="_ds/nocturne-261cfce1-daca-4e35-bfa4-88112db2def7/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; }
+  a { color: #b5abfc; }
+  a:hover { color: #d2cefd; }
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-thumb { background: #3f424d; border-radius: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+</helmet>
+
+<div style="display: flex; height: 100vh; min-height: 640px; background: #161826; color: #e9e9ed; font-family: Inter, system-ui, sans-serif; overflow: hidden;">
+
+  <nav style="width: 196px; flex: none; display: flex; flex-direction: column; background: #13151f; box-shadow: inset -1px 0 0 rgba(233,233,237,0.10);">
+    <div style="display: flex; align-items: baseline; gap: 7px; padding: 13px 14px 12px;">
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.14em;">LEDGERLINE</span>
+      <span style="font-size: 9px; letter-spacing: 0.1em; color: #75798c;">v0.4</span>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding-bottom: 12px;">
+      <sc-for list="{{ navGroups }}" as="grp" hint-placeholder-count="4">
+        <div style="padding: 11px 14px 4px; font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase; color: #595d6c;">{{ grp.label }}</div>
+        <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="4">
+          <button onClick="{{ it.go }}" style="display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer; font: inherit; font-size: 12.5px; padding: 5px 14px 5px 13px; color: {{ it.color }}; box-shadow: {{ it.mark }};" style-hover="background: rgba(233,233,237,0.05);">
+            <span style="width: 5px; height: 5px; flex: none; border-radius: 50%; background: {{ it.dot }};"></span>
+            <span style="flex: 1;">{{ it.label }}</span>
+            <span style="font-size: 9.5px; font-family: 'JetBrains Mono', monospace; color: {{ it.badgeColor }};">{{ it.badge }}</span>
+          </button>
+        </sc-for>
+      </sc-for>
+    </div>
+
+    <div style="padding: 9px 14px; box-shadow: inset 0 1px 0 rgba(233,233,237,0.10); display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: #75798c;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #57c98c;"></span>
+      <span>4 connectors live</span>
+    </div>
+  </nav>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <header style="flex: none; display: flex; align-items: center; gap: 14px; height: 44px; padding: 0 16px; background: #1a1c2b; box-shadow: inset 0 -1px 0 rgba(233,233,237,0.10);">
+      <span style="font-size: 13px; font-weight: 500; flex: none; white-space: nowrap;">{{ pageTitle }}</span>
+      <span style="font-size: 11px; color: #75798c; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 20;">{{ pageSub }}</span>
+      <button onClick="{{ noop }}" style="flex: 1 1 auto; min-width: 0; max-width: 320px; height: 28px; display: flex; align-items: center; gap: 8px; background: #232532; border: 1px solid rgba(233,233,237,0.12); border-radius: 8px; padding: 0 9px; color: #75798c; font: inherit; font-size: 11.5px; cursor: pointer; overflow: hidden;" style-hover="border-color: #9184d9;">
+        <span style="flex: 1; min-width: 0; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Search holdings, merchants, statements…</span>
+        <span style="flex: none; font-family: 'JetBrains Mono', monospace; font-size: 10px;">⌘K</span>
+      </button>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 11px; color: #75798c; flex: none; white-space: nowrap;">
+        <span>base <span style="color: #e9e9ed; font-family: 'JetBrains Mono', monospace;">INR</span></span>
+        <span>fx <span style="color: #e9e9ed; font-family: 'JetBrains Mono', monospace;">83.12</span></span>
+        <span style="color: #57c98c;">NSE ●</span>
+        <span style="color: #75798c;">NYSE ○</span>
+      </div>
+      <button onClick="{{ goInbox }}" class="btn btn-secondary" style="height: 27px; font-size: 11.5px; padding: 0 10px; gap: 7px; flex: none; white-space: nowrap;">
+Review<span style="background: #9184d9; color: #161826; border-radius: 20px; padding: 0 6px; font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;">7</span>
+      </button>
+      <button onClick="{{ toggleAgent }}" class="btn btn-primary" style="height: 27px; font-size: 11.5px; padding: 0 10px; flex: none;">Agent</button>
+    </header>
+
+    <div style="flex: 1; min-height: 0; display: flex;">
+      <div style="flex: 1; min-width: 0; overflow-y: auto;">
+
+        <!-- ══ OVERVIEW ══ -->
+        <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 18px 20px 28px;">
+          <div style="display: flex; gap: 28px; align-items: flex-end; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #75798c; margin-bottom: 4px;">Net worth</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 40px; font-weight: 500; line-height: 1; letter-spacing: -0.02em;">{{ netWorth }}</div>
+              <div style="display: flex; gap: 16px; margin-top: 9px; font-size: 12px; font-family: 'JetBrains Mono', monospace;">
+                <span style="color: #57c98c;">{{ dayLine }}</span>
+                <span style="color: #57c98c;">+₹9,84,600 30d · +4.33%</span>
+                <span style="color: #75798c;">XIRR 14.9%</span>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 260px; max-width: 560px;">
+              <svg viewBox="0 0 560 76" preserveAspectRatio="none" style="width: 100%; height: 76px; display: block;">
+                <defs><linearGradient id="nwfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9184d9" stop-opacity="0.30"/><stop offset="100%" stop-color="#9184d9" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0 62 L40 58 L80 63 L120 49 L160 52 L200 41 L240 45 L280 33 L320 37 L360 26 L400 30 L440 21 L480 24 L520 14 L560 11 L560 76 L0 76 Z" fill="url(#nwfill)"/>
+                <path d="M0 62 L40 58 L80 63 L120 49 L160 52 L200 41 L240 45 L280 33 L320 37 L360 26 L400 30 L440 21 L480 24 L520 14 L560 11" fill="none" stroke="#9184d9" stroke-width="1.5"/>
+              </svg>
+              <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #595d6c; font-family: 'JetBrains Mono', monospace;">
+                <span>Sep 2024</span><span>Mar 2025</span><span>Sep 2025</span><span>Mar 2026</span><span>today</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 10px; margin-top: 22px;">
+            <sc-for list="{{ sleeves }}" as="s" hint-placeholder-count="6">
+              <button onClick="{{ s.go }}" class="card" style="align-items: stretch; text-align: left; border: 0; cursor: pointer; font: inherit; color: inherit; gap: 0; padding: 11px 12px 10px; background: #1e2030; box-shadow: 0 0 0 1px rgba(233,233,237,0.07);" style-hover="box-shadow: 0 0 0 1px #595d6c;">
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                  <span style="font-size: 11.5px; color: #b2b6ca; flex: 1;">{{ s.name }}</span>
+                  <span style="font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #75798c;">{{ s.weight }}</span>
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; margin-top: 5px; letter-spacing: -0.01em;">{{ s.value }}</div>
+                <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px;">
+                  <span style="color: {{ s.dayColor }};">{{ s.day }}</span>
+                  <span style="color: #595d6c;">{{ s.native }}</span>
+                </div>
+                <div style="height: 2px; margin-top: 9px; background: rgba(233,233,237,0.08);">
+                  <div style="height: 2px; width: {{ s.bar }}; background: #796cbf;"></div>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 14px; margin-top: 20px; align-items: start;">
+            <section style="background: #1c1e2c; border-radius: 8px; padding: 12px 0 4px;">
+              <div style="display: flex; align-items: center; padding: 0 13px 9px;">
+                <h6 style="margin: 0; flex: 1; color: #b2b6ca;">Today's movers</h6>
+                <span style="font-size: 10px; color: #595d6c;">by contribution to net worth</span>
+              </div>
+              <table class="table" style="font-size: 12.5px;">
+                <thead><tr>
+                  <th style="padding: 4px 13px;">Symbol</th>
+                  <th style="padding: 4px 8px;">Name</th>
+                  <th style="padding: 4px 8px; text-align: right;">Day</th>
+                  <th style="padding: 4px 13px 4px 8px; text-align: right;">Contribution</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ movers }}" as="m" hint-placeholder-count="5">
+                    <tr>
+                      <td style="padding: 5px 13px; width: 1%; white-space: nowrap;"><span style="font-family: 'JetBrains Mono', monospace; font-weight: 500;">{{ m.sym }}</span></td>
+                      <td style="padding: 5px 8px; color: #75798c; font-size: 11.5px;">{{ m.name }}</td>
+                      <td style="padding: 5px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: {{ m.color }};">{{ m.pct }}</td>
+                      <td style="padding: 5px 13px 5px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: {{ m.color }};">{{ m.abs }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+
+            <section style="background: #1c1e2c; border-radius: 8px; padding: 12px 13px 13px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                <h6 style="margin: 0; flex: 1; color: #b2b6ca;">Needs review</h6>
+                <span class="tag tag-accent" style="font-size: 10px; padding: 1px 8px;">7 pending</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <sc-for list="{{ reviewPeek }}" as="r" hint-placeholder-count="3">
+                  <div style="display: flex; gap: 9px; align-items: flex-start; padding-bottom: 8px; box-shadow: inset 0 -1px 0 rgba(233,233,237,0.07);">
+                    <span style="font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #796cbf; width: 42px; flex: none; padding-top: 2px;">{{ r.src }}</span>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 12px;">{{ r.title }}</div>
+                      <div style="font-size: 10.5px; color: #75798c; font-family: 'JetBrains Mono', monospace;">{{ r.meta }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+                <button onClick="{{ goInbox }}" class="btn btn-ghost" style="align-self: flex-start; font-size: 11.5px;">Open review queue →</button>
+              </div>
+            </section>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ══ INVESTMENTS / HOLDINGS ══ -->
+        <sc-if value="{{ isHoldings }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; height: 100%;">
+          <div style="flex: none; display: flex; align-items: center; gap: 4px; padding: 8px 16px 0; flex-wrap: wrap;">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+              <button onClick="{{ t.go }}" style="border: 0; background: transparent; cursor: pointer; font: inherit; font-size: 12px; padding: 5px 9px 7px; color: {{ t.color }}; box-shadow: {{ t.mark }};" style-hover="color: #e9e9ed;">{{ t.label }} <span style="font-size: 10px; color: #595d6c; font-family: 'JetBrains Mono', monospace;">{{ t.count }}</span></button>
+            </sc-for>
+            <div style="flex: 1;"></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding-bottom: 4px;">
+              <input class="input" value="filter…" style="width: 130px; min-height: 26px; font-size: 11.5px; padding: 2px 8px; background: #1c1e2c;">
+              <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px; padding: 0 9px;">Group: asset class</button>
+              <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px; padding: 0 9px;">Add lot</button>
+            </div>
+          </div>
+          <div style="height: 1px; background: linear-gradient(to right, transparent, rgba(233,233,237,0.14) 48px, rgba(233,233,237,0.14) calc(100% - 48px), transparent);"></div>
+
+          <div style="flex: none; display: flex; align-items: stretch; gap: 0; padding: 9px 16px 10px; background: #1a1c2b; box-shadow: inset 0 -1px 0 rgba(233,233,237,0.08); overflow-x: auto;">
+            <sc-for list="{{ tabStats }}" as="k" hint-placeholder-count="8">
+              <div style="padding: 0 15px 0 0; margin-right: 15px; box-shadow: {{ k.sep }}; white-space: nowrap;">
+                <div style="font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #75798c;">{{ k.k }}</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 14.5px; margin-top: 3px; color: {{ k.color }};">{{ k.v }}</div>
+                <div style="font-size: 10px; color: #595d6c; font-family: 'JetBrains Mono', monospace; margin-top: 1px;">{{ k.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="flex: 1; min-height: 0; overflow: auto;">
+            <table class="table" style="font-size: 12.5px; min-width: 1080px;">
+              <thead>
+                <tr>
+                  <th style="padding: 6px 16px; position: sticky; top: 0; background: #161826; z-index: 1;">Instrument</th>
+                  <th style="padding: 6px 8px; position: sticky; top: 0; background: #161826;">Account</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Qty</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Avg cost</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Last</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Day</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Value</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Unrealised</th>
+                  <th style="padding: 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">XIRR</th>
+                  <th style="padding: 6px 16px 6px 8px; text-align: right; position: sticky; top: 0; background: #161826;">Wt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ holdings }}" as="h" hint-placeholder-count="10">
+                  <tr onClick="{{ h.open }}" style="cursor: pointer;">
+                    <td style="padding: 6px 16px;">
+                      <div style="font-family: 'JetBrains Mono', monospace; font-weight: 500;">{{ h.sym }}</div>
+                      <div style="font-size: 10.5px; color: #75798c;">{{ h.name }}</div>
+                    </td>
+                    <td style="padding: 6px 8px; font-size: 11px; color: #b2b6ca;">{{ h.acct }}</td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace;">{{ h.qty }}</td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: #b2b6ca;">{{ h.avg }}</td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace;">{{ h.ltp }}</td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: {{ h.dayColor }};">{{ h.day }}</td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace;">
+                      <div>{{ h.value }}</div>
+                      <div style="font-size: 10px; color: #595d6c;">{{ h.valueInr }}</div>
+                    </td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: {{ h.pnlColor }};">
+                      <div>{{ h.pnl }}</div>
+                      <div style="font-size: 10px; opacity: 0.75;">{{ h.pnlPct }}</div>
+                    </td>
+                    <td style="padding: 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: {{ h.xirrColor }};">{{ h.xirr }}</td>
+                    <td style="padding: 6px 16px 6px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: #b2b6ca;">{{ h.wt }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="flex: none; display: flex; align-items: center; gap: 22px; padding: 8px 16px; background: #1a1c2b; box-shadow: inset 0 1px 0 rgba(233,233,237,0.10); font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+            <span style="color: #75798c; font-family: Inter, sans-serif; font-size: 11px;">{{ footCount }}</span>
+            <span style="margin-left: auto; color: #75798c; font-family: Inter, sans-serif; font-size: 11px;">Prices</span><span>14:32:06 IST</span>
+            <span style="color: #75798c; font-family: Inter, sans-serif; font-size: 11px;">Lots synced</span><span>02 Sep</span>
+            <span style="color: #75798c; font-family: Inter, sans-serif; font-size: 11px;">Benchmark</span><span style="color: #57c98c;">{{ footBench }}</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ══ POSITION DETAIL ══ -->
+        <sc-if value="{{ isPosition }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 16px 20px 28px;">
+          <button onClick="{{ goHoldings }}" class="btn btn-ghost" style="font-size: 11.5px; padding-left: 0; margin-bottom: 8px;">← Holdings</button>
+          <div style="display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap;">
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 9px;">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500;">NVDA</span>
+                <span class="tag tag-neutral" style="font-size: 10px;">NASDAQ</span>
+                <span class="tag tag-outline" style="font-size: 10px;">IBKR · USD</span>
+              </div>
+              <div style="font-size: 12px; color: #75798c; margin-top: 3px;">NVIDIA Corporation · Semiconductors</div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 28px; line-height: 1;">$174.22</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #57c98c; margin-top: 4px;">+3.28 · +1.92% &nbsp;<span style="color: #595d6c;">₹14,481</span></div>
+            </div>
+            <div style="margin-left: auto; display: flex; gap: 7px;">
+              <button class="btn btn-secondary" style="height: 28px; font-size: 11.5px;">Add lot</button>
+              <button class="btn btn-secondary" style="height: 28px; font-size: 11.5px;">Set alert</button>
+              <button class="btn btn-primary" style="height: 28px; font-size: 11.5px;">Ask agent</button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 14px; margin-top: 16px; align-items: start;">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <section style="background: #1c1e2c; border-radius: 8px; padding: 11px 13px 9px;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                  <h6 style="margin: 0; flex: 1; color: #b2b6ca;">Price · cost basis</h6>
+                  <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="6">
+                    <button style="border: 0; background: transparent; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; color: {{ r.color }}; box-shadow: {{ r.mark }};">{{ r.label }}</button>
+                  </sc-for>
+                </div>
+                <svg viewBox="0 0 640 190" preserveAspectRatio="none" style="width: 100%; height: 190px; display: block;">
+                  <line x1="0" y1="126" x2="640" y2="126" stroke="#595d6c" stroke-width="1" stroke-dasharray="3 4"/>
+                  <path d="M0 168 L45 160 L90 171 L135 150 L180 141 L225 152 L270 118 L315 126 L360 96 L405 104 L450 72 L495 84 L540 52 L585 44 L640 30" fill="none" stroke="#9184d9" stroke-width="1.6"/>
+                  <path d="M0 168 L45 160 L90 171 L135 150 L180 141 L225 152 L270 118 L315 126 L360 96 L405 104 L450 72 L495 84 L540 52 L585 44 L640 30 L640 190 L0 190 Z" fill="#9184d9" fill-opacity="0.11"/>
+                  <circle cx="90" cy="171" r="3" fill="#57c98c"/><circle cx="270" cy="118" r="3" fill="#57c98c"/><circle cx="450" cy="72" r="3" fill="#57c98c"/>
+                </svg>
+                <div style="display: flex; gap: 16px; font-size: 10px; color: #595d6c; font-family: 'JetBrains Mono', monospace;">
+                  <span>— price</span><span style="color: #57c98c;">● buy lots</span><span>--- avg cost $118.40</span>
+                </div>
+              </section>
+
+              <section style="background: #1c1e2c; border-radius: 8px; padding: 11px 0 5px;">
+                <h6 style="margin: 0 0 6px; padding: 0 13px; color: #b2b6ca;">Tax lots</h6>
+                <table class="table" style="font-size: 12px;">
+                  <thead><tr>
+                    <th style="padding: 5px 13px;">Acquired</th>
+                    <th style="padding: 5px 8px; text-align: right;">Qty</th>
+                    <th style="padding: 5px 8px; text-align: right;">Cost</th>
+                    <th style="padding: 5px 8px; text-align: right;">Gain</th>
+                    <th style="padding: 5px 8px;">Holding</th>
+                    <th style="padding: 5px 13px 5px 8px; text-align: right;">If sold today</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ lots }}" as="l" hint-placeholder-count="3">
+                      <tr>
+                        <td style="padding: 5px 13px; font-family: 'JetBrains Mono', monospace;">{{ l.date }}</td>
+                        <td style="padding: 5px 8px; text-align: right; font-family: 'JetBrains Mono', monospace;">{{ l.qty }}</td>
+                        <td style="padding: 5px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: #b2b6ca;">{{ l.cost }}</td>
+                        <td style="padding: 5px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: #57c98c;">{{ l.gain }}</td>
+                        <td style="padding: 5px 8px;"><span class="tag" style="font-size: 10px; padding: 1px 7px; background: {{ l.tagBg }}; color: {{ l.tagFg }};">{{ l.term }}</span></td>
+                        <td style="padding: 5px 13px 5px 8px; text-align: right; font-family: 'JetBrains Mono', monospace; color: #e0736c;">{{ l.tax }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+                <div style="padding: 7px 13px 4px; font-size: 11px; color: #75798c;">Foreign asset — Schedule FA reportable. Sale tax modelled at 20% LTCG with indexation removed post-2024; dividends taxed at slab with 25% US withholding credited.</div>
+              </section>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <section style="background: #1c1e2c; border-radius: 8px; padding: 11px 13px 12px;">
+                <h6 style="margin: 0 0 8px; color: #b2b6ca;">Position</h6>
+                <sc-for list="{{ posStats }}" as="p" hint-placeholder-count="8">
+                  <div style="display: flex; align-items: baseline; gap: 10px; padding: 3px 0; font-size: 12px;">
+                    <span style="color: #75798c; flex: 1;">{{ p.k }}</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; color: {{ p.color }};">{{ p.v }}</span>
+                  </div>
+                </sc-for>
+              </section>
+
+              <section style="background: #1c1e2c; border-radius: 8px; padding: 11px 13px 12px;">
+                <h6 style="margin: 0 0 8px; color: #b2b6ca;">Concentration</h6>
+                <div style="font-size: 12px; color: #b2b6ca; line-height: 1.5;">Largest single position at <span style="font-family: 'JetBrains Mono', monospace; color: #e9e9ed;">7.9%</span> of net worth and <span style="font-family: 'JetBrains Mono', monospace; color: #e9e9ed;">41.7%</span> of the US sleeve. Semiconductors total <span style="font-family: 'JetBrains Mono', monospace; color: #e9e9ed;">9.8%</span> across NVDA and the index funds' look-through.</div>
+                <div style="display: flex; height: 5px; margin-top: 10px; gap: 2px;">
+                  <div style="width: 7.9%; background: #9184d9;"></div>
+                  <div style="width: 9.2%; background: #5d5294;"></div>
+                  <div style="flex: 1; background: rgba(233,233,237,0.08);"></div>
+                </div>
+              </section>
+
+              <section style="background: #1c1e2c; border-radius: 8px; padding: 11px 13px 10px;">
+                <h6 style="margin: 0 0 8px; color: #b2b6ca;">News</h6>
+                <sc-for list="{{ news }}" as="n" hint-placeholder-count="4">
+                  <div style="padding: 5px 0; box-shadow: inset 0 -1px 0 rgba(233,233,237,0.06);">
+                    <div style="font-size: 12px; line-height: 1.35;">{{ n.head }}</div>
+                    <div style="font-size: 10px; color: #595d6c; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">{{ n.meta }}</div>
+                  </div>
+                </sc-for>
+              </section>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ══ REVIEW QUEUE ══ -->
+        <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 16px 20px 28px; max-width: 1000px;">
+          <div style="display: flex; align-items: baseline; gap: 12px;">
+            <h4 style="margin: 0;">Review queue</h4>
+            <span style="font-size: 12px; color: #75798c;">Every agent write lands here before it touches the ledger.</span>
+          </div>
+          <div style="display: flex; gap: 6px; margin: 12px 0 14px; flex-wrap: wrap;">
+            <span class="tag tag-accent" style="font-size: 11px;">All 7</span>
+            <span class="tag tag-neutral" style="font-size: 11px;">Gmail MCP 3</span>
+            <span class="tag tag-neutral" style="font-size: 11px;">SMS relay 3</span>
+            <span class="tag tag-neutral" style="font-size: 11px;">Broker file 1</span>
+            <span style="margin-left: auto;"></span>
+            <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px;">Approve all high-confidence</button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <sc-for list="{{ queue }}" as="q" hint-placeholder-count="5">
+              <div style="background: #1c1e2c; border-radius: 8px; padding: 11px 13px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; box-shadow: 0 0 0 1px rgba(233,233,237,0.06);">
+                <div style="min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; color: #796cbf;">{{ q.src }}</span>
+                    <span style="font-size: 13px; font-weight: 500;">{{ q.title }}</span>
+                    <span class="tag" style="font-size: 10px; padding: 1px 7px; background: {{ q.confBg }}; color: {{ q.confFg }};">{{ q.conf }}</span>
+                  </div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #b2b6ca; margin-top: 6px;">{{ q.parsed }}</div>
+                  <div style="font-size: 11px; color: #75798c; margin-top: 4px;">{{ q.raw }}</div>
+                  <div style="font-size: 11px; color: #595d6c; margin-top: 5px;">→ writes {{ q.writes }}</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                  <button class="btn btn-primary" style="height: 26px; font-size: 11.5px; padding: 0 12px;">Approve</button>
+                  <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px; padding: 0 12px;">Edit</button>
+                  <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px; padding: 0 12px; color: #e0736c;">Reject</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ══ PLANNED SECTION ══ -->
+        <sc-if value="{{ isStub }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; height: 100%;">
+          <div style="flex: none; display: flex; align-items: center; gap: 4px; padding: 8px 16px 0; flex-wrap: wrap;">
+            <sc-for list="{{ scafTabs }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ t.go }}" style="border: 0; background: transparent; cursor: pointer; font: inherit; font-size: 12px; padding: 5px 9px 7px; color: {{ t.color }}; box-shadow: {{ t.mark }};" style-hover="color: #e9e9ed;">{{ t.label }}</button>
+            </sc-for>
+            <div style="flex: 1;"></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding-bottom: 4px;">
+              <input class="input" value="filter…" style="width: 130px; min-height: 26px; font-size: 11.5px; padding: 2px 8px; background: #1c1e2c;">
+              <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px; padding: 0 9px;">Period: FY26</button>
+              <button class="btn btn-secondary" style="height: 26px; font-size: 11.5px; padding: 0 9px;">Export</button>
+            </div>
+          </div>
+          <div style="height: 1px; background: linear-gradient(to right, transparent, rgba(233,233,237,0.14) 48px, rgba(233,233,237,0.14) calc(100% - 48px), transparent);"></div>
+
+          <div style="flex: none; display: flex; align-items: stretch; padding: 9px 16px 10px; background: #1a1c2b; box-shadow: inset 0 -1px 0 rgba(233,233,237,0.08); overflow-x: auto;">
+            <sc-for list="{{ scafStats }}" as="k" hint-placeholder-count="6">
+              <div style="padding: 0 15px 0 0; margin-right: 15px; box-shadow: {{ k.sep }}; white-space: nowrap;">
+                <div style="font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #75798c;">{{ k.k }}</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 14.5px; margin-top: 3px; color: {{ k.color }};">{{ k.v }}</div>
+                <div style="font-size: 10px; color: #595d6c; font-family: 'JetBrains Mono', monospace; margin-top: 1px;">{{ k.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="flex: 1; min-height: 0; overflow: auto;">
+            <table class="table" style="font-size: 12.5px; min-width: 820px;">
+              <thead>
+                <tr>
+                  <sc-for list="{{ scafCols }}" as="c" hint-placeholder-count="7">
+                    <th style="padding: 6px 10px; text-align: {{ c.align }}; position: sticky; top: 0; background: #161826; z-index: 1;">{{ c.label }}</th>
+                  </sc-for>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ scafRows }}" as="r" hint-placeholder-count="5">
+                  <tr style="cursor: pointer;">
+                    <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="7">
+                      <td style="padding: 6px 10px; text-align: {{ c.align }}; font-family: {{ c.font }}; color: {{ c.color }};">{{ c.v }}</td>
+                    </sc-for>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="flex: none; padding: 8px 16px; background: #1a1c2b; box-shadow: inset 0 1px 0 rgba(233,233,237,0.10); font-size: 11px; color: #75798c;">{{ scafNote }}</div>
+        </div>
+        </sc-if>
+
+      </div>
+
+      <!-- ══ AGENT CONSOLE ══ -->
+      <sc-if value="{{ agentOpen }}" hint-placeholder-val="{{ true }}">
+      <aside style="width: 296px; flex: none; display: flex; flex-direction: column; background: #1a1c2b; box-shadow: inset 1px 0 0 rgba(233,233,237,0.10);">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px 13px 9px; box-shadow: inset 0 -1px 0 rgba(233,233,237,0.08);">
+          <h6 style="margin: 0; flex: 1; color: #b2b6ca;">Agent</h6>
+          <span style="font-size: 10px; color: #595d6c;">sees this page</span>
+          <button onClick="{{ toggleAgent }}" style="border: 0; background: transparent; color: #75798c; cursor: pointer; font-size: 14px; line-height: 1;" style-hover="color: #e9e9ed;">×</button>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 11px 13px; display: flex; flex-direction: column; gap: 11px; font-size: 12px; line-height: 1.5;">
+          <div style="color: #75798c;">Context: Investments · NVDA · IBKR · FY26</div>
+          <div style="align-self: flex-end; background: #292b31; border-radius: 8px 8px 2px 8px; padding: 7px 9px; max-width: 88%;">If I trim NVDA to 3% of net worth, what's the tax hit?</div>
+          <div style="background: #232532; border-radius: 8px 8px 8px 2px; padding: 8px 9px;">Selling 11 shares takes the position to 3.0%. Cheapest lots by tax: the Mar-2026 lot is short-term. Using the Aug-2024 long-term lots instead gives <span style="font-family: 'JetBrains Mono', monospace; color: #e9e9ed;">₹1,04,300</span> LTCG and about <span style="font-family: 'JetBrains Mono', monospace; color: #e0736c;">₹20,860</span> tax at 20%.</div>
+          <div style="display: flex; flex-direction: column; gap: 5px; padding: 8px 9px; background: rgba(145,132,217,0.10); border-radius: 8px; box-shadow: 0 0 0 1px rgba(145,132,217,0.35);">
+            <div style="font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #b5abfc;">Proposed write</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px;">draft_order · SELL 11 NVDA @ market · lots FIFO-LT</div>
+            <div style="display: flex; gap: 6px; margin-top: 3px;">
+              <button class="btn btn-primary" style="height: 24px; font-size: 11px; padding: 0 10px;">Send to review</button>
+              <button class="btn btn-secondary" style="height: 24px; font-size: 11px; padding: 0 10px;">Discard</button>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 10px 13px; box-shadow: inset 0 1px 0 rgba(233,233,237,0.08);">
+          <input class="input" value="Ask about this page…" style="min-height: 30px; font-size: 12px; background: #232532;">
+        </div>
+      </aside>
+      </sc-if>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+const UP = "#57c98c", DOWN = "#e0736c", DIM = "#75798c", TXT = "#e9e9ed";
+
+const SECTIONS = [
+  { g: "Position", items: [
+    { id: "overview", label: "Overview" },
+    { id: "holdings", label: "Investments" },
+    { id: "networth", label: "Net worth", stub: ["Net worth", "Balance-sheet view of every account with a monthly close snapshot, so the curve is auditable rather than derived on the fly.", "modules/networth"] },
+    { id: "markets", label: "Markets", badge: "wkspc", stub: ["Markets", "The one section that keeps the OpenTerminal widget workspace: chart, quote, screener, heatmap, options, tape. Widget-level add-ons live here and nowhere else.", "modules/markets (widget host)"] },
+  ]},
+  { g: "Flow", items: [
+    { id: "cashflow", label: "Cashflow", badge: "P2", stub: ["Cashflow", "Money in against money out by month, with runway and a salary-to-savings waterfall.", "modules/cashflow"] },
+    { id: "expenses", label: "Expenses", badge: "P2", stub: ["Expenses", "Merchant-level ledger fed by the SMS relay and card statements, with segment drift: which category grew, by how much, against its own trailing median.", "modules/expenses"] },
+    { id: "subs", label: "Subscriptions", badge: "P2", stub: ["Subscriptions", "Recurring detection over the expense ledger — cadence, next charge, price increases since signup, and a cut list ranked by rupees per unused month.", "modules/subscriptions"] },
+    { id: "income", label: "Income", badge: "P3", stub: ["Income", "Salary, 3D printing, and any other source as its own P&L line with unit economics: revenue, direct cost, contribution margin per source.", "modules/income"] },
+  ]},
+  { g: "Books", items: [
+    { id: "statements", label: "Statements", badge: "P3", stub: ["Statements", "A personal P&L, a balance sheet, and a monthly close checklist. Same numbers as everywhere else, presented the way a finance team would read them.", "modules/statements"] },
+    { id: "tax", label: "Tax", badge: "P3", stub: ["Tax", "Realised gains by term and jurisdiction, advance-tax schedule, Schedule FA for foreign holdings, and a what-if on any pending disposal.", "modules/tax"] },
+  ]},
+  { g: "System", items: [
+    { id: "inbox", label: "Review queue", badge: "7" },
+    { id: "connectors", label: "Connectors", stub: ["Connectors", "Gmail MCP, the SMS relay APK, broker CSV drops, EPFO scrape and price providers — each with its last run, parse rate, and the writes it is allowed to make.", "modules/connectors"] },
+  ]},
+];
+
+// Every non-investments section renders from this one config through the same
+// scaffold: tab row → stat strip → toolbar → table → footnote. Adding a section
+// is a config entry, not a new page.
+const T = (stats, cols, rows, note) => ({ stats, cols, rows, note });
+
+// Every section below is placeholder data shaped like the real thing — enough
+// to build a source against, not enough to trust. One entry per sub-tab.
+const SCAFFOLDS = {
+  networth: { tabs: {
+    "Balance sheet": T(
+      [["Assets", "\u20b92,44,05,205", "19 accounts"], ["Liabilities", "\u20b96,65,000", "2 loans"], ["Net worth", "\u20b92,37,40,205", "as of 04 Sep"], ["MoM", "+\u20b99,84,600", "+4.33%"]],
+      ["Line", "Class", "Opening", "Movement", "Closing", "Share"],
+      [["Investable assets", "Asset", "\u20b91,66,21,000", "+\u20b99,84,205", "\u20b91,76,05,205", "72.1%"],
+       ["Property", "Asset", "\u20b968,00,000", "\u20140", "\u20b968,00,000", "27.9%"],
+       ["Home loan", "Liability", "\u2212\u20b96,82,000", "+\u20b917,000", "\u2212\u20b96,65,000", "\u22122.8%"],
+       ["Net worth", "Total", "\u20b92,27,39,000", "+\u20b910,01,205", "\u20b92,37,40,205", "100%"]],
+      "Closing balances are monthly-close snapshots, not live sums \u2014 the Overview curve reads this table so it stays auditable."),
+    "Accounts": T(
+      [["Accounts", "19", "11 institutions"], ["Auto-synced", "12", "63%"], ["Manual", "7", "quarterly"], ["Stale >30d", "2", "EPFO, Carta"]],
+      ["Account", "Institution", "Kind", "Balance", "Updated", "Method"],
+      [["Zerodha equity", "Zerodha", "Broker", "\u20b938,42,140", "1s ago", "price feed"],
+       ["IBKR margin", "IBKR", "Broker", "\u20b945,10,566", "1s ago", "price feed"],
+       ["EPF \u00b7 UAN", "EPFO", "Retirement", "\u20b912,84,000", "6d ago", "scrape"],
+       ["Carta ESOP", "Carta", "Equity", "\u20b96,40,000", "41d ago", "manual"],
+       ["ICICI savings", "ICICI", "Cash", "\u20b92,86,000", "4m ago", "sms relay"]],
+      "Anything over 30 days stale shows on Overview as a data-quality flag rather than silently ageing."),
+    "Monthly close": T(
+      [["Closes filed", "11 / 12", "Aug pending"], ["Open items", "3", "all in review"], ["Avg close time", "18 min", "trailing 6m"], ["Last filed", "31 Jul", "by agent"]],
+      ["Month", "Assets", "Liabilities", "Net worth", "Change", "Status"],
+      [["Aug 2026", "\u20b92,44,05,205", "\u20b96,65,000", "\u20b92,37,40,205", "+4.33%", "pending"],
+       ["Jul 2026", "\u20b92,34,21,000", "\u20b96,82,000", "\u20b92,27,39,000", "+2.981%", "filed"],
+       ["Jun 2026", "\u20b92,27,80,000", "\u20b96,99,000", "\u20b92,20,81,000", "+1.42%", "filed"],
+       ["May 2026", "\u20b92,24,90,000", "\u20b97,16,000", "\u20b92,17,74,000", "\u22120.61%", "filed"]],
+      "A close freezes prices and marks at month end. Nothing recomputes a filed month."),
+  } },
+  markets: { tabs: {
+    "Workspace": T(
+      [["NIFTY 50", "24,918", "+0.42%"], ["S&P 500", "6,412", "+0.31%"], ["USDINR", "83.12", "\u22120.08%"], ["Widgets", "5", "saved layout"]],
+      ["Widget", "Type", "Symbol", "Linked", "Provider", "Refresh"],
+      [["Chart", "chart", "NVDA", "yes", "nasdaq \u2192 yahoo", "1s"],
+       ["Quote", "quote", "NVDA", "yes", "nasdaq \u2192 yahoo", "1s"],
+       ["Watchlist", "watchlist", "\u2014", "no", "tradingview", "5s"],
+       ["News", "news", "NVDA", "yes", "yahoo rss \u2192 google", "60s"],
+       ["Macro", "macro", "\u2014", "no", "fred", "300s"]],
+      "The only section that keeps react-grid-layout. It is code-split behind this route, so no other page pays for it."),
+    "Watchlist": T(
+      [["Symbols", "12", "2 lists"], ["Held", "8", "of 12"], ["Alerts armed", "3", "price + news"], ["Triggered today", "1", "NVDA"]],
+      ["Symbol", "Last", "Day", "vs 52w high", "Held", "Alert"],
+      [["NVDA", "$174.22", "+1.92%", "\u22123.1%", "130 sh", "\u2265 $180"],
+       ["TSLA", "$243.10", "\u22120.88%", "\u221219.4%", "\u2014", "\u2264 $220"],
+       ["RELIANCE", "\u20b92,912", "+0.84%", "\u22126.2%", "480 sh", "\u2014"],
+       ["BTC", "\u20b961,20,000", "\u22121.24%", "\u221211.8%", "0.0412", "\u2265 \u20b970,00,000"]],
+      "Watchlist entries that match a holding show position size inline, so the list doubles as a monitor."),
+    "Screener": T(
+      [["Universe", "4,812", "US + NSE"], ["Matching", "37", "current filter"], ["Saved screens", "4", "1 scheduled"], ["Last run", "2m ago", "auto"]],
+      ["Symbol", "Sector", "Mkt cap", "P/E", "Day", "Vol vs avg"],
+      [["ANET", "Technology", "$118B", "42.1", "+2.31%", "1.8\u00d7"],
+       ["LRCX", "Semiconductors", "$96B", "24.6", "+1.14%", "1.2\u00d7"],
+       ["POWERGRID", "Utilities", "\u20b93.1T", "18.2", "+0.62%", "0.9\u00d7"],
+       ["CDSL", "Financials", "\u20b9284B", "61.4", "\u22121.02%", "2.4\u00d7"]],
+      "Filters run server-side against the provider's scanner; only the matching page is sent to the client."),
+    "Heatmap": T(
+      [["Sectors", "11", "US market"], ["Advancing", "7", "of 11"], ["Best", "Energy +1.8%", "today"], ["Worst", "Utilities \u22120.9%", "today"]],
+      ["Sector", "Weight", "Day", "5d", "Breadth", "Your exposure"],
+      [["Technology", "31.2%", "+0.84%", "+2.1%", "62% up", "18.4%"],
+       ["Energy", "3.9%", "+1.81%", "+4.2%", "78% up", "0.0%"],
+       ["Financials", "13.1%", "+0.22%", "+0.9%", "54% up", "4.3%"],
+       ["Utilities", "2.4%", "\u22120.91%", "\u22121.4%", "31% up", "0.0%"]],
+      "Your exposure is a look-through of index funds, not just direct holdings."),
+  } },
+  cashflow: { tabs: {
+    "Monthly": T(
+      [["Inflow MTD", "\u20b93,42,000", "2 sources"], ["Outflow MTD", "\u20b91,86,400", "41 merchants"], ["Net", "+\u20b91,55,600", "45.5% of inflow"], ["12m avg net", "+\u20b91,42,300", "41.2%"]],
+      ["Month", "Salary", "Other income", "Fixed", "Variable", "Net", "Savings rate"],
+      [["Sep 2026", "\u20b93,00,000", "\u20b942,000", "\u20b994,200", "\u20b992,200", "+\u20b91,55,600", "45.5%"],
+       ["Aug 2026", "\u20b93,00,000", "\u20b938,400", "\u20b994,200", "\u20b91,12,600", "+\u20b91,31,600", "38.9%"],
+       ["Jul 2026", "\u20b93,00,000", "\u20b951,200", "\u20b994,200", "\u20b988,400", "+\u20b91,68,600", "48.0%"],
+       ["Jun 2026", "\u20b93,00,000", "\u20b929,800", "\u20b992,000", "\u20b91,04,900", "+\u20b91,32,900", "40.3%"]],
+      "Fixed is anything subscriptions and loans mark recurring; everything else falls to variable."),
+    "Runway": T(
+      [["Liquid", "\u20b915,78,000", "cash + funds"], ["Avg burn", "\u20b91,74,300", "trailing 6m"], ["Runway", "9.1 mo", "liquid only"], ["With equity", "34.2 mo", "if liquidated"]],
+      ["Scenario", "Available", "Monthly burn", "Runway", "Tax on exit", "Note"],
+      [["Cash only", "\u20b92,86,000", "\u20b91,74,300", "1.6 mo", "\u20b90", "no disposal"],
+       ["Cash + liquid funds", "\u20b915,78,000", "\u20b91,74,300", "9.1 mo", "\u20b942,000", "MF redemption"],
+       ["+ listed equity", "\u20b959,30,000", "\u20b91,74,300", "34.2 mo", "\u20b93,84,000", "LTCG at 12.5%"],
+       ["Lean burn", "\u20b915,78,000", "\u20b91,08,000", "14.6 mo", "\u20b942,000", "fixed costs only"]],
+      "Runway assumes fixed costs continue and variable spend drops to the trailing 12-month floor."),
+    "Waterfall": T(
+      [["Gross inflow", "\u20b93,42,000", "Sep"], ["To fixed", "\u20b994,200", "27.5%"], ["To variable", "\u20b992,200", "27.0%"], ["To savings", "\u20b91,55,600", "45.5%"]],
+      ["Step", "Amount", "Running", "% of inflow", "vs 12m avg"],
+      [["Salary + other", "+\u20b93,42,000", "\u20b93,42,000", "100%", "+2.1%"],
+       ["Rent + loans", "\u2212\u20b994,200", "\u20b92,47,800", "72.5%", "+0.4%"],
+       ["Living costs", "\u2212\u20b992,200", "\u20b91,55,600", "45.5%", "\u22128.2%"],
+       ["SIP + investing", "\u2212\u20b91,25,000", "\u20b930,600", "8.9%", "+0.0%"]],
+      "The waterfall ends at unallocated cash, which is what actually lands in the sweep account."),
+  } },
+  expenses: { tabs: {
+    "Ledger": T(
+      [["MTD", "\u20b91,86,400", "41 merchants"], ["vs 6m median", "+12.4%", "\u20b920,600 over"], ["Uncategorised", "3", "needs a rule"], ["Cards", "3", "2 auto-synced"]],
+      ["Date", "Merchant", "Segment", "Account", "Amount", "Source", "Status"],
+      [["03 Sep", "Notion Labs", "Software", "ICICI \u2022\u20224417", "\u20b91,899", "sms", "unmatched"],
+       ["02 Sep", "Blue Tokai", "Dining", "HDFC \u2022\u20228802", "\u20b9640", "sms", "auto"],
+       ["01 Sep", "Landlord \u2014 rent", "Rent", "ICICI \u2022\u20224417", "\u20b952,000", "gmail", "auto"],
+       ["01 Sep", "Amazon.in", "Household", "HDFC \u2022\u20228802", "\u20b93,412", "statement", "auto"],
+       ["31 Aug", "Indian Oil", "Fuel", "HDFC \u2022\u20228802", "\u20b94,100", "sms", "auto"]],
+      "Every row traces to a proposal in the review queue, so a wrong category is one click from its source message."),
+    "Segments": T(
+      [["Segments", "11", "3 growing"], ["Largest", "Rent 27.9%", "\u20b952,000"], ["Fastest growing", "Dining +38%", "\u20b99,200 over"], ["Under median", "5", "\u20b914,100 under"]],
+      ["Segment", "MTD", "6m median", "Drift", "Share", "Trend 6m"],
+      [["Rent", "\u20b952,000", "\u20b952,000", "0.0%", "27.9%", "flat"],
+       ["Dining", "\u20b933,400", "\u20b924,200", "+38.0%", "17.9%", "rising"],
+       ["Groceries", "\u20b918,600", "\u20b921,400", "\u221213.1%", "10.0%", "falling"],
+       ["Software", "\u20b99,840", "\u20b98,200", "+20.0%", "5.3%", "rising"],
+       ["Fuel", "\u20b94,100", "\u20b96,900", "\u221240.6%", "2.2%", "falling"]],
+      "Drift compares a segment against its own trailing median, not against a budget you never set."),
+    "Merchants": T(
+      [["Merchants", "41", "MTD"], ["New this month", "3", "\u20b96,240"], ["Top merchant", "Landlord", "\u20b952,000"], ["Normalised", "38 / 41", "3 aliases open"]],
+      ["Merchant", "Segment", "MTD", "Txns", "Avg", "First seen"],
+      [["Landlord \u2014 rent", "Rent", "\u20b952,000", "1", "\u20b952,000", "Apr 2023"],
+       ["Swiggy", "Dining", "\u20b912,840", "14", "\u20b9917", "Jun 2021"],
+       ["Amazon.in", "Household", "\u20b98,904", "6", "\u20b91,484", "Nov 2019"],
+       ["Blue Tokai", "Dining", "\u20b93,840", "6", "\u20b9640", "Feb 2024"]],
+      "Aliases (SWIGGY*ORDER, Swiggy Ltd) collapse to one merchant by rule; unresolved aliases show as open."),
+    "Rules": T(
+      [["Rules", "24", "18 auto-made"], ["Coverage", "96.2%", "of transactions"], ["Conflicts", "1", "needs a decision"], ["Last added", "2d ago", "by agent"]],
+      ["Match", "Field", "Segment", "Applied", "Confidence", "Source"],
+      [["rzp.notion@*", "vpa", "Software", "12", "0.98", "manual"],
+       ["SWIGGY*", "merchant", "Dining", "184", "0.99", "auto"],
+       ["*INDIANOIL*", "merchant", "Fuel", "31", "0.97", "auto"],
+       ["amount > \u20b950,000 + monthly", "pattern", "Rent", "18", "0.92", "auto"]],
+      "Rules are ordered; the first match wins. A rule that would reclassify history asks before backfilling."),
+  } },
+  subs: { tabs: {
+    "Active": T(
+      [["Monthly", "\u20b99,840", "14 active"], ["Annualised", "\u20b91,18,080", "8.7% of spend"], ["Unused 90d", "2", "\u20b91,690 / mo"], ["Cut candidates", "\u20b93,210", "per month"]],
+      ["Service", "Cadence", "Amount", "Next charge", "Since", "Change 12m", "Usage"],
+      [["Notion", "monthly", "\u20b91,899", "03 Oct", "Mar 2024", "+\u20b9400", "weekly"],
+       ["iCloud 2TB", "monthly", "\u20b9749", "09 Sep", "Jan 2022", "+\u20b9150", "passive"],
+       ["Adobe CC", "annual", "\u20b942,000", "18 Nov", "Nov 2021", "+\u20b96,000", "none 90d"],
+       ["Spotify", "monthly", "\u20b9179", "12 Sep", "Aug 2020", "+\u20b960", "daily"],
+       ["AWS Lightsail", "monthly", "\u20b9941", "01 Oct", "Feb 2025", "\u2014", "daily"]],
+      "Detected from the expense ledger by cadence, not from a list you maintain. A missed charge shows as a gap, not a deletion."),
+    "Upcoming": T(
+      [["Next 7 days", "3", "\u20b92,438"], ["Next 30 days", "9", "\u20b98,610"], ["Largest", "Adobe CC", "\u20b942,000 on 18 Nov"], ["Cash needed", "\u20b950,610", "next 90d"]],
+      ["Service", "Charges", "Amount", "Account", "Confidence", "Note"],
+      [["iCloud 2TB", "09 Sep", "\u20b9749", "HDFC \u2022\u20228802", "0.99", "12 of 12 on time"],
+       ["Spotify", "12 Sep", "\u20b9179", "HDFC \u2022\u20228802", "0.99", "stable price"],
+       ["Netflix", "14 Sep", "\u20b91,510", "ICICI \u2022\u20224417", "0.94", "price rise expected"],
+       ["AWS Lightsail", "01 Oct", "\u20b9941", "ICICI \u2022\u20224417", "0.88", "usage-variable"]],
+      "Predicted dates come from observed cadence; a variable-amount service shows its trailing average instead."),
+    "Price creep": T(
+      [["Rises 12m", "4", "+\u20b91,120 / mo"], ["Worst", "Adobe CC", "+\u20b96,000 / yr"], ["Silent rises", "3", "no email found"], ["Total drift", "+16.2%", "since signup"]],
+      ["Service", "At signup", "Now", "Change", "Rises", "Last rise", "Notified"],
+      [["Adobe CC", "\u20b936,000", "\u20b942,000", "+16.7%", "2", "Nov 2025", "email"],
+       ["Notion", "\u20b91,499", "\u20b91,899", "+26.7%", "1", "Mar 2026", "none found"],
+       ["iCloud 2TB", "\u20b9599", "\u20b9749", "+25.0%", "2", "Jan 2026", "none found"],
+       ["Spotify", "\u20b9119", "\u20b9179", "+50.4%", "3", "Jul 2026", "none found"]],
+      "A rise with no matching email is flagged silent \u2014 the most common way recurring spend grows unnoticed."),
+    "Cancelled": T(
+      [["Cancelled 12m", "6", "\u20b94,290 / mo saved"], ["Still charging", "1", "needs a dispute"], ["Avg lifetime", "19 mo", "before cancel"], ["Resubscribed", "2", "within 6m"]],
+      ["Service", "Cancelled", "Was", "Lifetime", "Total paid", "Status"],
+      [["Audible", "12 Aug 2026", "\u20b9199 / mo", "22 mo", "\u20b94,378", "clean"],
+       ["Coursera", "04 Jun 2026", "\u20b93,999 / yr", "24 mo", "\u20b97,998", "clean"],
+       ["Figma", "18 Mar 2026", "\u20b91,240 / mo", "14 mo", "\u20b917,360", "still charging"],
+       ["Dropbox", "02 Jan 2026", "\u20b9829 / mo", "31 mo", "\u20b925,699", "clean"]],
+      "A cancelled service that keeps charging is the single highest-value alert this section produces."),
+  } },
+  income: { tabs: {
+    "Sources": T(
+      [["Revenue FY26", "\u20b941,20,000", "4 sources"], ["Salary share", "87.4%", "concentration risk"], ["Ex-salary", "\u20b95,20,000", "12.6%"], ["Growth YoY", "+11.8%", "all sources"]],
+      ["Source", "Revenue FY26", "Direct cost", "Contribution", "Margin", "Share", "Trend"],
+      [["Salary", "\u20b936,00,000", "\u2014", "\u20b936,00,000", "100%", "87.4%", "flat"],
+       ["3D printing", "\u20b93,84,000", "\u20b91,46,000", "\u20b92,38,000", "62%", "9.3%", "+18% YoY"],
+       ["Dividends", "\u20b948,900", "\u2014", "\u20b948,900", "100%", "1.2%", "+9% YoY"],
+       ["Consulting", "\u20b987,100", "\u20b94,200", "\u20b982,900", "95%", "2.1%", "\u221231% YoY"]],
+      "Direct cost pulls filament, power and platform fees out of the expense ledger by rule, so margin is real."),
+    "Unit economics": T(
+      [["Orders FY26", "148", "3D printing"], ["Avg order", "\u20b92,595", "+\u20b9180 YoY"], ["Contribution / order", "\u20b91,608", "62%"], ["Break-even", "34 orders", "per year"]],
+      ["Line", "Per order", "Per month", "FY26", "% of revenue"],
+      [["Revenue", "\u20b92,595", "\u20b932,000", "\u20b93,84,000", "100%"],
+       ["Filament", "\u20b9612", "\u20b97,548", "\u20b990,576", "23.6%"],
+       ["Power", "\u20b9148", "\u20b91,826", "\u20b921,912", "5.7%"],
+       ["Platform fees", "\u20b9227", "\u20b92,801", "\u20b933,612", "8.8%"],
+       ["Contribution", "\u20b91,608", "\u20b919,825", "\u20b92,37,900", "62.0%"]],
+      "Printer depreciation sits below contribution as a fixed cost, so unit economics stay comparable month to month."),
+    "Invoices": T(
+      [["Outstanding", "\u20b968,400", "4 invoices"], ["Overdue", "\u20b912,900", "1 invoice"], ["Avg days to pay", "23", "trailing 12m"], ["Raised FY26", "148", "\u20b93,84,000"]],
+      ["Invoice", "Client", "Raised", "Due", "Amount", "Status"],
+      [["INV-2026-148", "Marlowe Design", "28 Aug", "27 Sep", "\u20b924,800", "sent"],
+       ["INV-2026-147", "Hexa Robotics", "21 Aug", "20 Sep", "\u20b918,200", "sent"],
+       ["INV-2026-146", "Private buyer", "14 Aug", "13 Sep", "\u20b912,500", "sent"],
+       ["INV-2026-141", "Hexa Robotics", "02 Jul", "01 Aug", "\u20b912,900", "overdue"]],
+      "Paid invoices reconcile against bank credits from the SMS relay, so revenue is recognised on receipt."),
+  } },
+  statements: { tabs: {
+    "P&L": T(
+      [["Revenue", "\u20b941,20,000", "FY26 to date"], ["Expenses", "\u20b922,36,800", "54.3%"], ["Net", "\u20b918,83,200", "45.7% margin"], ["vs FY25", "+19.0%", "net"]],
+      ["Line", "FY26", "FY25", "\u0394", "% of revenue"],
+      [["Revenue", "\u20b941,20,000", "\u20b936,84,000", "+11.8%", "100%"],
+       ["Fixed costs", "\u20b911,30,400", "\u20b910,42,000", "+8.5%", "27.4%"],
+       ["Variable costs", "\u20b99,52,400", "\u20b98,88,600", "+7.2%", "23.1%"],
+       ["Finance costs", "\u20b91,54,000", "\u20b91,71,000", "\u22129.9%", "3.7%"],
+       ["Net", "\u20b918,83,200", "\u20b915,82,400", "+19.0%", "45.7%"]],
+      "Unrealised investment gains are excluded from P&L and shown only on the balance sheet."),
+    "Balance sheet": T(
+      [["Assets", "\u20b92,44,05,205", "19 accounts"], ["Liabilities", "\u20b96,65,000", "2 loans"], ["Net worth", "\u20b92,37,40,205", "as of 04 Sep"], ["Leverage", "2.7%", "debt / assets"]],
+      ["Line", "Class", "FY26", "FY25", "\u0394"],
+      [["Listed investments", "Asset", "\u20b91,21,76,205", "\u20b998,40,000", "+23.7%"],
+       ["Retirement + fixed income", "Asset", "\u20b929,32,000", "\u20b925,10,000", "+16.8%"],
+       ["Property", "Asset", "\u20b968,00,000", "\u20b964,00,000", "+6.3%"],
+       ["Illiquid (ESOP, private)", "Asset", "\u20b910,50,000", "\u20b96,80,000", "+54.4%"],
+       ["Home loan", "Liability", "\u2212\u20b96,65,000", "\u2212\u20b98,84,000", "\u221224.8%"]],
+      "Illiquid assets are shown separately because they cannot fund the runway calculation in Cashflow."),
+    "Monthly close": T(
+      [["Closes filed", "11 / 12", "Aug pending"], ["Open items", "3", "all in review"], ["Auto-cleared", "9", "of 12 checks"], ["Avg close time", "18 min", "trailing 6m"]],
+      ["Check", "Owner", "Status", "Last run", "Blocking"],
+      [["All proposals decided", "agent", "3 pending", "4m ago", "yes"],
+       ["Prices frozen at month end", "system", "done", "31 Aug", "yes"],
+       ["EPFO balance refreshed", "agent", "6d stale", "29 Aug", "yes"],
+       ["ESOP mark current", "manual", "41d stale", "26 Jul", "no"],
+       ["Bank balances reconciled", "system", "done", "01 Sep", "yes"]],
+      "A month cannot be filed while a blocking check is open, which is what keeps the net-worth curve trustworthy."),
+    "Notes": T(
+      [["Notes", "6", "FY26"], ["Policy changes", "2", "this year"], ["Manual marks", "2", "ESOP, property"], ["Restatements", "0", "since FY24"]],
+      ["Note", "Applies to", "Effective", "Reason"],
+      [["Property marked at circle rate", "Real estate", "Apr 2024", "no independent valuation"],
+       ["ESOP at last 409A", "ESOP", "Jul 2026", "no liquidity event"],
+       ["Crypto at INR exchange rate", "Crypto", "Apr 2023", "CoinDCX is the funding venue"],
+       ["FX at trade date for lots", "US equity", "Apr 2025", "matches Schedule FA method"]],
+      "Every manual mark carries a note. A number without a source or a note should not appear in a filed month."),
+  } },
+  tax: { tabs: {
+    "Realised gains": T(
+      [["STCG", "\u20b91,15,200", "taxed at slab"], ["LTCG", "\u20b969,000", "20% post-2024"], ["Total realised", "\u20b91,84,200", "FY26"], ["Tax on realised", "\u20b945,285", "effective 24.6%"]],
+      ["Asset", "Disposed", "Term", "Gain", "Rate", "Tax", "Jurisdiction"],
+      [["BTC", "12 Jun 2026", "Short", "\u20b91,15,200", "30%", "\u20b934,560", "IN \u2014 VDA"],
+       ["INFY", "28 Apr 2026", "Long", "\u20b941,000", "12.5%", "\u20b95,125", "IN \u2014 equity"],
+       ["AAPL", "14 Mar 2026", "Long", "\u20b928,000", "20%", "\u20b95,600", "US \u2192 IN credit"],
+       ["Dividends (US)", "FY26", "\u2014", "$4.20", "25% WHT", "credited", "US \u2192 IN credit"]],
+      "Every disposal on a position page runs through this table first, so the what-if and the filing use one calculation."),
+    "Advance tax": T(
+      [["Est. liability", "\u20b92,84,600", "FY26"], ["Paid", "\u20b91,95,000", "2 instalments"], ["Due 15 Dec", "\u20b989,600", "3rd instalment"], ["Interest risk", "\u20b90", "on track"]],
+      ["Instalment", "Due", "Required", "Paid", "Shortfall", "Status"],
+      [["15 Jun", "15 Jun 2026", "\u20b942,690", "\u20b945,000", "\u20b90", "paid"],
+       ["15 Sep", "15 Sep 2026", "\u20b91,50,000", "\u20b91,50,000", "\u20b90", "paid"],
+       ["15 Dec", "15 Dec 2026", "\u20b92,13,450", "\u20b91,95,000", "\u20b918,450", "due"],
+       ["15 Mar", "15 Mar 2027", "\u20b92,84,600", "\u20b91,95,000", "\u20b989,600", "scheduled"]],
+      "Required amounts follow the 15/45/75/100% schedule against the running estimate, which moves as gains are realised."),
+    "Schedule FA": T(
+      [["Foreign assets", "3", "all IBKR"], ["Peak value", "$57,120", "FY26"], ["Closing value", "$54,269", "31 Dec basis"], ["Income", "$142.60", "dividends"]],
+      ["Asset", "Country", "Acquired", "Peak value", "Closing", "Income", "WHT"],
+      [["NVDA", "US", "14 Aug 2024", "$24,180", "$22,649", "$0.00", "\u2014"],
+       ["AAPL", "US", "09 Nov 2024", "$15,020", "$14,170", "$61.20", "$15.30"],
+       ["VOO", "US", "22 Jan 2025", "$17,920", "$17,450", "$81.40", "$20.35"],
+       ["IBKR cash", "US", "\u2014", "$1,240", "$318", "\u2014", "\u2014"]],
+      "Peak value is the highest month-end balance in the calendar year, which is what the schedule actually asks for."),
+    "What-if": T(
+      [["Scenario", "Trim NVDA to 3%", "draft"], ["Shares", "72", "of 130"], ["Gain", "\u20b94,02,100", "long term"], ["Tax", "\u20b980,420", "at 20%"]],
+      ["Lot", "Qty used", "Cost", "Proceeds", "Gain", "Term", "Tax"],
+      [["2024-08-14", "56", "$5,387", "$9,756", "+$4,369", "Long", "\u2212\u20b972,640"],
+       ["2025-02-03", "16", "$1,942", "$2,788", "+$846", "Long", "\u2212\u20b914,060"],
+       ["2026-03-11", "0", "$0", "$0", "\u2014", "Short", "\u20b90"],
+       ["Total", "72", "$7,329", "$12,544", "+$5,215", "\u2014", "\u2212\u20b986,700"]],
+      "Lot selection defaults to lowest tax, not FIFO. The chosen lots are what the review queue would write."),
+  } },
+  connectors: { tabs: {
+    "Sources": T(
+      [["Live", "4", "of 6 configured"], ["Proposals 30d", "186", "142 auto-applied"], ["Parse rate", "96.2%", "trailing 30d"], ["Failures 7d", "2", "both retried"]],
+      ["Connector", "Kind", "Last run", "Parsed", "Confidence", "Policy", "Writes allowed"],
+      [["Gmail MCP", "agent", "12m ago", "68 / 71", "0.94 avg", "auto-above-0.9", "expenses, investments"],
+       ["SMS relay", "apk", "4m ago", "104 / 108", "0.91 avg", "auto-above-0.9", "expenses, cash"],
+       ["IBKR files", "file drop", "1d ago", "17 / 17", "0.98 avg", "always-review", "investments, tax"],
+       ["EPFO scrape", "scheduled", "6d ago", "1 / 1", "1.00", "always-review", "retirement"],
+       ["Price providers", "read only", "1s ago", "\u2014", "\u2014", "n/a", "none"]],
+      "A connector declares which sections it may write to. Anything outside that list is rejected before the queue."),
+    "Policies": T(
+      [["Always review", "3", "sections"], ["Auto above 0.9", "2", "sections"], ["Fully auto", "0", "by choice"], ["Overrides 30d", "4", "all manual"]],
+      ["Section", "Policy", "Threshold", "Auto-applied 30d", "Reverted", "Owner"],
+      [["Expenses", "auto-above-0.9", "0.90", "118", "2", "sms relay"],
+       ["Investments", "always-review", "\u2014", "0", "0", "broker files"],
+       ["Cash", "auto-above-0.9", "0.90", "24", "0", "sms relay"],
+       ["Tax", "always-review", "\u2014", "0", "0", "manual"],
+       ["Retirement", "always-review", "\u2014", "0", "0", "epfo"]],
+      "Auto-applied writes still appear in the review queue with an applied status, so the audit trail is complete."),
+    "Runs": T(
+      [["Runs 7d", "412", "6 connectors"], ["Failed", "2", "0.5%"], ["Avg latency", "1.8 s", "per run"], ["Next scheduled", "in 11 min", "gmail mcp"]],
+      ["Run", "Connector", "Started", "Duration", "Items", "Result"],
+      [["#4412", "SMS relay", "04 Sep 14:28", "0.4 s", "3", "ok"],
+       ["#4411", "Gmail MCP", "04 Sep 14:16", "6.2 s", "11", "ok"],
+       ["#4408", "EPFO scrape", "29 Aug 06:00", "18.4 s", "0", "failed \u2014 captcha"],
+       ["#4407", "IBKR files", "28 Aug 09:12", "2.1 s", "17", "ok"]],
+      "A failed run never partially writes. The whole batch either becomes proposals or is retried."),
+  } },
+};
+
+const ROWS = [
+  ["RELIANCE", "Reliance Industries", "NSE · Zerodha", "480", "₹2,684", "₹2,912", "+0.84%", "₹13,97,760", "", "+₹1,09,440", "+8.5%", "14.2%", "5.9%"],
+  ["HDFCBANK", "HDFC Bank", "NSE · Zerodha", "520", "₹1,510", "₹1,678", "+0.21%", "₹8,72,560", "", "+₹87,360", "+11.1%", "9.8%", "3.7%"],
+  ["INFY", "Infosys", "NSE · Zerodha", "460", "₹1,432", "₹1,389", "−0.62%", "₹6,38,940", "", "−₹19,780", "−3.0%", "−2.1%", "2.7%"],
+  ["NVDA", "NVIDIA Corp", "NASDAQ · IBKR", "130", "$118.40", "$174.22", "+1.92%", "$22,649", "₹18,82,551", "+$7,257", "+47.1%", "61.4%", "7.9%"],
+  ["AAPL", "Apple Inc", "NASDAQ · IBKR", "62", "$196.10", "$228.55", "−0.34%", "$14,170", "₹11,77,819", "+$2,012", "+16.5%", "12.7%", "5.0%"],
+  ["VOO", "Vanguard S&P 500", "NYSE · IBKR", "31", "$472.20", "$562.90", "+0.41%", "$17,450", "₹14,50,196", "+$2,812", "+19.2%", "15.9%", "6.1%"],
+  ["PPFAS-FC", "Parag Parikh Flexi Cap", "MF · MFCentral", "7,900.0", "₹58.94", "₹76.12", "+0.37%", "₹6,01,348", "", "+₹1,35,722", "+29.1%", "18.4%", "2.5%"],
+  ["BTC", "Bitcoin", "CoinDCX", "0.0412", "₹49,10,000", "₹61,20,000", "−1.24%", "₹2,52,144", "", "+₹49,852", "+24.6%", "31.0%", "1.1%"],
+  ["ETH", "Ethereum", "CoinDCX", "1.85", "₹2,38,400", "₹2,72,100", "−2.10%", "₹5,03,385", "", "+₹62,345", "+14.1%", "11.2%", "2.1%"],
+  ["EPF", "Employees' Provident Fund", "EPFO · UAN", "—", "—", "8.25% p.a.", "+0.01%", "₹12,84,000", "", "+₹1,02,300", "+8.6%", "8.3%", "5.4%"],
+  ["TATAMOTORS", "Tata Motors", "NSE · Zerodha", "420", "₹1,042", "₹1,118", "+1.14%", "₹4,69,560", "", "+₹31,920", "+7.3%", "11.4%", "2.0%"],
+  ["ITC", "ITC Ltd", "NSE · Zerodha", "990", "₹412", "₹468", "+0.33%", "₹4,63,320", "", "+₹55,440", "+13.6%", "10.2%", "2.0%"],
+  ["HDFC-SC", "HDFC Small Cap", "MF · MFCentral", "6,200.0", "₹92.40", "₹118.60", "+0.44%", "₹7,35,320", "", "+₹1,62,440", "+28.4%", "16.8%", "3.1%"],
+  ["NIFTY-IDX", "Nippon India Index", "MF · MFCentral", "9,315.0", "₹142.10", "₹168.40", "+0.19%", "₹15,68,646", "", "+₹2,44,984", "+18.5%", "13.1%", "6.6%"],
+  ["SOL", "Solana", "CoinDCX", "18.4", "₹9,820", "₹8,840", "−3.02%", "₹1,62,656", "", "−₹18,032", "−9.9%", "−6.4%", "0.7%"],
+  ["NPS-T1", "NPS Tier I · Scheme E", "NPS · PRAN", "—", "—", "12.4% p.a.", "+0.02%", "₹3,56,000", "", "+₹95,700", "+36.7%", "12.4%", "1.5%"],
+  ["KLPT-U", "Kalpataru Labs (unlisted)", "Private · demat", "1,200", "₹291.67", "₹341.67", "—", "₹4,10,000", "", "+₹60,000", "+17.1%", "9.1%", "1.7%"],
+  ["PPF", "Public Provident Fund", "PPF · SBI", "—", "₹6,80,000", "7.1% p.a.", "+0.02%", "₹8,42,000", "", "+₹1,62,000", "+23.8%", "7.1%", "3.5%"],
+  ["FD-SBI", "Fixed deposit · 7.25%", "FD · SBI", "—", "₹4,20,000", "7.25% p.a.", "+0.02%", "₹4,50,000", "", "+₹30,000", "+7.1%", "7.3%", "1.9%"],
+  ["SGB-31", "Sovereign Gold Bond 2.5% 2031", "SGB · demat", "48 g", "₹5,417", "₹8,000", "−0.31%", "₹3,84,000", "", "+₹1,24,000", "+47.7%", "16.2%", "1.6%"],
+  ["DGOLD", "Digital gold", "MMTC-PAMP", "14 g", "₹6,286", "₹8,000", "−0.31%", "₹1,12,000", "", "+₹24,000", "+27.3%", "11.8%", "0.5%"],
+  ["FLAT-PN", "Flat · Baner, Pune", "Property · deed", "1", "₹54,00,000", "₹68,00,000", "—", "₹68,00,000", "", "+₹14,00,000", "+25.9%", "8.1%", "28.6%"],
+  ["ESOP-V", "Employer ESOP · vested", "ESOP · Carta", "3,200", "₹60.00", "₹200.00", "+0.29%", "₹6,40,000", "", "+₹4,48,000", "+233.3%", "41.2%", "2.7%"],
+  ["CASH", "Savings + sweep", "ICICI ••4417", "—", "—", "3.1% p.a.", "+0.01%", "₹2,86,000", "", "—", "—", "3.1%", "1.2%"],
+];
+const CLASS_OF = {
+  RELIANCE: "Indian equity", HDFCBANK: "Indian equity", INFY: "Indian equity",
+  TATAMOTORS: "Indian equity", ITC: "Indian equity",
+  NVDA: "US equity", AAPL: "US equity", VOO: "US equity",
+  "PPFAS-FC": "Mutual funds", "HDFC-SC": "Mutual funds", "NIFTY-IDX": "Mutual funds",
+  BTC: "Crypto", ETH: "Crypto", SOL: "Crypto",
+  EPF: "Retirement", "NPS-T1": "Retirement",
+  "KLPT-U": "Private",
+  PPF: "Fixed income", "FD-SBI": "Fixed income",
+  "SGB-31": "Commodities", DGOLD: "Commodities",
+  "FLAT-PN": "Real estate", "ESOP-V": "ESOP", CASH: "Cash",
+};
+
+
+const FX = 83.12;
+const numOf = s => { const n = Number(String(s).replace(/[^0-9.]/g, "")); return isFinite(n) ? n : 0; };
+const signOf = s => String(s).trim().startsWith("\u2212") ? -1 : 1;
+const inrOf = r => (r[8] && r[8].trim() ? numOf(r[8]) : numOf(r[7]));
+const pctOf = r => r[6] === "\u2014" ? 0 : signOf(r[6]) * numOf(r[6]);
+const rupees = v => "\u20b9" + Math.round(v).toLocaleString("en-IN");
+const dollars = v => "$" + Math.round(v / FX).toLocaleString("en-US");
+const signed = (v, f2) => (v < 0 ? "\u2212" : "+") + f2(Math.abs(v));
+const pctStr = p => (p < 0 ? "\u2212" : "+") + Math.abs(p).toFixed(2) + "%";
+
+const TOTALS = (() => {
+  const acc = {};
+  for (const r of ROWS) {
+    const cls = CLASS_OF[r[0]];
+    const v = inrOf(r), d = v * pctOf(r) / 100;
+    for (const k of [cls, "All"]) {
+      acc[k] = acc[k] || { value: 0, day: 0, n: 0 };
+      acc[k].value += v; acc[k].day += d; acc[k].n += 1;
+    }
+  }
+  for (const k in acc) acc[k].dayPct = acc[k].value ? (acc[k].day / acc[k].value) * 100 : 0;
+  return acc;
+})();
+
+const TITLES = {
+  overview: ["Overview", "all accounts · INR"],
+  holdings: ["Investments", "24 positions · 11 accounts"],
+  position: ["NVDA", "Investments / US equity"],
+  inbox: ["Review queue", "7 pending writes"],
+};
+
+class Component extends DCLogic {
+  state = { page: "overview", tab: "All", agentOpen: false, range: "1Y", scafTab: {} };
+
+  go(page) { return () => this.setState({ page }); }
+
+  renderVals() {
+    const { page, tab, agentOpen, range, scafTab } = this.state;
+    const stubEntry = SECTIONS.flatMap(s => s.items).find(i => i.id === page && i.stub);
+    const [title, sub] = TITLES[page] ?? (stubEntry
+      ? [stubEntry.stub[0], stubEntry.stub[2]]
+      : ["", ""]);
+
+    const navGroups = SECTIONS.map(s => ({
+      label: s.g,
+      items: s.items.map(i => {
+        const active = i.id === page || (page === "position" && i.id === "holdings");
+        return {
+          label: i.label,
+          badge: i.badge ?? "",
+          badgeColor: i.badge === "7" ? "#b5abfc" : "#595d6c",
+          color: active ? TXT : "#9397ab",
+          dot: active ? "#9184d9" : "transparent",
+          mark: active ? "inset 2px 0 0 #9184d9, inset 0 0 0 999px rgba(145,132,217,0.08)" : "none",
+          go: this.go(i.id),
+        };
+      }),
+    }));
+
+    const NW = TOTALS["All"].value;
+    const sleeves = [
+      ["Real estate", "Real estate", "1 property, circle-rate mark", "holdings"],
+      ["US equity", "US equity", dollars(TOTALS["US equity"].value), "holdings"],
+      ["Indian equity", "Indian equity", "5 positions", "holdings"],
+      ["Mutual funds", "Mutual funds", "3 schemes", "holdings"],
+      ["EPF · NPS", "Retirement", "accrual", "holdings"],
+      ["Fixed income", "Fixed income", "PPF · 1 FD", "holdings"],
+      ["Crypto", "Crypto", "3 assets", "holdings"],
+      ["ESOP", "ESOP", "3,200 vested", "holdings"],
+      ["Commodities", "Commodities", "62 g gold", "holdings"],
+      ["Private equity", "Private", "1 holding, Q2 mark", "holdings"],
+      ["Cash", "Cash", "ICICI sweep", "holdings"],
+    ].map(([name, cls, native, dest]) => {
+      const t = TOTALS[cls];
+      const w = (t.value / NW) * 100;
+      return { name, value: rupees(t.value), weight: w.toFixed(1) + "%",
+        day: Math.abs(t.dayPct) < 0.005 ? "\u2014" : pctStr(t.dayPct),
+        dayColor: Math.abs(t.dayPct) < 0.005 ? DIM : t.dayPct < 0 ? DOWN : UP,
+        native, bar: Math.round(w) + "%", go: this.go(dest) };
+    });
+
+    const movers = [
+      ["NVDA", "NVIDIA Corp", "+1.92%", "+₹36,145", UP],
+      ["RELIANCE", "Reliance Industries", "+0.84%", "+₹11,741", UP],
+      ["ETH", "Ethereum", "−2.10%", "−₹10,571", DOWN],
+      ["VOO", "Vanguard S&P 500", "+0.41%", "+₹5,946", UP],
+      ["TATAMOTORS", "Tata Motors", "+1.14%", "+₹5,353", UP],
+    ].map(([sym, name, pct, abs, color]) => ({ sym, name, pct, abs, color }));
+
+    const reviewPeek = [
+      ["gmail", "HDFC card statement · Aug", "24 transactions parsed · ₹68,412"],
+      ["sms", "Zerodha contract note", "BUY 12 TATAMOTORS @ ₹1,042"],
+      ["gmail", "PPFAS SIP debit", "₹25,000 · 328.4 units @ ₹76.12"],
+    ].map(([src, title, meta]) => ({ src, title, meta }));
+
+    const TABS = [["All", "24"], ["Indian equity", "5"], ["US equity", "3"], ["Mutual funds", "3"], ["Crypto", "3"],
+      ["Fixed income", "2"], ["Commodities", "2"], ["Real estate", "1"], ["Retirement", "2"], ["ESOP", "1"], ["Private", "1"], ["Cash", "1"]];
+    const tabs = TABS.map(([label, count]) => ({
+      label, count,
+      color: label === tab ? TXT : DIM,
+      mark: label === tab ? "inset 0 -2px 0 #9184d9" : "none",
+      go: () => this.setState({ tab: label }),
+    }));
+
+    // Money metrics are [value, alternate-currency line]; the tab decides which
+    // currency leads. US equity leads in USD because that is the account's own
+    // currency; All leads in INR with the USD line under it.
+    const STATS = {
+      "All": { m: [["₹1,91,88,600", "$2,30,853"], ["₹2,37,40,205", "$2,85,613"], ["+₹45,51,605", "+$54,760"], ["+₹1,84,200", "+$2,216"], ["₹4,25,600", "$5,120"], ["+₹45,215", "+$544"]],
+        r: ["+23.7%", "+0.19%", "14.9%", "13.2%", "−12.4%", "1.79%"], f: ["24 positions · 11 accounts", "vs NIFTY 50 +3.1%"] },
+      "Indian equity": { m: [["₹35,77,760", "cost basis"], ["₹38,42,140", "live"], ["+₹2,64,380", "unrealised"], ["+₹42,600", "booked FY26"], ["₹32,400", "8 payouts"], ["+₹16,494", "today"]],
+        r: ["+7.4%", "+0.43%", "13.9%", "12.4%", "−21.4%", "0.84%"], f: ["5 positions · Zerodha", "vs NIFTY 50 +1.6%"] },
+      "US equity": { m: [["$42,188", "₹35,06,668"], ["$54,269", "₹45,10,566"], ["+$12,081", "+₹10,03,898"], ["+$318", "+₹26,400"], ["$142.60", "₹11,853 · 25% WHT"], ["+$458", "+₹38,086"]],
+        r: ["+28.6%", "+0.84%", "28.3%", "24.1%", "−16.8%", "0.51%"], f: ["3 positions · IBKR", "vs S&P 500 +7.9%"] },
+      "Mutual funds": { m: [["₹21,62,168", "cost basis"], ["₹29,05,314", "live NAV"], ["+₹7,43,146", "unrealised"], ["—", "no redemptions"], ["—", "growth plans"], ["+₹8,440", "today"]],
+        r: ["+34.4%", "+0.29%", "18.4%", "16.9%", "−14.1%", "0.00%"], f: ["3 schemes · MFCentral", "vs NIFTY 500 +2.4%"] },
+      "Crypto": { m: [["₹6,70,000", "cost basis"], ["₹9,18,000", "live"], ["+₹2,48,000", "unrealised"], ["+₹1,15,200", "taxed at 30%"], ["—", "no staking"], ["−₹18,610", "today"]],
+        r: ["+37.0%", "−2.03%", "19.7%", "17.2%", "−52.6%", "—"], f: ["3 assets · CoinDCX", "vs BTC −4.2%"] },
+      "Retirement": { m: [["₹14,42,000", "contributions"], ["₹16,40,000", "accrued"], ["+₹1,98,000", "interest credited"], ["—", "locked in"], ["—", "reinvested"], ["+₹190", "daily accrual"]],
+        r: ["+13.7%", "+0.01%", "8.4%", "8.3%", "0.0%", "—"], f: ["EPF · NPS", "vs 8.25% declared"] },
+      "Private": { m: [["₹3,50,000", "cost basis"], ["₹4,10,000", "Q2 mark"], ["+₹60,000", "unrealised"], ["—", "no exit"], ["—", "no distributions"], ["—", "not marked daily"]],
+        r: ["+17.1%", "—", "9.1%", "9.1%", "—", "—"], f: ["1 holding · Q2 mark", "unbenchmarked"] },
+      "Fixed income": { m: [["₹11,00,000", "contributed"], ["₹12,92,000", "accrued"], ["+₹1,92,000", "interest credited"], ["—", "no withdrawals"], ["₹94,200", "interest FY26"], ["+₹258", "daily accrual"]],
+        r: ["+17.5%", "+0.00%", "7.4%", "7.2%", "0.0%", "7.14%"], f: ["PPF · 1 FD", "vs 10Y G-sec 6.9%"] },
+      "Commodities": { m: [["₹3,48,000", "cost basis"], ["₹4,96,000", "62 g gold"], ["+₹1,48,000", "unrealised"], ["—", "no redemptions"], ["₹9,600", "SGB 2.5% coupon"], ["−₹1,537", "today"]],
+        r: ["+42.5%", "−0.31%", "16.2%", "14.4%", "−11.2%", "2.50%"], f: ["SGB · digital gold", "vs MCX gold +0.2%"] },
+      "Real estate": { m: [["₹54,00,000", "purchase + stamp"], ["₹68,00,000", "circle-rate mark"], ["+₹14,00,000", "unrealised"], ["—", "not sold"], ["₹2,64,000", "rent FY26, net"], ["—", "not marked daily"]],
+        r: ["+25.9%", "—", "8.1%", "7.6%", "—", "3.88%"], f: ["1 property · self-marked", "vs Pune index +6.4%"] },
+      "ESOP": { m: [["₹1,92,000", "strike paid"], ["₹6,40,000", "last 409A"], ["+₹4,48,000", "unrealised"], ["—", "no liquidity event"], ["—", "no dividends"], ["+₹1,856", "mark drift"]],
+        r: ["+233.3%", "+0.29%", "41.2%", "33.8%", "−24.0%", "—"], f: ["3,200 vested · 1,800 unvested", "illiquid — no benchmark"] },
+      "Cash": { m: [["₹2,86,000", "balance"], ["₹2,86,000", "swept"], ["—", "no mark"], ["—", "n/a"], ["₹8,900", "interest FY26"], ["+₹29", "daily accrual"]],
+        r: ["—", "+0.01%", "3.1%", "3.1%", "—", "3.10%"], f: ["1 account · ICICI", "vs liquid fund 6.8%"] },
+    };
+    const base = STATS[tab] ?? STATS["All"];
+    const T = TOTALS[tab] ?? TOTALS["All"];
+    const lead = (inr) => tab === "US equity" ? dollars(inr) : rupees(inr);
+    const trail = (inr, fallback) => tab === "US equity" ? rupees(inr)
+      : tab === "All" ? dollars(inr) : fallback;
+    const leadS = (inr) => tab === "US equity" ? signed(inr, dollars) : signed(inr, rupees);
+    const trailS = (inr, fallback) => tab === "US equity" ? signed(inr, rupees)
+      : tab === "All" ? signed(inr, dollars) : fallback;
+    // Any $ figure anywhere in the strip is re-grouped en-US, so hand-written
+    // literals can never drift from the values the helpers produce.
+    const usd = s => typeof s !== "string" ? s : s.replace(/\$([\d,]+(?:\.\d+)?)/g, (_, d) => {
+      const dec = d.includes(".") ? 2 : 0;
+      return "$" + Number(d.replace(/,/g, "")).toLocaleString("en-US",
+        { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    });
+    const unmarked = Math.abs(T.day) < 1;
+    const st = { ...base,
+      m: base.m.map((pair, i) => (
+        i === 1 ? [lead(T.value), trail(T.value, pair[1])]
+        : i === 5 ? (unmarked ? ["\u2014", pair[1]] : [leadS(T.day), trailS(T.day, pair[1])])
+        : pair).map(usd)),
+      r: base.r.map((v, i) => i === 1 ? (unmarked ? "\u2014" : pctStr(T.dayPct)) : v),
+    };
+    const isNeg = s => typeof s === "string" && s.trim().startsWith("−");
+    const tone = s => s === "—" ? DIM : isNeg(s) ? DOWN : UP;
+    const tabStats = [
+      ["Invested", st.m[0][0], st.m[0][1], TXT],
+      ["Market value", st.m[1][0], st.m[1][1], TXT],
+      ["Unrealised", st.m[2][0], st.m[2][1] + " · " + st.r[0], tone(st.m[2][0])],
+      ["Realised FY26", st.m[3][0], st.m[3][1], tone(st.m[3][0])],
+      ["Dividends FY26", st.m[4][0], st.m[4][1], st.m[4][0] === "—" ? DIM : TXT],
+      ["Day P&L", st.m[5][0], st.m[5][1] + " · " + st.r[1], tone(st.m[5][0])],
+      ["XIRR", st.r[2], "cash-flow weighted", tone(st.r[2])],
+      ["CAGR", st.r[3], "since first lot", tone(st.r[3])],
+      ["Max drawdown", st.r[4], "trailing 3Y", st.r[4] === "—" || st.r[4] === "0.0%" ? DIM : DOWN],
+      ["Yield", st.r[5], "trailing 12m", TXT],
+    ].map(([k, v, sub, color], i, arr) =>
+      ({ k, v, sub, color, sep: i === arr.length - 1 ? "none" : "inset -1px 0 0 rgba(233,233,237,0.09)" }));
+
+    const scaf = SCAFFOLDS[page];
+    const scafNames = scaf ? Object.keys(scaf.tabs) : [];
+    const activeScafTab = scaf ? (scafTab[page] ?? scafNames[0]) : null;
+    const view = scaf ? scaf.tabs[activeScafTab] : null;
+    const scafTabs = scafNames.map(label => ({
+      label, count: "",
+      color: label === activeScafTab ? TXT : DIM,
+      mark: label === activeScafTab ? "inset 0 -2px 0 #9184d9" : "none",
+      go: () => this.setState(s => ({ scafTab: { ...s.scafTab, [page]: label } })),
+    }));
+    const scafStats = (view ? view.stats : []).map(([k, v, sub], i, arr) => ({
+      k, v, sub, color: tone(v) === DIM && v !== "—" ? TXT : (isNeg(v) ? DOWN : TXT),
+      sep: i === arr.length - 1 ? "none" : "inset -1px 0 0 rgba(233,233,237,0.09)",
+    }));
+    const scafCols = (view ? view.cols : []).map((label, i) => ({ label, align: i === 0 ? "left" : "right" }));
+    const scafRows = (view ? view.rows : []).map(cells => ({
+      cells: cells.map((v, i) => ({
+        v, align: i === 0 ? "left" : "right",
+        font: i === 0 ? "Inter, sans-serif" : "'JetBrains Mono', monospace",
+        color: i === 0 ? TXT : isNeg(v) ? DOWN : (typeof v === "string" && v.startsWith("+")) ? UP : "#b2b6ca",
+      })),
+    }));
+
+    const raw = ROWS;
+    const neg = s => typeof s === "string" && s.trim().startsWith("−");
+    const holdings = raw.filter(r => tab === "All" || CLASS_OF[r[0]] === tab).map(r => ({
+      sym: r[0], name: r[1], acct: r[2], qty: r[3], avg: r[4], ltp: r[5],
+      day: r[6], dayColor: r[6] === "—" ? DIM : neg(r[6]) ? DOWN : UP,
+      value: r[7], valueInr: r[8],
+      pnl: r[9], pnlPct: r[10], pnlColor: neg(r[9]) ? DOWN : UP,
+      xirr: r[11], xirrColor: neg(r[11]) ? DOWN : UP, wt: r[12],
+      open: () => this.setState({ page: "position" }),
+    }));
+
+    const ranges = ["1D", "1M", "6M", "1Y", "3Y", "MAX"].map(label => ({
+      label,
+      color: label === range ? "#b5abfc" : DIM,
+      mark: label === range ? "inset 0 0 0 1px #5d5294" : "none",
+    }));
+
+    const lots = [
+      ["2024-08-14", "56", "$96.20", "+$4,369", "Long term", "#292b31", "#cfd3e5", "−₹72,640"],
+      ["2025-02-03", "44", "$121.40", "+$2,324", "Long term", "#292b31", "#cfd3e5", "−₹38,640"],
+      ["2026-03-11", "30", "$148.90", "+$760", "Short term", "#423a6a", "#d2cefd", "−₹19,690"],
+    ].map(([date, qty, cost, gain, term, tagBg, tagFg, tax]) => ({ date, qty, cost, gain, term, tagBg, tagFg, tax }));
+
+    const posStats = [
+      ["Quantity", "130", TXT], ["Average cost", "$118.40", TXT], ["Invested", "$15,392 · ₹12,79,383", TXT],
+      ["Market value", "$22,649 · ₹18,82,551", TXT], ["Unrealised", "+$7,257 · +47.1%", UP],
+      ["FX effect", "+₹58,500", UP], ["XIRR", "61.4%", UP], ["Weight of net worth", "7.9%", TXT],
+      ["Realised FY26", "+$318", UP], ["Dividends FY26", "$4.20", TXT],
+    ].map(([k, v, color]) => ({ k, v, color }));
+
+    const news = [
+      ["Data-centre revenue guidance lifted for the third straight quarter", "Reuters · 2h · sentiment +"],
+      ["Supplier lead times shorten on the latest accelerator line", "Bloomberg · 5h · sentiment +"],
+      ["Export-control review widens to two more markets", "FT · 9h · sentiment −"],
+      ["Index rebalance raises weight in the S&P 500 to 7.4%", "Nasdaq · 1d · neutral"],
+    ].map(([head, meta]) => ({ head, meta }));
+
+    const queue = [
+      ["gmail", "HDFC Bank card statement · August", "high 0.96", "#233d33", "#a9e6c6",
+       "24 transactions · ₹68,412 total · 3 new merchants",
+       "Statement PDF, hdfcbank.net · received 02 Sep 09:14",
+       "expenses.transactions ×24, accounts.card_hdfc.balance"],
+      ["sms", "Zerodha contract note", "high 0.94", "#233d33", "#a9e6c6",
+       "BUY 12 TATAMOTORS @ ₹1,042.30 · ₹12,507.60 · order 2509021144",
+       "VM-ZERODHA · 02 Sep 15:41",
+       "investments.lots +1, cash.zerodha −₹12,507.60"],
+      ["gmail", "PPFAS Flexi Cap SIP allotment", "high 0.91", "#233d33", "#a9e6c6",
+       "₹25,000 · 328.42 units @ ₹76.12 · folio 4491882",
+       "CAMS allotment mail · 01 Sep 06:02",
+       "investments.mf_lots +1, cashflow.sip"],
+      ["sms", "UPI debit ₹1,899 — unmatched merchant", "low 0.42", "#4a2f2d", "#f0c1bd",
+       "₹1,899 · VPA rzp.notion@icici · category guess: Software",
+       "AD-ICICIB · 03 Sep 11:27",
+       "expenses.transactions +1 · needs category"],
+      ["file", "IBKR activity statement Q2", "medium 0.78", "#3a3320", "#ecdca6",
+       "17 trades · 2 dividends · $4.20 withholding · FX at trade date",
+       "Dropped into ~/statements/ibkr · 04 Sep",
+       "investments.lots ×17, tax.foreign_withholding"],
+    ].map(([src, title, conf, confBg, confFg, parsed, rawTxt, writes]) =>
+      ({ src, title, conf, confBg, confFg, parsed, raw: rawTxt, writes }));
+
+    return {
+      navGroups, sleeves, movers, reviewPeek, tabs, holdings, ranges, lots, posStats, news, queue,
+      tabStats, footCount: st.f[0], footBench: st.f[1],
+      netWorth: rupees(TOTALS["All"].value),
+      dayLine: signed(TOTALS["All"].day, rupees) + " today · " + pctStr(TOTALS["All"].dayPct),
+      scafTabs, scafStats, scafCols, scafRows,
+      scafNote: view ? view.note : "",
+      pageTitle: title, pageSub: sub,
+      isOverview: page === "overview", isHoldings: page === "holdings",
+      isPosition: page === "position", isInbox: page === "inbox",
+      isStub: Boolean(stubEntry),
+      stubTitle: stubEntry ? stubEntry.stub[0] : "",
+      stubBody: stubEntry ? stubEntry.stub[1] : "",
+      stubModule: stubEntry ? stubEntry.stub[2] : "",
+      agentOpen,
+      toggleAgent: () => this.setState({ agentOpen: !agentOpen }),
+      goInbox: this.go("inbox"),
+      goHoldings: this.go("holdings"),
+      noop: () => {},
+    };
+  }
+}
+</script>
+</body>
+</html>
