@@ -61,18 +61,17 @@
     return value.trim() !== "" && Number.isFinite(parsed) ? parsed : undefined;
   }
 
+  // Wired to /api/market/screener
   async function fetchScreener(filters: ScreenerFilters): Promise<ScreenerRow[]> {
-    // TODO(integration): wire to real /api/market/screener route
-    await Promise.resolve();
-
-    return rows.filter((row) => {
-      return (
-        (!filters.sector || row.sector === filters.sector) &&
-        (filters.marketCapMin === undefined || row.marketCap >= filters.marketCapMin * 1_000_000_000) &&
-        (filters.volumeMin === undefined || row.volume >= filters.volumeMin * 1_000_000) &&
-        (filters.changePercentMin === undefined || row.changePercent >= filters.changePercentMin)
-      );
-    });
+    const params = new URLSearchParams();
+    if (filters.sector) params.set("sector", filters.sector);
+    if (filters.marketCapMin !== undefined) params.set("marketCapMin", filters.marketCapMin.toString());
+    if (filters.volumeMin !== undefined) params.set("volumeMin", filters.volumeMin.toString());
+    if (filters.changePercentMin !== undefined) params.set("changePercentMin", filters.changePercentMin.toString());
+    const response = await fetch(`/api/market/screener?${params}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.rows || [];
   }
 
   async function loadRows(nextFilters: ScreenerFilters): Promise<void> {

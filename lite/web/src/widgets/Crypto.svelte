@@ -31,92 +31,27 @@
 
   const timeframes = ["1D", "5D", "1W", "1M", "3M", "6M", "YTD", "1Y", "5Y", "MAX"];
 
-  // TODO(integration): wire to real /api/crypto route
+  // Wired to /api/crypto
   async function fetchTopAssets(limit: number): Promise<CryptoAsset[]> {
-    // Stub: return mock data for testing
-    return [
-      {
-        id: "bitcoin",
-        symbol: "BTC",
-        name: "Bitcoin",
-        price: 45000,
-        changePercent24h: 2.5,
-        marketCap: 900000000000,
-        volume24h: 25000000000,
-        rank: 1,
-        sparkline: [44000, 44200, 44500, 44800, 45000, 45200, 45000, 44800, 45100, 45300, 45000, 44900, 45200, 45100, 45000],
-      },
-      {
-        id: "ethereum",
-        symbol: "ETH",
-        name: "Ethereum",
-        price: 2500,
-        changePercent24h: 3.2,
-        marketCap: 300000000000,
-        volume24h: 15000000000,
-        rank: 2,
-        sparkline: [2450, 2460, 2470, 2480, 2500, 2510, 2500, 2490, 2520, 2530, 2500, 2490, 2510, 2505, 2500],
-      },
-      {
-        id: "binancecoin",
-        symbol: "BNB",
-        name: "BNB",
-        price: 600,
-        changePercent24h: 1.8,
-        marketCap: 90000000000,
-        volume24h: 3000000000,
-        rank: 3,
-        sparkline: [590, 592, 595, 598, 600, 602, 600, 598, 605, 610, 600, 598, 602, 601, 600],
-      },
-      {
-        id: "solana",
-        symbol: "SOL",
-        name: "Solana",
-        price: 120,
-        changePercent24h: -1.5,
-        marketCap: 50000000000,
-        volume24h: 2000000000,
-        rank: 4,
-        sparkline: [125, 123, 121, 120, 119, 118, 120, 121, 119, 118, 120, 121, 120, 119, 120],
-      },
-      {
-        id: "cardano",
-        symbol: "ADA",
-        name: "Cardano",
-        price: 0.95,
-        changePercent24h: 0.5,
-        marketCap: 34000000000,
-        volume24h: 1200000000,
-        rank: 5,
-        sparkline: [0.94, 0.945, 0.95, 0.951, 0.952, 0.951, 0.95, 0.949, 0.952, 0.953, 0.95, 0.949, 0.951, 0.95, 0.95],
-      },
-    ];
+    const response = await fetch(`/api/crypto?limit=${limit}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.assets || [];
   }
 
-  // TODO(integration): wire to real /api/crypto/dominance route
+  // Wired to /api/crypto/dominance
   async function fetchDominance(): Promise<GlobalStats> {
-    // Stub: return mock data for testing
-    return { btc: 45.2, eth: 18.5, totalMarketCap: 1300000000000 };
+    const response = await fetch("/api/crypto/dominance");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
-  // TODO(integration): wire to real /api/crypto/ohlcv route
+  // Wired to /api/crypto/ohlcv
   async function getOHLCV(symbol: string, timeframe: string): Promise<Candle[]> {
-    // Stub: return mock candlestick data
-    const now = Math.floor(Date.now() / 1000);
-    const candles: Candle[] = [];
-    for (let i = 100; i >= 0; i--) {
-      const time = now - i * 86400; // daily candles
-      const base = 44000 + Math.random() * 2000;
-      candles.push({
-        time,
-        open: base + Math.random() * 500,
-        high: base + Math.random() * 1000,
-        low: base - Math.random() * 1000,
-        close: base + Math.random() * 500,
-        volume: Math.random() * 50000000000,
-      });
-    }
-    return candles;
+    const response = await fetch(`/api/crypto/ohlcv?symbol=${encodeURIComponent(symbol)}&timeframe=${encodeURIComponent(timeframe)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.candles || [];
   }
 
   function formatNum(val: number | null | undefined, isPrice = false): string {

@@ -27,26 +27,19 @@
   let loading = true;
   let selectedExpiry: string | null = null;
 
-  /**
-   * Fetch the options chain data.
-   * TODO(integration): wire to real /api/market/options route
-   */
+  // Wired to /api/market/options
   async function fetchOptionsChain(sym: string): Promise<OptionsChain> {
-    // Stub implementation — will be wired to real API
-    console.log("TODO: fetch from /api/market/options/" + sym);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    throw new Error("TODO(integration): not yet connected to /api/market/options");
+    const response = await fetch(`/api/market/options?symbol=${encodeURIComponent(sym)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
-  /**
-   * Fetch current stock price for ITM highlighting.
-   * TODO(integration): wire to real /api/market/quote route
-   */
+  // Wired to /api/market/quote
   async function fetchCurrentPrice(sym: string): Promise<number | null> {
-    // Stub implementation — will be wired to real API
-    console.log("TODO: fetch quote from /api/market/quote/" + sym);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return null;
+    const response = await fetch(`/api/market/quote?symbol=${encodeURIComponent(sym)}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.price ?? null;
   }
 
   onMount(async () => {

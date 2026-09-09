@@ -11,12 +11,17 @@
 
   const STORAGE_KEY = "openterminal-watchlist";
 
-  // This is intentionally replaceable until the market-data endpoint is wired in.
-  export let fetchQuote: FetchQuote = async () => ({
-    price: 0,
-    changePercent: 0,
-    volume: 0
-  });
+  // Wired to /api/market/quote; exportable for testing
+  export let fetchQuote: FetchQuote = async (symbol: string) => {
+    const response = await fetch(`/api/market/quote?symbol=${encodeURIComponent(symbol)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return {
+      price: data.price ?? 0,
+      changePercent: data.changePercent ?? 0,
+      volume: data.volume ?? 0
+    };
+  };
 
   let symbols: string[] = [];
   let quotes: Record<string, Quote> = {};

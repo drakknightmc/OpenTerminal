@@ -1,6 +1,19 @@
 <script lang="ts">
   import { widgets } from "../store/widgets";
   import type { WidgetInstance } from "../store/widgets";
+  import Chart from "./Chart.svelte";
+  import Quote from "./Quote.svelte";
+  import Watchlist from "./Watchlist.svelte";
+  import News from "./News.svelte";
+  import Macro from "./Macro.svelte";
+  import Screener from "./Screener.svelte";
+  import Heatmap from "./Heatmap.svelte";
+  import Crypto from "./Crypto.svelte";
+  import Options from "./Options.svelte";
+  import IndiaMarket from "./IndiaMarket.svelte";
+  import MutualFund from "./MutualFund.svelte";
+  import Portfolio from "./Portfolio.svelte";
+  import AiAssistant from "./AiAssistant.svelte";
 
   let dragging: { id: string; startX: number; startY: number; startX0: number; startY0: number } | null = null;
   let resizing: { id: string; startX: number; startY: number; startW: number; startH: number } | null = null;
@@ -20,23 +33,6 @@
     mutualfunds: "Mutual Funds",
     mutualfund: "Mutual Fund",
     indiamarket: "India Market",
-  };
-
-  const COLORS: Record<string, string> = {
-    chart: "#1a4d7a",
-    quote: "#1a7a4d",
-    watchlist: "#4d7a1a",
-    news: "#7a4d1a",
-    heatmap: "#7a1a4d",
-    screener: "#1a7a7a",
-    crypto: "#7a7a1a",
-    options: "#4d1a7a",
-    portfolio: "#7a1a1a",
-    ai: "#1a4d4d",
-    macro: "#4d7a4d",
-    mutualfunds: "#7a4d4d",
-    mutualfund: "#7a4d4d",
-    indiamarket: "#4d4d7a",
   };
 
   function startDrag(e: MouseEvent, id: string) {
@@ -88,12 +84,33 @@
           </button>
         </div>
         <div class="widget-body">
-          <div
-            class="widget-placeholder"
-            style={`background: ${COLORS[widget.type] || "#1a1a3a"}; color: #ccc;`}
-          >
-            {WIDGET_LABELS[widget.type]}
-          </div>
+          {#if widget.type === "chart"}
+            <Chart symbol={widget.symbol || $widgets.activeSymbol || "AAPL"} />
+          {:else if widget.type === "quote"}
+            <Quote symbol={widget.symbol || $widgets.activeSymbol || "AAPL"} />
+          {:else if widget.type === "watchlist"}
+            <Watchlist />
+          {:else if widget.type === "news"}
+            <News symbol={widget.symbol} />
+          {:else if widget.type === "macro"}
+            <Macro />
+          {:else if widget.type === "screener"}
+            <Screener />
+          {:else if widget.type === "heatmap"}
+            <Heatmap />
+          {:else if widget.type === "crypto"}
+            <Crypto />
+          {:else if widget.type === "options"}
+            <Options symbol={widget.symbol || $widgets.activeSymbol || "AAPL"} />
+          {:else if widget.type === "indiamarket"}
+            <IndiaMarket symbol={widget.symbol || "RELIANCE"} />
+          {:else if widget.type === "mutualfund"}
+            <MutualFund />
+          {:else if widget.type === "portfolio"}
+            <Portfolio />
+          {:else if widget.type === "ai"}
+            <AiAssistant symbol={widget.symbol} />
+          {/if}
         </div>
         <div class="resize-handle" on:mousedown={(e) => startResize(e, widget.id)}></div>
       </div>
@@ -166,20 +183,6 @@
   .widget-body {
     flex: 1;
     overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .widget-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Courier New", monospace;
-    font-size: 12px;
-    opacity: 0.7;
   }
 
   .resize-handle {

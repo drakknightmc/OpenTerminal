@@ -26,15 +26,13 @@
 
   let symbolResults: { symbol: string; name: string; exchange: string; type: string }[] = [];
 
-  // TODO(integration): wire to real /api/market/search route
+  // Wired to /api/market/search
   async function searchSymbols(q: string) {
     if (!q) return [];
-    // Stub data for now
-    return [
-      { symbol: "AAPL", name: "Apple Inc.", exchange: "NASDAQ", type: "Equity" },
-      { symbol: "GOOGL", name: "Alphabet Inc.", exchange: "NASDAQ", type: "Equity" },
-      { symbol: "MSFT", name: "Microsoft Corp.", exchange: "NASDAQ", type: "Equity" },
-    ].filter((r) => r.symbol.includes(q.toUpperCase()) || r.name.toUpperCase().includes(q.toUpperCase()));
+    const response = await fetch(`/api/market/search?q=${encodeURIComponent(q)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.results || [];
   }
 
   async function onQueryChange(e: Event) {

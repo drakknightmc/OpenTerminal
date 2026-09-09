@@ -16,16 +16,20 @@
     category?: string;
   };
 
-  // TODO(integration): wire to the real /api/mf/search route.
+  // Wired to /api/mf/search
   async function fetchSearchSchemes(query: string): Promise<SchemeResult[]> {
-    void query;
-    return [];
+    const response = await fetch(`/api/mf/search?q=${encodeURIComponent(query)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.results || [];
   }
 
-  // TODO(integration): wire to the real /api/mf/... route.
+  // Wired to /api/mf/nav/:schemeCode
   async function fetchNavHistory(schemeCode: number): Promise<NavEntry[]> {
-    void schemeCode;
-    return [];
+    const response = await fetch(`/api/mf/nav/${schemeCode}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.history || [];
   }
 
   let query = "";

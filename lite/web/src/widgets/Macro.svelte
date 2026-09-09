@@ -15,14 +15,19 @@
   let vix: Vix | null = null;
   let loading = true;
 
+  // Wired to /api/macro/treasuries
   async function fetchTreasuryYields(): Promise<TreasuryYield[]> {
-    // TODO(integration): wire to real /api/macro/treasuries route
-    return [];
+    const response = await fetch("/api/macro/treasuries");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.yields || [];
   }
 
+  // Wired to /api/macro/vix
   async function fetchVix(): Promise<Vix | null> {
-    // TODO(integration): wire to real /api/macro/vix route
-    return null;
+    const response = await fetch("/api/macro/vix");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
   const chart = { width: 520, height: 220, left: 48, right: 16, top: 18, bottom: 36 };

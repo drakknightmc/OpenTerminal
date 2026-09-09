@@ -22,22 +22,12 @@
   let chartHost: HTMLDivElement;
   let chart: IChartApi | null = null;
 
-  // TODO(integration): wire to real /api/market/candles route
+  // Wired to /api/market/candles
   async function fetchCandles(ticker: string, selectedTimeframe: string): Promise<Candle[]> {
-    await Promise.resolve();
-    const periods = selectedTimeframe === "1D" ? 96 : selectedTimeframe === "1W" ? 140 : selectedTimeframe === "1M" ? 180 : selectedTimeframe === "6M" ? 180 : selectedTimeframe === "1Y" ? 260 : 420;
-    const end = Math.floor(Date.now() / 86_400_000) * 86_400_000;
-    let price = 100 + ticker.length * 7;
-    return Array.from({ length: periods }, (_, index) => {
-      const time = end - (periods - index) * 86_400_000;
-      const wave = Math.sin(index / 8) * 1.7 + Math.cos(index / 21) * 1.1;
-      const open = price;
-      const close = Math.max(1, open + wave + (index % 9 - 4) * 0.18);
-      const high = Math.max(open, close) + 0.55 + (index % 4) * 0.12;
-      const low = Math.min(open, close) - 0.55 - (index % 3) * 0.1;
-      price = close;
-      return { time: Math.floor(time / 1000), open, high, low, close, volume: 900_000 + (index % 12) * 85_000 + Math.abs(wave) * 120_000 };
-    });
+    const response = await fetch(`/api/market/candles?symbol=${encodeURIComponent(ticker)}&timeframe=${encodeURIComponent(selectedTimeframe)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.candles || [];
   }
 
   function toggleIndicator(indicator: Indicator) {

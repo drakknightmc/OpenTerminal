@@ -19,27 +19,11 @@
     sharesOutstanding: number | null;
   }
 
-  /** Replace this stub with the market quote API when the endpoint is ready. */
+  // Wired to /api/market/quote
   export async function fetchQuote(symbol: string): Promise<Quote> {
-    return {
-      symbol: symbol.toUpperCase(),
-      price: 187.42,
-      changePercent: 1.84,
-      open: 184.96,
-      high: 188.31,
-      low: 184.52,
-      bid: 187.40,
-      ask: 187.45,
-      volume: 28_431_920,
-      marketCap: 2_890_000_000_000,
-      pe: 29.14,
-      eps: 6.43,
-      yield: 0.51,
-      week52Low: 124.17,
-      week52High: 199.62,
-      beta: 1.21,
-      sharesOutstanding: 15_410_000_000
-    };
+    const response = await fetch(`/api/market/quote?symbol=${encodeURIComponent(symbol)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 </script>
 

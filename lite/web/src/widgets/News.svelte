@@ -15,10 +15,14 @@
   let loading = true;
   let error: string | null = null;
 
+  // Wired to /api/news
   async function fetchNews(symbol?: string): Promise<NewsItem[]> {
-    // TODO(integration): wire to real /api/news route
-    void symbol;
-    return [];
+    const params = new URLSearchParams();
+    if (symbol) params.set("symbol", symbol);
+    const response = await fetch(`/api/news?${params}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.items || [];
   }
 
   function relativeTime(publishedAt: string | null): string {

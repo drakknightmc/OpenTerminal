@@ -33,32 +33,19 @@
   let loading = true;
   let error: string | null = null;
 
-  // TODO: Replace this development fixture with /api/india/indices.
+  // Wired to /api/india/indices
   async function fetchIndices(): Promise<IndiaIndex[]> {
-    return [
-      { name: "NIFTY 50", value: 24_812.35, change: 142.25, changePercent: 0.58 },
-      { name: "SENSEX", value: 81_455.4, change: 489.8, changePercent: 0.6 },
-    ];
+    const response = await fetch("/api/india/indices");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.indices || [];
   }
 
-  // TODO: Replace this development fixture with /api/india/quote/SYMBOL.
+  // Wired to /api/india/quote/SYMBOL
   async function fetchIndiaQuote(symbolName: string): Promise<IndiaQuote> {
-    return {
-      symbol: symbolName,
-      price: 1_425.6,
-      change: 18.35,
-      changePercent: 1.3,
-      open: 1_411.25,
-      high: 1_438.9,
-      low: 1_405.1,
-      previousClose: 1_407.25,
-      volume: 8_452_190,
-      currency: "INR",
-      exchange: "NSE",
-      marketState: "REGULAR",
-      time: Date.now(),
-      source: "development fixture",
-    };
+    const response = await fetch(`/api/india/quote/${encodeURIComponent(symbolName)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
   async function loadMarket(nextSymbol: string): Promise<void> {

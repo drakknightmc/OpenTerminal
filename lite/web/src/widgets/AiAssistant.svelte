@@ -40,10 +40,16 @@
     }
   }
 
+  // Wired to /api/ai/chat
   async function sendMessage(message: string, context?: string): Promise<string> {
-    // TODO(integration): wire to real /api/ai/chat route
-    // For now, return a stub response
-    return "AI integration pending. This is a stub response.";
+    const response = await fetch("/api/ai/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, symbol: context })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.reply || "";
   }
 
   async function handleSend(): Promise<void> {
