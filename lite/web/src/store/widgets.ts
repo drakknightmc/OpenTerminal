@@ -43,6 +43,23 @@ const DEFAULT_WIDGETS: WidgetInstance[] = [
   { id: "w-portfolio-groww", type: "portfolio", x: 6, y: 15, w: 6, h: 7, linked: false, section: "groww_mf" },
 ];
 
+/**
+ * Safe localStorage operations with graceful degradation.
+ * If quota is exceeded or storage is unavailable, state remains in-memory only.
+ */
+function safeSave(key: string, value: unknown): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    // Quota exceeded, private browsing, or storage unavailable
+    // Silently fail; state remains in Svelte store (session-only)
+    if (err instanceof Error && err.name === "QuotaExceededError") {
+      console.warn("localStorage quota exceeded; layout changes will not persist");
+    }
+  }
+}
+
 function loadState(): WidgetStore {
   if (typeof window === "undefined") {
     return { widgets: DEFAULT_WIDGETS, activeSymbol: "AAPL" };
@@ -80,44 +97,34 @@ function createWidgetStore() {
           ...(section ? { section } : {}),
         };
         const newState = { ...state, widgets: [...state.widgets, newWidget] };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     removeWidget: (id: string) => {
       update((state) => {
         const newState = { ...state, widgets: state.widgets.filter((w) => w.id !== id) };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     updateLayout: (widgets: WidgetInstance[]) => {
       update((state) => {
         const newState = { ...state, widgets };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     setActiveSymbol: (symbol: string) => {
       update((state) => {
         const newState = { ...state, activeSymbol: symbol };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     resetWorkspace: () => {
       const newState = { widgets: DEFAULT_WIDGETS, activeSymbol: "AAPL" };
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      }
+      safeSave(STORAGE_KEY, newState);
       set(newState);
     },
   };

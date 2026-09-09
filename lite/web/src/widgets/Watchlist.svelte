@@ -47,7 +47,14 @@
   });
 
   function persist() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols));
+    } catch (err) {
+      // Storage quota exceeded or unavailable; silently degrade to in-memory only
+      if (err instanceof Error && err.name === "QuotaExceededError") {
+        console.warn("localStorage quota exceeded; watchlist will not persist");
+      }
+    }
   }
 
   function addSymbol() {
