@@ -33,6 +33,10 @@
     crypto: "Crypto",
     options: "Options",
     portfolio: "Portfolio",
+    "portfolio:total": "Portfolio: Total",
+    "portfolio:icici_direct": "Portfolio: ICICI",
+    "portfolio:ibkr": "Portfolio: IBKR",
+    "portfolio:groww_mf": "Portfolio: Groww MF",
     ai: "AI Assistant",
     macro: "Macro",
     mutualfunds: "Mutual Funds",
@@ -47,7 +51,7 @@
   let grid: GridStack | null = null;
   let mounted: Record<string, MountedWidget> = {};
 
-  $: if (grid) syncWidgets();
+  $: if (grid && $widgets.widgets) syncWidgets();
 
   function layoutOf(widget: WidgetInstance): GridStackWidget {
     return {
@@ -71,7 +75,12 @@
       return { symbol: widget.linked ? $widgets.activeSymbol : widget.symbol };
     }
     if (widget.type === "indiamarket") return { symbol: widget.symbol || "RELIANCE" };
+    if (widget.type === "portfolio") return widget.section ? { section: widget.section } : {};
     return {};
+  }
+
+  function labelFor(widget: WidgetInstance): string {
+    return WIDGET_LABELS[widget.section ? `${widget.type}:${widget.section}` : widget.type] || widget.type;
   }
 
   function createComponent(type: WidgetType, target: HTMLElement, widget: WidgetInstance): Component {
@@ -87,7 +96,7 @@
     if (type === "options") return new Options({ target, props }) as unknown as Component;
     if (type === "indiamarket") return new IndiaMarket({ target, props }) as unknown as Component;
     if (type === "mutualfund") return new MutualFund({ target }) as unknown as Component;
-    if (type === "portfolio") return new Portfolio({ target }) as unknown as Component;
+    if (type === "portfolio") return new Portfolio({ target, props }) as unknown as Component;
     return new AiAssistant({ target, props }) as unknown as Component;
   }
 
@@ -100,7 +109,8 @@
     const title = document.createElement("div");
     title.className = "panel-title";
     const label = document.createElement("span");
-    label.textContent = WIDGET_LABELS[widget.type] || widget.type;
+    label.className = "drag-handle";
+    label.textContent = labelFor(widget);
     const close = document.createElement("button");
     close.type = "button";
     close.className = "close-btn";
@@ -170,7 +180,7 @@
         margin: 12,
         float: false,
         animate: false,
-        handle: ".panel-title",
+        handle: ".drag-handle",
         columnOpts: {
           breakpointForWindow: true,
           breakpoints: [
@@ -184,7 +194,6 @@
     );
     grid.on("dragstop", (_event, element) => persistFromNode(element.gridstackNode));
     grid.on("resizestop", (_event, element) => persistFromNode(element.gridstackNode));
-    syncWidgets();
   });
 
   onDestroy(() => {
@@ -237,10 +246,14 @@
     color: #e0e0e0;
     white-space: nowrap;
     flex-shrink: 0;
-    cursor: grab;
   }
 
-  :global(.panel-title:active) {
+  :global(.drag-handle) {
+    cursor: grab;
+    flex: 1;
+  }
+
+  :global(.drag-handle:active) {
     cursor: grabbing;
   }
 

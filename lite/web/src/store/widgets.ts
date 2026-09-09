@@ -16,6 +16,8 @@ export type WidgetType =
   | "mutualfund"
   | "indiamarket";
 
+export type PortfolioSection = "total" | "icici_direct" | "ibkr" | "groww_mf";
+
 export interface WidgetInstance {
   id: string;
   type: WidgetType;
@@ -25,6 +27,7 @@ export interface WidgetInstance {
   h: number;
   symbol?: string;
   linked?: boolean;
+  section?: PortfolioSection;
 }
 
 interface WidgetStore {
@@ -59,7 +62,7 @@ function createWidgetStore() {
 
   return {
     subscribe,
-    addWidget: (type: WidgetType) => {
+    addWidget: (type: WidgetType, section?: PortfolioSection) => {
       update((state) => {
         const id = `w-${type}-${Date.now()}`;
         // Stack new widgets below everything else — avoids spawning on top of
@@ -73,6 +76,7 @@ function createWidgetStore() {
           w: 6,
           h: 8,
           linked: ["chart", "quote", "news", "options"].includes(type),
+          ...(section ? { section } : {}),
         };
         const newState = { ...state, widgets: [...state.widgets, newWidget] };
         if (typeof window !== "undefined") {

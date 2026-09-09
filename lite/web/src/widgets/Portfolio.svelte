@@ -1,5 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { PortfolioSection } from "../store/widgets";
+
+  export let section: PortfolioSection | undefined;
 
   type Market = "us" | "india" | "crypto" | "mf";
   type Currency = "USD" | "INR";
@@ -161,8 +164,19 @@
   }
 
   $: primaryTotal = primaryCurrency === "INR" ? summary?.totalInr ?? 0 : summary?.totalUsd ?? 0;
+  $: visibleHoldings = section && section !== "total"
+    ? summary?.holdings.filter((holding) => holding.source === section) ?? []
+    : summary?.holdings ?? [];
+  $: sectionInr = visibleHoldings.reduce(
+    (total, holding) => total + (holding.currency === "INR" ? holding.nativeValue : holding.convertedValue),
+    0,
+  );
+  $: sectionUsd = visibleHoldings.reduce(
+    (total, holding) => total + (holding.currency === "USD" ? holding.nativeValue : holding.convertedValue),
+    0,
+  );
   $: holdingGroups = summary ? Array.from(
-    summary.holdings.reduce((groups, holding) => {
+    visibleHoldings.reduce((groups, holding) => {
       const key = `${holding.sourceLabel ?? "Manual"}/${marketLabels[holding.market]}`;
       const group = groups.get(key) ?? { key, label: key, holdings: [] as HoldingWithValue[] };
       group.holdings.push(holding);
@@ -190,33 +204,57 @@
   {:else if error}
     <section class="panel state error">Error: {error}</section>
   {:else if summary}
-    <section class="panel overview">
-      <div class="total-block">
-        <span class="label">TOTAL {primaryCurrency}</span>
-        <strong>{money(primaryTotal, primaryCurrency)}</strong>
-        <button class="currency-toggle" type="button" on:click={() => (primaryCurrency = otherCurrency(primaryCurrency))}>
-          Show {otherCurrency(primaryCurrency)}
-        </button>
-      </div>
-      <div class="market-row">
-        {#each markets as market}
-          {@const item = marketSummary(market)}
-          <div class="market-card">
-            <span class="market-name">{marketLabels[market]}</span>
-            <strong>{item ? money(item.nativeTotal, item.nativeCurrency) : "--"}</strong>
-            <span class="muted">{item?.holdingCount ?? 0} holding{item?.holdingCount === 1 ? "" : "s"}</span>
-          </div>
-        {/each}
-      </div>
-    </section>
+    {#if section === "total"}
+      <section class="panel overview">
+        <div class="total-block">
+          <span class="label">TOTAL INR</span>
+          <strong>{money(summary.totalInr, "INR")}</strong>
+          <span class="label">TOTAL USD</span>
+          <strong>{money(summary.totalUsd, "USD")}</strong>
+          <button class="currency-toggle" type="button" on:click={() => (primaryCurrency = otherCurrency(primaryCurrency))}>
+            Primary: {primaryCurrency}
+          </button>
+        </div>
+      </section>
+    {:else if section}
+      <section class="panel overview">
+        <div class="total-block">
+          <span class="label">SUBTOTAL INR</span>
+          <strong>{money(sectionInr, "INR")}</strong>
+          <span class="label">SUBTOTAL USD</span>
+          <strong>{money(sectionUsd, "USD")}</strong>
+        </div>
+      </section>
+    {:else}
+      <section class="panel overview">
+        <div class="total-block">
+          <span class="label">TOTAL {primaryCurrency}</span>
+          <strong>{money(primaryTotal, primaryCurrency)}</strong>
+          <button class="currency-toggle" type="button" on:click={() => (primaryCurrency = otherCurrency(primaryCurrency))}>
+            Show {otherCurrency(primaryCurrency)}
+          </button>
+        </div>
+        <div class="market-row">
+          {#each markets as market}
+            {@const item = marketSummary(market)}
+            <div class="market-card">
+              <span class="market-name">{marketLabels[market]}</span>
+              <strong>{item ? money(item.nativeTotal, item.nativeCurrency) : "--"}</strong>
+              <span class="muted">{item?.holdingCount ?? 0} holding{item?.holdingCount === 1 ? "" : "s"}</span>
+            </div>
+          {/each}
+        </div>
+      </section>
+    {/if}
 
+    {#if section !== "total"}
     <section class="panel table-panel">
-      <div class="section-heading"><h2>Positions</h2><span>{summary.holdings.length} total</span></div>
+      <div class="section-heading"><h2>Positions</h2><span>{visibleHoldings.length} total</span></div>
       <div class="table-scroll">
         <table>
           <thead><tr><th>Market</th><th>Symbol</th><th>Qty</th><th>Avg cost</th><th>Native value</th><th>Unrealized P&amp;L</th></tr></thead>
           <tbody>
-            {#if summary.holdings.length === 0}
+            {#if visibleHoldings.length === 0}
               <tr><td class="empty" colspan="6">No holdings yet. Add a transaction below.</td></tr>
              {:else}
               {#each holdingGroups as group}
@@ -240,8 +278,10 @@
         </table>
       </div>
     </section>
+    {/if}
   {/if}
 
+  {#if !section}
   <section class="panel transaction-panel">
     <div class="section-heading"><h2>Add transaction</h2><span>BUY / SELL</span></div>
     <form on:submit|preventDefault={submitTransaction}>
@@ -255,6 +295,7 @@
     </form>
     {#if formError}<p class="form-error">{formError}</p>{/if}
   </section>
+  {/if}
 </main>
 
 <style>
