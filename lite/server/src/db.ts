@@ -1,7 +1,10 @@
 import { Database } from "bun:sqlite";
 import { join } from "path";
 
-const dbPath = process.env.DB_PATH || "./data/terminal.db";
+// Named distinctly from the old app's "data/terminal.db" (server/src/db.ts on main) —
+// both apps default to a relative "./data" dir, and running this from the repo root
+// would otherwise silently open the old app's incompatible database.
+const dbPath = process.env.DB_PATH || "./data/openterminal-lite.db";
 
 // Ensure data directory exists
 const dataDir = join(dbPath, "..");
