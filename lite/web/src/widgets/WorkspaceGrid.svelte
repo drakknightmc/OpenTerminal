@@ -17,6 +17,8 @@
 
   let dragging: { id: string; startX: number; startY: number; startX0: number; startY0: number } | null = null;
   let resizing: { id: string; startX: number; startY: number; startW: number; startH: number } | null = null;
+  let gridContainer: HTMLElement | null = null;
+  let liveWidgets = $widgets.widgets;
 
   const WIDGET_LABELS: Record<string, string> = {
     chart: "Chart",
@@ -35,30 +37,83 @@
     indiamarket: "India Market",
   };
 
+  const GAP = 4;
+  const COLS = 12;
+  const ROW_HEIGHT = 30;
+
+  function getGridMetrics(): { colWidth: number; rowHeight: number } {
+    if (!gridContainer) return { colWidth: 0, rowHeight: ROW_HEIGHT + GAP };
+    const containerWidth = gridContainer.offsetWidth;
+    const colWidth = (containerWidth - (COLS - 1) * GAP) / COLS;
+    return { colWidth, rowHeight: ROW_HEIGHT + GAP };
+  }
+
   function startDrag(e: MouseEvent, id: string) {
     if ((e.target as HTMLElement).classList.contains("resize-handle")) return;
-    dragging = { id, startX: e.clientX, startY: e.clientY, startX0: 0, startY0: 0 };
+    const widget = $widgets.widgets.find((w) => w.id === id);
+    if (widget) {
+      dragging = { id, startX: e.clientX, startY: e.clientY, startX0: widget.x, startY0: widget.y };
+    }
   }
 
   function startResize(e: MouseEvent, id: string) {
     e.stopPropagation();
-    resizing = { id, startX: e.clientX, startY: e.clientY, startW: 0, startH: 0 };
+    const widget = $widgets.widgets.find((w) => w.id === id);
+    if (widget) {
+      resizing = { id, startX: e.clientX, startY: e.clientY, startW: widget.w, startH: widget.h };
+    }
   }
 
   function onMouseMove(e: MouseEvent) {
     if (dragging) {
       const dx = e.clientX - dragging.startX;
       const dy = e.clientY - dragging.startY;
-      // TODO: implement drag positioning if needed
+      const { colWidth, rowHeight } = getGridMetrics();
+
+      const widget = liveWidgets.find((w) => w.id === dragging!.id);
+      if (widget) {
+        const gridDx = Math.round(dx / colWidth);
+        const gridDy = Math.round(dy / rowHeight);
+
+        let newX = dragging.startX0 + gridDx;
+        let newY = dragging.startY0 + gridDy;
+
+        // Clamp to grid bounds
+        newX = Math.max(0, Math.min(newX, COLS - widget.w));
+        newY = Math.max(0, newY);
+
+        widget.x = newX;
+        widget.y = newY;
+        liveWidgets = liveWidgets;
+      }
     }
     if (resizing) {
       const dx = e.clientX - resizing.startX;
       const dy = e.clientY - resizing.startY;
-      // TODO: implement resize if needed
+      const { colWidth, rowHeight } = getGridMetrics();
+
+      const widget = liveWidgets.find((w) => w.id === resizing!.id);
+      if (widget) {
+        const gridDx = Math.round(dx / colWidth);
+        const gridDy = Math.round(dy / rowHeight);
+
+        let newW = Math.max(2, resizing.startW + gridDx);
+        let newH = Math.max(3, resizing.startH + gridDy);
+
+        // Clamp width to grid edge
+        newW = Math.min(newW, COLS - widget.x);
+
+        widget.w = newW;
+        widget.h = newH;
+        liveWidgets = liveWidgets;
+      }
     }
   }
 
   function onMouseUp() {
+    if (dragging || resizing) {
+      widgets.updateLayout(liveWidgets);
+    }
     dragging = null;
     resizing = null;
   }
@@ -66,7 +121,7 @@
 
 <svelte:window on:mousemove={onMouseMove} on:mouseup={onMouseUp} />
 
-<div class="workspace-grid">
+<div class="workspace-grid" bind:this={gridContainer}>
   {#each $widgets.widgets as widget (widget.id)}
     <div
       class="widget-container"
@@ -146,6 +201,7 @@
     border-radius: 4px;
     overflow: hidden;
     cursor: grab;
+    position: relative;
   }
 
   .terminal-panel:active {
