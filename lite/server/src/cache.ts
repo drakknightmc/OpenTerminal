@@ -1,5 +1,36 @@
+/**
+ * Two-Tier In-Memory Cache with Stale Fallback
+ *
+ * This cache layer improves resilience when external API providers are unavailable.
+ * It keeps two copies of each successful fetch:
+ *
+ * 1. Live Cache (TTL-based expiry):
+ *    - 30s for quotes, candles, crypto OHLCV (frequently updated)
+ *    - 5m for search, screener, news (slower-changing)
+ *    - 1h for FX rates, macro data, fundamentals (very stable)
+ *    - Returns fresh-as-possible data
+ *
+ * 2. Stale Cache (never expires):
+ *    - Fallback if provider fails
+ *    - If live miss AND provider down → return stale data
+ *    - Prevents "unavailable" errors due to API outages
+ *    - Data is potentially old (hours), but better than error
+ *
+ * Real-world example (user loads portfolio):
+ *   1. GET /api/portfolio/networth
+ *   2. Server needs USD→INR FX rate
+ *   3. Checks live cache: miss (expired or first time)
+ *   4. Calls Frankfurter API: down
+ *   5. Returns stale rate (82.5 from yesterday)
+ *   6. Portfolio displays with slightly stale conversion
+ *   7. Next request 30s later → API back up → fresh rate
+ *
+ * ponytail: Stale cache grows indefinitely (~50MB typical), add cleanup when size > 1000.
+ */
+
 type Entry = { value: unknown; expires: number };
 
+// Live cache with TTL-based expiry
 const store = new Map<string, Entry>();
 
 export function cacheGet<T>(key: string): T | undefined {

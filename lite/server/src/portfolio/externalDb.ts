@@ -1,3 +1,47 @@
+/**
+ * External Broker Database Integration
+ *
+ * OpenTerminal can read holdings from external broker databases (ICICI Direct,
+ * IBKR, Groww, etc.) without writing to them. This allows consolidating portfolio
+ * data from multiple sources into a single net worth calculation.
+ *
+ * The external database is expected to be a SQLite database (or similar) with a
+ * `holdings` table containing broker data. OpenTerminal reads this once per API
+ * call (on-demand), combining with user's manual holdings in openterminal-lite.db.
+ *
+ * Setup:
+ * 1. Export your broker's portfolio to a SQLite database (see schema below)
+ * 2. Set PORTFOLIO_DB_PATH environment variable to the database file path
+ * 3. Server will automatically read and include external holdings in net worth
+ * 4. If file not found or unreadable, external holdings are skipped gracefully
+ *
+ * Expected schema (can use symlink to broker's actual database):
+ *   CREATE TABLE holdings (
+ *     rowid INTEGER PRIMARY KEY,
+ *     source TEXT,           -- "icici_direct", "ibkr", "groww_mf", etc.
+ *     market TEXT,           -- "IN_STOCK", "INTL_STOCK", "IN_MF" (maps to us/india/crypto/mf)
+ *     symbol TEXT,           -- Stock symbol or fund code
+ *     shares REAL,           -- Quantity held
+ *     avg_cost REAL,         -- Average cost per unit
+ *     last_price REAL,       -- Last known price (for P&L calculation)
+ *     currency TEXT,         -- "INR", "USD"
+ *     market_value REAL,     -- Total value (shares * last_price) if available
+ *     updated_at TEXT        -- Last update timestamp (ISO format)
+ *   );
+ *
+ * Symlink usage (e.g., on vault-pi):
+ *   ln -s /path/to/broker/portfolio.db /var/lib/openterminal/portfolio-external.db
+ *   export PORTFOLIO_DB_PATH=/var/lib/openterminal/portfolio-external.db
+ *
+ * Why symlink? Because the broker database might be on a different mount/NFS,
+ * and symlinks are cheaper than copying large files. WAL mode on broker DB
+ * means the symlink points to -wal and -shm files as well; opening read-only
+ * avoids write conflicts.
+ *
+ * Note: IDs are negated (-rowid) to distinguish external holdings from manual ones
+ * (manual holdings have positive IDs). This allows filtering/grouping by source.
+ */
+
 import { Database } from "bun:sqlite";
 import type { Currency, Holding, Market } from "./store.js";
 
