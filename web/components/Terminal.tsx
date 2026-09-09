@@ -42,7 +42,7 @@ export default function Terminal() {
   }, [setCommandOpen, addWidget]);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="legacy-terminal flex flex-col h-full">
       <TopBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />

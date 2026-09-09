@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-261cfce1-daca-4e35-bfa4-88112db2def7/styles.css">
+<script src="_ds/nocturne-261cfce1-daca-4e35-bfa4-88112db2def7/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  body { margin: 0; }
+  a { color: #b5abfc; }
+  a:hover { color: #d2cefd; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: #d2cefd; }
+</style>
+</helmet>
+
+<div style="max-width: 1080px; margin: 0 auto; padding: 40px 28px 90px; color: #e9e9ed; font-family: Inter, system-ui, sans-serif;">
+
+  <div style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #796cbf;">UI/UX plan · draft 1</div>
+  <h1 style="margin: 8px 0 10px; font-size: 38px;">A personal finance terminal, built as add-ons</h1>
+  <p style="font-size: 15px; color: #b2b6ca; max-width: 68ch; text-wrap: pretty;">OpenTerminal already has the two halves this needs: isolated provider modules on the server and a widget registry on the client. The plan keeps both, adds a section layer above the widget layer, and makes every agent write pass through one queue. Markets stays a workspace. Everything else is a fixed page, because fixed pages are denser, cheaper to render, and far cheaper to build.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 24px 0 34px;">
+    <sc-for list="{{ principles }}" as="p" hint-placeholder-count="4">
+      <div style="background: #1c1e2c; border-radius: 8px; padding: 12px 13px;">
+        <div style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #9184d9; margin-bottom: 5px;">{{ p.k }}</div>
+        <div style="font-size: 12.5px; color: #b2b6ca; line-height: 1.5;">{{ p.v }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">1 · Information architecture</h3>
+  <p style="font-size: 13.5px; color: #b2b6ca; max-width: 68ch;">Four rail groups, eleven sections. A section owns its URL, its tables, and its own server routes. Nothing is shared across sections except the ledger primitives and the number formatters.</p>
+
+  <div style="background: #1c1e2c; border-radius: 8px; padding: 14px 16px; margin: 14px 0 30px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.9; color: #b2b6ca; overflow-x: auto;">
+    <sc-for list="{{ tree }}" as="t" hint-placeholder-count="16">
+      <div style="white-space: pre; color: {{ t.color }};">{{ t.line }}</div>
+    </sc-for>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">2 · Section map</h3>
+  <p style="font-size: 13.5px; color: #b2b6ca; max-width: 68ch;">What each section answers, what feeds it, and when it lands. Phase 1 is the part you would open every morning.</p>
+  <div style="overflow-x: auto; margin: 14px 0 30px;">
+    <table class="table" style="font-size: 12.5px; min-width: 860px;">
+      <thead><tr>
+        <th style="width: 130px;">Section</th>
+        <th>The question it answers</th>
+        <th style="width: 190px;">Primary source</th>
+        <th style="width: 190px;">Key views</th>
+        <th style="width: 54px;">Phase</th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ sections }}" as="s" hint-placeholder-count="11">
+          <tr>
+            <td style="font-weight: 500;">{{ s.name }}</td>
+            <td style="color: #b2b6ca;">{{ s.q }}</td>
+            <td style="color: #9397ab; font-family: 'JetBrains Mono', monospace; font-size: 11px;">{{ s.src }}</td>
+            <td style="color: #9397ab; font-size: 11.5px;">{{ s.views }}</td>
+            <td><span class="tag" style="font-size: 10px; padding: 1px 8px; background: {{ s.phBg }}; color: {{ s.phFg }};">{{ s.phase }}</span></td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">3 · The shell</h3>
+  <p style="font-size: 13.5px; color: #b2b6ca; max-width: 68ch;">Three fixed chrome elements and one content well. The chrome never re-renders on navigation, so a section swap is a single subtree mount.</p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin: 14px 0 30px;">
+    <sc-for list="{{ shell }}" as="c" hint-placeholder-count="4">
+      <div style="background: #1c1e2c; border-radius: 8px; padding: 12px 13px;">
+        <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">{{ c.k }}</div>
+        <div style="font-size: 12.5px; color: #b2b6ca; line-height: 1.5;">{{ c.v }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">4 · Component inventory</h3>
+  <p style="font-size: 13.5px; color: #b2b6ca; max-width: 68ch;">Twelve primitives cover every screen in the map. Build these once; a new section should be assembly, not new CSS.</p>
+  <div style="overflow-x: auto; margin: 14px 0 30px;">
+    <table class="table" style="font-size: 12.5px; min-width: 780px;">
+      <thead><tr>
+        <th style="width: 168px;">Component</th>
+        <th style="width: 240px;">Props that matter</th>
+        <th>Notes</th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ components }}" as="c" hint-placeholder-count="12">
+          <tr>
+            <td style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #d2cefd;">{{ c.name }}</td>
+            <td style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9397ab;">{{ c.props }}</td>
+            <td style="color: #b2b6ca;">{{ c.note }}</td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">5 · The add-on contract</h3>
+  <p style="font-size: 13.5px; color: #b2b6ca; max-width: 68ch;">Two kinds of add-on, deliberately different. A market widget is a view over a provider; a finance section owns data and therefore owns migrations, routes, and a review policy.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 12px; margin: 14px 0 16px;">
+    <div style="background: #1c1e2c; border-radius: 8px; padding: 13px 14px;">
+      <div style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #9184d9; margin-bottom: 7px;">Widget add-on · markets only</div>
+      <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #cfd3e5; white-space: pre-wrap;">registerWidget({
+  type: "yieldcurve",
+  title: "Yield curve",
+  size: { w: 5, h: 7 },
+  symbolAware: false,
+  provider: "fred",
+  view: YieldCurveWidget,
+})</pre>
+      <div style="font-size: 12px; color: #9397ab; margin-top: 9px; line-height: 1.5;">One file in <code>web/components/widgets/</code>, one line in the registry. No DB, no routes. This is the existing pattern in <code>store/terminal.ts</code>, lifted out of the switch statement into a map.</div>
+    </div>
+
+    <div style="background: #1c1e2c; border-radius: 8px; padding: 13px 14px;">
+      <div style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #9184d9; margin-bottom: 7px;">Section add-on · finance domains</div>
+      <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #cfd3e5; white-space: pre-wrap;">registerSection({
+  id: "subscriptions",
+  label: "Subscriptions",
+  group: "Flow",
+  routes: subscriptionsRouter,
+  migrations: ["001_recurring.sql"],
+  pages: { index: List, detail: Detail },
+  ingest: {
+    accepts: ["expense.transaction"],
+    review: "auto-above-0.9",
+  },
+  rollup: (ctx) =&gt; ctx.sum("recurring.monthly"),
+})</pre>
+      <div style="font-size: 12px; color: #9397ab; margin-top: 9px; line-height: 1.5;">The <code>rollup</code> is what lets Overview, Net worth and Statements stay generic: they render whatever sections register, in group order, with no knowledge of what a subscription is.</div>
+    </div>
+  </div>
+
+  <div style="background: #1c1e2c; border-radius: 8px; padding: 13px 15px; margin-bottom: 30px;">
+    <div style="font-size: 13px; font-weight: 500; margin-bottom: 7px;">Ingest and the review queue</div>
+    <p style="font-size: 12.5px; color: #b2b6ca; margin: 0 0 8px; max-width: 78ch;">Every connector — Gmail MCP, the SMS relay, broker files, the EPFO scrape — writes a <code>proposal</code> row, never a ledger row. A proposal carries source, raw payload, parsed fields, target writes, and a confidence. The queue is the only place proposals become ledger rows, and the only place a bad parse can be corrected before it pollutes a rollup.</p>
+    <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #cfd3e5; white-space: pre-wrap;">proposals(id, source, received_at, raw, parsed_json, target_section,
+          writes_json, confidence, status, decided_at, decided_by)</pre>
+    <p style="font-size: 12.5px; color: #9397ab; margin: 8px 0 0; max-width: 78ch;">Policy per section: <code>always-review</code>, <code>auto-above-0.9</code>, or <code>auto</code>. Auto-applied proposals still land in the queue as an <code>applied</code> row, so the audit log and the review list are the same table with a different filter. That is one screen doing all three jobs you asked for.</p>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">6 · Weight budget</h3>
+  <p style="font-size: 13.5px; color: #b2b6ca; max-width: 68ch;">Explicit limits, since staying light was the constraint you led with. These are the rules I designed the screens against.</p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 14px 0 30px;">
+    <sc-for list="{{ budget }}" as="b" hint-placeholder-count="6">
+      <div style="background: #1c1e2c; border-radius: 8px; padding: 11px 13px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #b5abfc;">{{ b.n }}</div>
+        <div style="font-size: 12px; color: #b2b6ca; margin-top: 3px; line-height: 1.45;">{{ b.v }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <h3 style="margin: 0 0 4px;">7 · Build order</h3>
+  <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 14px;">
+    <sc-for list="{{ phases }}" as="p" hint-placeholder-count="4">
+      <div style="display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 14px; background: #1c1e2c; border-radius: 8px; padding: 12px 14px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 500; color: #b5abfc;">{{ p.name }}</div>
+          <div style="font-size: 10.5px; color: #75798c; font-family: 'JetBrains Mono', monospace;">{{ p.len }}</div>
+        </div>
+        <div>
+          <div style="font-size: 13px; color: #e9e9ed; margin-bottom: 3px;">{{ p.goal }}</div>
+          <div style="font-size: 12px; color: #9397ab; line-height: 1.5;">{{ p.detail }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top: 34px; padding-top: 16px; background: linear-gradient(to right, transparent, rgba(233,233,237,0.14) 48px, rgba(233,233,237,0.14) calc(100% - 48px), transparent) no-repeat top / 100% 1px;">
+    <p style="font-size: 12.5px; color: #75798c; max-width: 72ch;">Open questions I'd settle before Phase 2: whether the EPFO number is scraped or entered quarterly by hand; whether private-equity marks are manual or read from a cap-table export; and whether algo-trading gets its own section or lives as a widget group inside Markets.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PH = { 1: ["#233d33", "#a9e6c6"], 2: ["#423a6a", "#d2cefd"], 3: ["#292b31", "#cfd3e5"] };
+
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      principles: [
+        ["Sections, not tabs", "Each finance domain is its own route with its own tables. A section can be deleted without touching another."],
+        ["One write path", "No connector writes the ledger directly. Everything becomes a proposal, and the queue is the gate."],
+        ["Widgets stay in Markets", "Drag-and-drop is expensive and only earns its cost where the layout genuinely varies by day."],
+        ["Rollups are generic", "Overview and Statements read whatever sections register. Adding a section adds a line, not a code change."],
+      ].map(([k, v]) => ({ k, v })),
+
+      tree: [
+        ["/", "#75798c"],
+        ["├─ overview                 net worth, movers, review peek", "#e9e9ed"],
+        ["├─ investments", "#e9e9ed"],
+        ["│   ├─ /                    all holdings, tabbed by asset class", "#b2b6ca"],
+        ["│   ├─ /:symbol             position detail, lots, tax, news", "#b2b6ca"],
+        ["│   └─ /allocation          target vs actual, drift, look-through", "#b2b6ca"],
+        ["├─ networth                 balance sheet, monthly close snapshots", "#e9e9ed"],
+        ["├─ markets                  ← the widget workspace lives only here", "#9184d9"],
+        ["├─ cashflow                 in/out by month, runway, waterfall", "#e9e9ed"],
+        ["├─ expenses", "#e9e9ed"],
+        ["│   ├─ /                    merchant ledger", "#b2b6ca"],
+        ["│   └─ /segments            category drift, cut candidates", "#b2b6ca"],
+        ["├─ subscriptions            cadence, next charge, price creep", "#e9e9ed"],
+        ["├─ income                   per-source P&L and unit economics", "#e9e9ed"],
+        ["├─ statements               P&L · balance sheet · monthly close", "#e9e9ed"],
+        ["├─ tax                      realised gains, advance tax, Schedule FA", "#e9e9ed"],
+        ["├─ inbox                    review queue + audit log (one table)", "#e9e9ed"],
+        ["└─ connectors               MCP, SMS relay, files, providers", "#e9e9ed"],
+      ].map(([line, color]) => ({ line, color })),
+
+      sections: [
+        ["Overview", "Where do I stand, and what changed today?", "rollups from all sections", "Net worth, sleeve tiles, movers, review peek", 1],
+        ["Investments", "What do I own, at what cost, and what is it worth?", "broker files, MFCentral, CoinDCX, price providers", "Holdings table, position detail, allocation drift", 1],
+        ["Net worth", "How has the total moved, and is that curve auditable?", "monthly close snapshots", "Curve, balance sheet, account list", 1],
+        ["Markets", "What is the market doing around what I hold?", "existing OpenTerminal providers", "Widget workspace, chart, screener, heatmap, news", 1],
+        ["Review queue", "What do my agents want to write to the ledger?", "proposals table", "Queue, audit log, per-connector filter", 1],
+        ["Expenses", "Where did the money go, and which segment grew?", "SMS relay, card statements via Gmail MCP", "Merchant ledger, segment drift, cut candidates", 2],
+        ["Cashflow", "Am I net positive this month, and for how long?", "expenses + income + salary credits", "In/out by month, runway, savings waterfall", 2],
+        ["Subscriptions", "What recurs, and what is quietly getting pricier?", "recurring detection over expenses", "Cadence list, next charge, price-creep chart", 2],
+        ["Income", "What does each source actually earn after cost?", "salary slips, 3D-print invoices, dividends", "Per-source P&L, contribution margin", 3],
+        ["Tax", "What do I owe, and what would a disposal cost?", "realised lots, withholding, slabs", "Gains by term, advance-tax schedule, what-if", 3],
+        ["Statements", "How would a finance team read my year?", "every section's rollup", "P&L, balance sheet, monthly close checklist", 3],
+      ].map(([name, q, src, views, phase]) => ({ name, q, src, views, phase: "P" + phase, phBg: PH[phase][0], phFg: PH[phase][1] })),
+
+      shell: [
+        ["Left rail · 196px", "Grouped sections, an active mark, and a live count badge on the review queue. Collapses to icons under 1100px."],
+        ["Top bar · 44px", "Page title, ⌘K search across holdings and merchants, base currency and FX rate, market status, review badge, agent toggle."],
+        ["Content well", "The only scrolling region. Tables get a sticky header row and a pinned totals footer, so the aggregate never scrolls away."],
+        ["Agent console · 296px", "A right dock, not a modal. It reads the current page as context and can only propose writes, which land in the queue."],
+      ].map(([k, v]) => ({ k, v })),
+
+      components: [
+        ["<DataTable>", "columns, rows, sticky, totals, onRowClick", "The workhorse. Right-aligned numerics, dual-line cells for native + INR, sortable headers."],
+        ["<Money>", "value, currency, base, mode", "Single source of truth for formatting. Native currency on top, normalised below, sign colour built in."],
+        ["<Delta>", "abs, pct, invert", "Coloured change pair. Used in tables, tiles, and headers alike."],
+        ["<StatTile>", "label, value, sub, bar, onClick", "The sleeve tiles on Overview. One rollup per tile."],
+        ["<StatList>", "items[{k, v, tone}]", "The right-hand key/value blocks on any detail page."],
+        ["<Sparkline> / <AreaChart>", "series, baseline, markers", "Inline SVG, no chart library outside Markets."],
+        ["<SectionPanel>", "title, actions, children", "The card shell every panel uses. Radius, background, and header spacing live here only."],
+        ["<TabBar>", "tabs[{label, count}], value", "Asset-class tabs, expense segments, statement periods."],
+        ["<Toolbar>", "filter, groupBy, actions", "Sits above every table. Same three slots everywhere."],
+        ["<ProposalCard>", "proposal, onApprove, onEdit, onReject", "The review queue's row. Also the audit-log row, read-only."],
+        ["<TagPill>", "tone, children", "Confidence, holding term, account type, phase."],
+        ["<AgentDock>", "context, messages, proposals", "The console. Renders <ProposalCard> for anything it wants to write."],
+      ].map(([name, props, note]) => ({ name, props, note })),
+
+      budget: [
+        ["≤ 3", "chart libraries total, and lightweight-charts only loads inside Markets"],
+        ["0", "drag-and-drop outside Markets — react-grid-layout is code-split behind that route"],
+        ["1 s", "poll interval for prices only while Markets is the visible route; 60 s elsewhere"],
+        ["SQLite", "stays the store. One DB, one file per section's migrations, WAL as today."],
+        ["No", "global state beyond the existing Zustand store plus a per-section query cache"],
+        ["Server-side", "rollups. The client never sums a ledger; it renders a number the API computed."],
+      ].map(([n, v]) => ({ n, v })),
+
+      phases: [
+        ["Phase 1", "3–4 weeks", "The daily driver", "Shell, Overview, Investments with all six asset classes, position detail, net-worth curve, review queue, and Markets kept as-is behind its route. Gmail MCP and the SMS relay wired to proposals only."],
+        ["Phase 2", "3 weeks", "Money out", "Expenses with merchant normalisation, segment drift, subscriptions detection, cashflow and runway. This is where the SMS relay earns its keep."],
+        ["Phase 3", "4 weeks", "The books", "Income with per-source unit economics, tax with lot-level what-if and Schedule FA, statements with a monthly close. Overview gains a close-status strip."],
+        ["Later", "open", "The long tail", "Algo-trading, alerts, multi-user, and a hosted mode. All of these should be section add-ons that ship without touching the shell — if one of them can't, the contract in section 5 is wrong and gets fixed then."],
+      ].map(([name, len, goal, detail]) => ({ name, len, goal, detail })),
+    };
+  }
+}
+</script>
+</body>
+</html>
