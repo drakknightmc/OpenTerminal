@@ -36,7 +36,7 @@
   let sortKey: SortKey = "marketCap";
   let sortDirection: "asc" | "desc" = "desc";
 
-  $: sectors = Array.from(new Set(rows.map((row) => row.sector).filter(Boolean))).sort();
+  $: sectors = Array.from(new Set(allRows.map((row) => row.sector).filter(Boolean))).sort();
   $: filters = {
     sector: sector === "all" ? undefined : sector,
     marketCapMin: parseMinimum(marketCapMin),
@@ -61,17 +61,28 @@
     return value.trim() !== "" && Number.isFinite(parsed) ? parsed : undefined;
   }
 
-  // Wired to /api/market/screener
+  // Wired to /api/market/screener. The backend has no server-side sector/cap/volume/change
+  // filtering (only `limit`) — fetch the full screen once and filter client-side below.
+  let allRows: ScreenerRow[] = [];
+  let fetchedOnce = false;
+
   async function fetchScreener(filters: ScreenerFilters): Promise<ScreenerRow[]> {
-    const params = new URLSearchParams();
-    if (filters.sector) params.set("sector", filters.sector);
-    if (filters.marketCapMin !== undefined) params.set("marketCapMin", filters.marketCapMin.toString());
-    if (filters.volumeMin !== undefined) params.set("volumeMin", filters.volumeMin.toString());
-    if (filters.changePercentMin !== undefined) params.set("changePercentMin", filters.changePercentMin.toString());
-    const response = await fetch(`/api/market/screener?${params}`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    return data.rows || [];
+    if (!fetchedOnce) {
+      const response = await fetch(`/api/market/screener`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      allRows = data.rows || [];
+      fetchedOnce = true;
+    }
+
+    return allRows.filter((row) => {
+      return (
+        (!filters.sector || row.sector === filters.sector) &&
+        (filters.marketCapMin === undefined || row.marketCap >= filters.marketCapMin * 1_000_000_000) &&
+        (filters.volumeMin === undefined || row.volume >= filters.volumeMin * 1_000_000) &&
+        (filters.changePercentMin === undefined || row.changePercent >= filters.changePercentMin)
+      );
+    });
   }
 
   async function loadRows(nextFilters: ScreenerFilters): Promise<void> {

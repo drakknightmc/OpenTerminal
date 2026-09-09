@@ -1,15 +1,37 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { ScreenerRow } from "./Screener.svelte";
 
-  export let rows: ScreenerRow[] = [];
+  // If a parent explicitly passes rows, use those; otherwise fetch our own
+  // (WorkspaceGrid renders widgets independently, no cross-widget data sharing).
+  export let rows: ScreenerRow[] | null = null;
+
+  let fetchedRows: ScreenerRow[] = [];
+  let loading = rows === null;
+  let error: string | null = null;
 
   type SectorGroup = [string, ScreenerRow[]];
 
-  $: sectorGroups = groupBySector(rows);
+  $: displayRows = rows ?? fetchedRows;
+  $: sectorGroups = groupBySector(displayRows);
 
-  // Integration stub for the future screener API route.
+  onMount(async () => {
+    if (rows !== null) return;
+    try {
+      fetchedRows = await fetchScreener();
+    } catch (e) {
+      error = e instanceof Error ? e.message : "Unable to load heatmap data";
+    } finally {
+      loading = false;
+    }
+  });
+
+  // Wired to /api/market/screener (same full-screen fetch as Screener.svelte).
   async function fetchScreener(): Promise<ScreenerRow[]> {
-    return [];
+    const response = await fetch(`/api/market/screener`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.rows || [];
   }
 
   function groupBySector(screenerRows: ScreenerRow[]): SectorGroup[] {
@@ -52,10 +74,14 @@
       <p class="eyebrow">MARKET MAP</p>
       <h2>Sector performance</h2>
     </div>
-    <span class="count">{rows.length} stocks</span>
+    <span class="count">{displayRows.length} stocks</span>
   </div>
 
-  {#if sectorGroups.length === 0}
+  {#if loading}
+    <p class="empty">Loading heatmap data...</p>
+  {:else if error}
+    <p class="empty">Unable to load heatmap data: {error}</p>
+  {:else if sectorGroups.length === 0}
     <p class="empty">No screener data available.</p>
   {:else}
     <div class="sectors">

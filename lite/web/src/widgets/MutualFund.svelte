@@ -25,11 +25,11 @@
   }
 
   // Wired to /api/mf/nav/:schemeCode
-  async function fetchNavHistory(schemeCode: number): Promise<NavEntry[]> {
+  async function fetchNavHistory(schemeCode: number): Promise<{ history: NavEntry[] } & FundMetadata> {
     const response = await fetch(`/api/mf/nav/${schemeCode}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    return data.history || [];
+    return { history: data.history || [], fundHouse: data.fundHouse, category: data.category };
   }
 
   let query = "";
@@ -77,11 +77,11 @@
     history = [];
 
     try {
-      history = (await fetchNavHistory(scheme.schemeCode)).sort((left, right) =>
+      const result = await fetchNavHistory(scheme.schemeCode);
+      history = result.history.sort((left, right) =>
         dateKey(left.date).localeCompare(dateKey(right.date)),
       );
-      const details = scheme as SchemeResult & FundMetadata;
-      metadata = { fundHouse: details.fundHouse, category: details.category };
+      metadata = { fundHouse: result.fundHouse, category: result.category };
     } catch (reason) {
       error = reason instanceof Error ? reason.message : "Unable to load NAV history";
     } finally {

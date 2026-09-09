@@ -9,7 +9,10 @@ export async function handleIndia(req: Request, url: URL): Promise<Response | nu
   try {
     const path = url.pathname.replace(/\/$/, "");
     const symbol = decodeURIComponent(path.split("/")[4] || "");
-    if (path === "/api/india/indices") return json(await cached("india:indices", TTL.medium, india.getIndices));
+    if (path === "/api/india/indices") {
+      const indices = await cached("india:indices", TTL.medium, india.getIndices);
+      return json({ indices });
+    }
     if (path.startsWith("/api/india/quote/") && symbol) return json(await cached(`india:quote:${symbol}`, TTL.short, () => india.getQuote(symbol)));
     if (path === "/api/india/candles") {
       const s = required(url, "symbol"); if (s instanceof Response) return s;

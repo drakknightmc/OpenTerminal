@@ -17,14 +17,18 @@ export async function handleAi(req: Request, url: URL): Promise<Response | null>
   if (req.method !== "POST" || url.pathname !== "/api/ai/chat") return methodNotAllowed();
   if (!aiAvailable()) return json({ error: "AI assistant unavailable: set ANTHROPIC_API_KEY on the server." }, 503);
   try {
-    const body = await req.json() as { messages?: unknown; context?: unknown };
-    if (!Array.isArray(body.messages) || body.messages.length === 0) return json({ error: "messages array required" }, 400);
-    const messages = body.context
-      ? [{ role: "user", content: `Current terminal context (JSON):\n${JSON.stringify(body.context)}` }, ...body.messages]
-      : body.messages;
-    const response = await getClient().messages.create({ model: "claude-opus-4-8", max_tokens: 16000, thinking: { type: "adaptive" }, system: SYSTEM, messages: messages as Array<{ role: "user" | "assistant"; content: string }> });
-    if (response.stop_reason === "refusal") return json({ text: "The assistant declined to answer this request." });
-    return json({ text: response.content.filter((part) => part.type === "text").map((part) => part.type === "text" ? part.text : "").join("") });
+    const body = await req.json() as { message?: unknown; symbol?: unknown };
+    if (typeof body.message !== "string" || !body.message.trim()) return json({ error: "message is required" }, 400);
+    const messages: Array<{ role: "user"; content: string }> = [
+      ...(typeof body.symbol === "string" && body.symbol
+        ? [{ role: "user" as const, content: `The user is currently viewing symbol: ${body.symbol}` }]
+        : []),
+      { role: "user", content: body.message },
+    ];
+    const response = await getClient().messages.create({ model: "claude-sonnet-5", max_tokens: 1024, system: SYSTEM, messages });
+    if (response.stop_reason === "refusal") return json({ reply: "The assistant declined to answer this request." });
+    const reply = response.content.filter((part) => part.type === "text").map((part) => part.type === "text" ? part.text : "").join("");
+    return json({ reply });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.includes("api_key") || message.includes("authentication") || message.includes("401")) return json({ error: "AI assistant unavailable: set ANTHROPIC_API_KEY on the server." }, 503);

@@ -12,21 +12,32 @@ export async function handleMarket(req: Request, url: URL): Promise<Response | n
     const path = url.pathname.replace(/\/$/, "");
     if (path === "/api/market/search") {
       const q = required(url, "q"); if (q instanceof Response) return q;
-      return json(await cached(`market:search:${q}`, TTL.medium, () => market.searchSymbols(q)));
+      const results = await cached(`market:search:${q}`, TTL.medium, () => market.searchSymbols(q));
+      return json({ results });
     }
     if (path === "/api/market/screener") {
       const limit = numberParam(url, "limit", 1500); if (limit instanceof Response) return limit;
       if (limit < 1 || limit > 1500) return json({ error: "limit must be between 1 and 1500" }, 400);
-      return json(await cached(`market:screener:${limit}`, TTL.medium, () => market.getScreener({ limit })));
+      const rows = await cached(`market:screener:${limit}`, TTL.medium, () => market.getScreener({ limit }));
+      return json({ rows });
     }
-    const symbol = segment(url, 4);
-    if (path.startsWith("/api/market/quote/") && symbol) return json(await cached(`market:quote:${symbol}`, TTL.short, () => market.getQuote(symbol)));
-    if (path.startsWith("/api/market/options/") && symbol) return json(await cached(`market:options:${symbol}`, TTL.medium, () => market.getOptionsChain(symbol)));
+    const pathSymbol = segment(url, 4);
+    if ((path === "/api/market/quote" || path.startsWith("/api/market/quote/"))) {
+      const symbol = url.searchParams.get("symbol") || pathSymbol;
+      if (!symbol) return json({ error: "symbol is required" }, 400);
+      return json(await cached(`market:quote:${symbol}`, TTL.short, () => market.getQuote(symbol)));
+    }
+    if ((path === "/api/market/options" || path.startsWith("/api/market/options/"))) {
+      const symbol = url.searchParams.get("symbol") || pathSymbol;
+      if (!symbol) return json({ error: "symbol is required" }, 400);
+      return json(await cached(`market:options:${symbol}`, TTL.medium, () => market.getOptionsChain(symbol)));
+    }
     if (path === "/api/market/candles") {
       const s = required(url, "symbol"); if (s instanceof Response) return s;
       const timeframe = (url.searchParams.get("timeframe") || "1Y").toUpperCase();
       if (!validRanges.has(timeframe)) return json({ error: "unsupported timeframe" }, 400);
-      return json(await cached(`market:candles:${s}:${timeframe}`, TTL.short, () => market.getHistoricalCandles(s, timeframe)));
+      const candles = await cached(`market:candles:${s}:${timeframe}`, TTL.short, () => market.getHistoricalCandles(s, timeframe));
+      return json({ candles });
     }
     if (path === "/api/market/fundamentals") {
       const s = required(url, "symbol"); if (s instanceof Response) return s;

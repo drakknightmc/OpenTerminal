@@ -94,15 +94,6 @@ export default Bun.serve({
       });
     }
 
-    if (pathname.startsWith("/api/")) {
-      for (const route of apiRoutes) {
-        const response = await route(req, url);
-        if (response) return response;
-      }
-      return json({ error: "Not found" }, 404);
-    }
-
-    // API routes
     if (pathname === "/api/status") {
       return new Response(
         JSON.stringify({
@@ -114,10 +105,9 @@ export default Bun.serve({
       );
     }
 
-    // Check DB connection
     if (pathname === "/api/health") {
       try {
-        const result = db.query("SELECT 1").get();
+        db.query("SELECT 1").get();
         return new Response(
           JSON.stringify({ ok: true, db: "connected" }),
             { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
@@ -128,6 +118,14 @@ export default Bun.serve({
           { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
         );
       }
+    }
+
+    if (pathname.startsWith("/api/")) {
+      for (const route of apiRoutes) {
+        const response = await route(req, url);
+        if (response) return response;
+      }
+      return json({ error: "Not found" }, 404);
     }
 
     // Serve static files in production, fallback to index.html for SPA routing
