@@ -62,6 +62,14 @@
     mf: "MF",
   };
 
+  const sourceSections: PortfolioSection[] = ["icici_direct", "ibkr", "groww_mf"];
+  const sourceLabels: Record<PortfolioSection, string> = {
+    total: "Total",
+    icici_direct: "ICICI Direct",
+    ibkr: "IBKR",
+    groww_mf: "Groww MF",
+  };
+
   // Opt-in demo data for local UI work; production never uses this value.
   const demoSummary: NetWorthSummary = {
     totalInr: 1843250,
@@ -163,6 +171,16 @@
     return summary?.byMarket.find((item) => item.market === market);
   }
 
+  function sourceSummary(sourceId: PortfolioSection) {
+    if (!summary) return null;
+    const holdings = summary.holdings.filter((h) => h.source === sourceId);
+    if (holdings.length === 0) return null;
+    const inr = holdings.reduce((total, h) => total + (h.currency === "INR" ? h.nativeValue : h.convertedValue), 0);
+    const usd = holdings.reduce((total, h) => total + (h.currency === "USD" ? h.nativeValue : h.convertedValue), 0);
+    const nativeTotal = primaryCurrency === "INR" ? inr : usd;
+    return { nativeTotal, nativeCurrency: primaryCurrency, count: holdings.length };
+  }
+
   $: primaryTotal = primaryCurrency === "INR" ? summary?.totalInr ?? 0 : summary?.totalUsd ?? 0;
   $: visibleHoldings = section && section !== "total"
     ? summary?.holdings.filter((holding) => holding.source === section) ?? []
@@ -214,6 +232,16 @@
           <button class="currency-toggle" type="button" on:click={() => (primaryCurrency = otherCurrency(primaryCurrency))}>
             Primary: {primaryCurrency}
           </button>
+        </div>
+        <div class="market-row">
+          {#each sourceSections as source}
+            {@const item = sourceSummary(source)}
+            <div class="market-card">
+              <span class="market-name">{sourceLabels[source]}</span>
+              <strong>{item ? money(item.nativeTotal, item.nativeCurrency) : "--"}</strong>
+              <span class="muted">{item?.count ?? 0} holding{item?.count === 1 ? "" : "s"}</span>
+            </div>
+          {/each}
         </div>
       </section>
     {:else if section}
@@ -300,18 +328,18 @@
 
 <style>
   :global(body) { background: #0a0a0a; color: #e0e0e0; font-family: "Courier New", monospace; }
-  .portfolio { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+  .portfolio { max-width: 1180px; margin: 0 auto; padding: 16px 14px 20px; }
   .page-header, .section-heading, .market-row, .total-block { display: flex; align-items: center; }
   .page-header { justify-content: space-between; margin-bottom: 20px; }
   .eyebrow, .label, .muted, time, .section-heading > span { color: #888; font-size: 11px; letter-spacing: .08em; }
   h1, h2, p { margin: 0; } h1 { font-size: 24px; margin-top: 5px; } h2 { font-size: 14px; }
-  .panel { background: #1a1a1a; border: 1px solid #333; border-radius: 5px; margin-bottom: 16px; }
-  .overview { padding: 18px; } .total-block { gap: 14px; flex-wrap: wrap; }
+  .panel { background: #1a1a1a; border: 1px solid #333; border-radius: 5px; margin-bottom: 10px; }
+  .overview { padding: 12px; } .total-block { gap: 14px; flex-wrap: wrap; }
   .total-block strong { font-size: 31px; letter-spacing: -.05em; }
   .total-block .label { align-self: flex-start; margin-top: 7px; }
   button { font: inherit; cursor: pointer; } .currency-toggle { background: transparent; border: 1px solid #555; color: #aaa; padding: 5px 8px; font-size: 11px; }
   .currency-toggle:hover, .submit:hover { border-color: #e0e0e0; color: #fff; }
-  .market-row { gap: 8px; margin-top: 22px; overflow-x: auto; }
+  .market-row { gap: 8px; margin-top: 12px; overflow-x: auto; }
   .market-card { border-left: 1px solid #333; min-width: 130px; padding-left: 11px; display: grid; gap: 5px; }
   .market-name, .tag { color: #aaa; font-size: 11px; text-transform: uppercase; } .market-card strong { font-size: 16px; }
   .table-panel, .transaction-panel { padding: 16px; } .section-heading { justify-content: space-between; margin-bottom: 12px; }

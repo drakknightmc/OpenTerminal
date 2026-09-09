@@ -20,7 +20,7 @@
   import Portfolio from "./Portfolio.svelte";
   import AiAssistant from "./AiAssistant.svelte";
 
-  const CELL_HEIGHT = 76;
+  const CELL_HEIGHT = 56;
   const COLUMNS = 12;
 
   const WIDGET_LABELS: Record<string, string> = {
@@ -177,7 +177,7 @@
       {
         column: COLUMNS,
         cellHeight: CELL_HEIGHT,
-        margin: 12,
+        margin: 6,
         float: false,
         animate: false,
         handle: ".drag-handle",

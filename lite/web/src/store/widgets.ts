@@ -37,9 +37,10 @@ interface WidgetStore {
 
 const STORAGE_KEY = "openterminal-layout";
 const DEFAULT_WIDGETS: WidgetInstance[] = [
-  { id: "w-chart-1", type: "chart", x: 0, y: 0, w: 6, h: 8, symbol: "AAPL", linked: true },
-  { id: "w-quote-1", type: "quote", x: 6, y: 0, w: 6, h: 10, symbol: "AAPL", linked: true },
-  { id: "w-watchlist-1", type: "watchlist", x: 6, y: 10, w: 6, h: 6 },
+  { id: "w-portfolio-total", type: "portfolio", x: 0, y: 0, w: 12, h: 5, linked: false, section: "total" },
+  { id: "w-portfolio-icici", type: "portfolio", x: 0, y: 5, w: 6, h: 13, linked: false, section: "icici_direct" },
+  { id: "w-portfolio-ibkr", type: "portfolio", x: 6, y: 5, w: 6, h: 10, linked: false, section: "ibkr" },
+  { id: "w-portfolio-groww", type: "portfolio", x: 6, y: 15, w: 6, h: 7, linked: false, section: "groww_mf" },
 ];
 
 function loadState(): WidgetStore {
