@@ -1,8 +1,23 @@
 import { join } from "path";
 import { readFileSync, existsSync } from "fs";
 import db from "./db";
+import { initSchema } from "./portfolio/schema.js";
+import { handleAi, aiAvailable } from "./routes/ai.js";
+import { handleCrypto } from "./routes/crypto.js";
+import { handleFx } from "./routes/fx.js";
+import { handleIndia } from "./routes/india.js";
+import { handleMacro } from "./routes/macro.js";
+import { handleMarket } from "./routes/market.js";
+import { handleMf } from "./routes/mf.js";
+import { handleNews } from "./routes/news.js";
+import { handlePortfolio } from "./routes/portfolio.js";
+import { json } from "./routes/_utils.js";
 
 const port = parseInt(process.env.PORT || "4100", 10);
+
+initSchema(db);
+
+const apiRoutes = [handleMarket, handleIndia, handleCrypto, handleMf, handleMacro, handleNews, handleFx, handlePortfolio, handleAi];
 
 // When compiled, import.meta.dir points to the executable location
 // Try multiple possible paths for the dist directory
@@ -69,14 +84,33 @@ export default Bun.serve({
     const url = new URL(req.url);
     const pathname = url.pathname;
 
+    if (req.method === "OPTIONS" && pathname.startsWith("/api/")) {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      });
+    }
+
+    if (pathname.startsWith("/api/")) {
+      for (const route of apiRoutes) {
+        const response = await route(req, url);
+        if (response) return response;
+      }
+      return json({ error: "Not found" }, 404);
+    }
+
     // API routes
     if (pathname === "/api/status") {
       return new Response(
         JSON.stringify({
           ok: true,
           time: new Date().toISOString(),
+          ai: aiAvailable(),
         }),
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
       );
     }
 
@@ -86,12 +120,12 @@ export default Bun.serve({
         const result = db.query("SELECT 1").get();
         return new Response(
           JSON.stringify({ ok: true, db: "connected" }),
-          { headers: { "Content-Type": "application/json" } }
+            { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
         );
       } catch (e) {
         return new Response(
           JSON.stringify({ ok: false, error: "Database connection failed" }),
-          { status: 500, headers: { "Content-Type": "application/json" } }
+          { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
         );
       }
     }
