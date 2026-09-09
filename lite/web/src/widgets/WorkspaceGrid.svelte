@@ -85,13 +85,13 @@
         </div>
         <div class="widget-body">
           {#if widget.type === "chart"}
-            <Chart symbol={widget.symbol || $widgets.activeSymbol || "AAPL"} />
+            <Chart symbol={widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL")} />
           {:else if widget.type === "quote"}
-            <Quote symbol={widget.symbol || $widgets.activeSymbol || "AAPL"} />
+            <Quote symbol={widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL")} />
           {:else if widget.type === "watchlist"}
             <Watchlist />
           {:else if widget.type === "news"}
-            <News symbol={widget.symbol} />
+            <News symbol={widget.linked ? $widgets.activeSymbol : widget.symbol} />
           {:else if widget.type === "macro"}
             <Macro />
           {:else if widget.type === "screener"}
@@ -101,7 +101,7 @@
           {:else if widget.type === "crypto"}
             <Crypto />
           {:else if widget.type === "options"}
-            <Options symbol={widget.symbol || $widgets.activeSymbol || "AAPL"} />
+            <Options symbol={widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL")} />
           {:else if widget.type === "indiamarket"}
             <IndiaMarket symbol={widget.symbol || "RELIANCE"} />
           {:else if widget.type === "mutualfund"}
@@ -109,7 +109,7 @@
           {:else if widget.type === "portfolio"}
             <Portfolio />
           {:else if widget.type === "ai"}
-            <AiAssistant symbol={widget.symbol} />
+            <AiAssistant symbol={widget.linked ? $widgets.activeSymbol : widget.symbol} />
           {/if}
         </div>
         <div class="resize-handle" on:mousedown={(e) => startResize(e, widget.id)}></div>

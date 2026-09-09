@@ -35,14 +35,24 @@
     return data.results || [];
   }
 
-  async function onQueryChange(e: Event) {
+  let searchTimer: ReturnType<typeof setTimeout>;
+  let searchRequestId = 0;
+
+  function onQueryChange(e: Event) {
     query = (e.target as HTMLInputElement).value;
-    if (query.trim()) {
-      symbolResults = await searchSymbols(query);
-    } else {
-      symbolResults = [];
-    }
     selectedIndex = 0;
+    clearTimeout(searchTimer);
+
+    if (!query.trim()) {
+      symbolResults = [];
+      return;
+    }
+
+    const currentRequest = ++searchRequestId;
+    searchTimer = setTimeout(async () => {
+      const results = await searchSymbols(query);
+      if (currentRequest === searchRequestId) symbolResults = results;
+    }, 250);
   }
 
   function selectItem() {
@@ -87,6 +97,7 @@
 
   onDestroy(() => {
     window.removeEventListener("keydown", handleKeyDown);
+    clearTimeout(searchTimer);
   });
 
   $: if (isOpen) {
