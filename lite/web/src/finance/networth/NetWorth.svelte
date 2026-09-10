@@ -10,6 +10,7 @@
   let error: string | null = null;
   let loading = true;
   let range = "1Y";
+  let requestID = 0;
 
   const classLabels: Record<string, string> = {
     us_equity: "US equity", india_equity: "Indian equity", mutual_funds: "Mutual funds",
@@ -17,14 +18,16 @@
   };
 
   async function load() {
+    const request = ++requestID;
     loading = true;
     error = null;
     try {
-      snapshots = (await fetchAPI<{ snapshots: NetWorthSnapshot[] }>(`/api/networth/curve?range=${range}`)).snapshots;
+      const response = await fetchAPI<{ snapshots: NetWorthSnapshot[] }>(`/api/networth/curve?range=${range}`);
+      if (request === requestID) snapshots = response.snapshots;
     } catch (err) {
-      error = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : "Failed to load net worth history";
+      if (request === requestID) error = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : "Failed to load net worth history";
     } finally {
-      loading = false;
+      if (request === requestID) loading = false;
     }
   }
 

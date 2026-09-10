@@ -74,7 +74,8 @@
         <StatTile
           label={sleeve.label}
           value={money(sleeve.valueINR, "INR")}
-          sub={`${(sleeve.weight * 100).toFixed(1)}% · ${sleeve.dayPct === null ? "—" : formatPercent(sleeve.dayPct)}`}
+          weight={`${(sleeve.weight * 100).toFixed(1)}%`}
+          sub={`${sleeve.dayPct === null ? "—" : formatPercent(sleeve.dayPct)} · ${sleeve.native}`}
           bar={sleeve.weight * 100}
         />
       {/each}
