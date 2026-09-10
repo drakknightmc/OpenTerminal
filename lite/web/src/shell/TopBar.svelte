@@ -1,22 +1,31 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import { fetchAPI } from "../lib/api";
+  import ThemePicker from "./ThemePicker.svelte";
+
   export let title = "Overview";
   export let baseCurrency = "USD";
   export let fxStatus = "FX pending";
   export let reviewCount = 0;
-  import ThemePicker from "./ThemePicker.svelte";
+  let pending = reviewCount;
+  function openPalette() { document.dispatchEvent(new Event("ledgerline-open-command-palette")); }
+  onMount(async () => {
+    try { pending = (await fetchAPI<{ proposals: unknown[] }>("/api/proposals?status=pending")).proposals.length; } catch { /* header remains usable if the API is unavailable */ }
+  });
 </script>
 
 <header class="topbar">
   <h1>{title}</h1>
-  <div class="meta"><span>{baseCurrency}</span><span>{fxStatus}</span><span class="review">Review queue <b>{reviewCount}</b></span><ThemePicker /></div>
+  <span class="subtitle">all accounts · {baseCurrency}</span>
+  <button class="search" type="button" title="Search (⌘K)" on:click={openPalette}><span>Search holdings, merchants, statements…</span><kbd>⌘K</kbd></button>
+  <div class="meta"><span>base <strong>{baseCurrency}</strong></span><span>{fxStatus}</span><span class="market-live">NSE ●</span><span class="market-idle">NYSE ○</span><a class="review" href="/inbox">Review <b>{pending}</b></a><ThemePicker /></div>
 </header>
 
 <style>
-  .topbar { height: 44px; flex: 0 0 44px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: 0 var(--space-5); background: var(--color-surface); border-bottom: 1px solid var(--color-border); color: var(--color-text); }
-  h1 { margin: 0; font-size: 0.95rem; font-weight: 600; }
-  .meta { display: flex; align-items: center; gap: var(--space-4); color: var(--color-text-muted); font-size: 0.75rem; }
-  .review { color: var(--color-text-dim); }
-  b { display: inline-grid; min-width: 1.25rem; height: 1.25rem; place-items: center; margin-left: var(--space-1); border-radius: 99px; background: var(--color-accent); color: var(--color-bg); font-size: 0.7rem; }
-  @media (max-width: 700px) { .topbar { padding-inline: 10px; } .meta > span:not(.review) { display: none; } .meta { gap: 8px; } }
-  @media (max-width: 460px) { h1 { font-size: 13px; } .review { font-size: 0; } .review b { font-size: 10px; } }
+  .topbar { height: 44px; flex: 0 0 44px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: color-mix(in srgb, var(--color-surface) 72%, var(--color-bg)); box-shadow: inset 0 -1px 0 var(--color-divider); color: var(--color-text); }
+  h1 { flex: none; margin: 0; font-size: 13px; font-weight: 500; white-space: nowrap; } .subtitle { min-width: 0; overflow: hidden; color: var(--color-text-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+  .search { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 100px; max-width: 320px; height: 28px; padding: 0 9px; overflow: hidden; border: 1px solid var(--color-divider); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text-muted); cursor: pointer; font: 11.5px var(--font-body); text-align: left; } .search span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } kbd { color: var(--color-text-faint); font: 10px var(--font-mono); }
+  .meta { display: flex; align-items: center; gap: 14px; margin-left: auto; color: var(--color-text-muted); font-size: 11px; white-space: nowrap; } .meta strong { color: var(--color-text); font: 11px var(--font-mono); } .market-live { color: var(--color-gain); } .market-idle { color: var(--color-text-muted); } .review { color: var(--color-text-dim); text-decoration: none; } .review:hover { color: var(--color-text); }
+  b { display: inline-grid; min-width: 20px; height: 20px; place-items: center; margin-left: 4px; border-radius: 20px; background: var(--color-accent); color: var(--color-bg); font: 600 10px var(--font-mono); }
+  @media (max-width: 1050px) { .subtitle, .market-idle { display: none; } } @media (max-width: 760px) { .topbar { padding-inline: 10px; gap: 8px; } .search { max-width: 180px; } .meta > span { display: none; } .meta { gap: 6px; } } @media (max-width: 500px) { .search { display: none; } h1 { font-size: 12px; } .review { font-size: 0; } .review b { font-size: 10px; } }
 </style>

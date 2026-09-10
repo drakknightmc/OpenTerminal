@@ -15,6 +15,7 @@
   import NetWorth from "./finance/networth/NetWorth.svelte";
   import Inbox from "./finance/inbox/Inbox.svelte";
   import MarketsPage from "./finance/markets/MarketsPage.svelte";
+  import CommandPalette from "./widgets/CommandPalette.svelte";
 
   import { path } from "./lib/router";
 
@@ -53,6 +54,7 @@
     </div>
     <AgentDock />
   </div>
+  <CommandPalette />
 </main>
 
 <style>

@@ -10,7 +10,12 @@
   type Indicator = "SMA20" | "SMA50" | "RSI";
 
   // lightweight-charts needs resolved colors rather than CSS var() strings.
-  const colors = { up: "#57c98c", down: "#e0736c", sma20: "#a7a1db", sma50: "#9184d9", rsi: "#b5abfc" };
+  let colors = { up: "#57c98c", down: "#e0736c", sma20: "#a7a1db", sma50: "#9184d9", rsi: "#b5abfc", surface: "#161826", text: "#e9e9ed", grid: "#232532", border: "#3f424d" };
+  function readThemeColors() {
+    const style = getComputedStyle(document.documentElement);
+    const get = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
+    colors = { up: get("--color-gain", colors.up), down: get("--color-loss", colors.down), sma20: get("--color-accent-2", colors.sma20), sma50: get("--color-accent", colors.sma50), rsi: get("--color-accent-2", colors.rsi), surface: get("--color-bg", colors.surface), text: get("--color-text", colors.text), grid: get("--color-surface", colors.grid), border: get("--color-border-strong", colors.border) };
+  }
   const toTimestamp = (time: number) => time as UTCTimestamp;
   const formatNumber = (value: number, digits = 2) => value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
   const formatVolume = (value: number) => value >= 1_000_000 ? `${(value / 1_000_000).toFixed(1)}M` : value >= 1_000 ? `${(value / 1_000).toFixed(1)}K` : value.toFixed(0);
@@ -43,10 +48,10 @@
     chart?.remove();
     chart = createChart(chartHost, {
       autoSize: true,
-      layout: { background: { color: "#161826" }, textColor: "#e9e9ed", fontSize: 11, attributionLogo: false },
-      grid: { vertLines: { color: "#232532" }, horzLines: { color: "#232532" } },
-      rightPriceScale: { borderColor: "#3f424d" },
-      timeScale: { borderColor: "#3f424d", timeVisible: timeframe === "1D" || timeframe === "1W" },
+      layout: { background: { color: colors.surface }, textColor: colors.text, fontSize: 11, attributionLogo: false },
+      grid: { vertLines: { color: colors.grid }, horzLines: { color: colors.grid } },
+      rightPriceScale: { borderColor: colors.border },
+      timeScale: { borderColor: colors.border, timeVisible: timeframe === "1D" || timeframe === "1W" },
       crosshair: { mode: 0 },
       handleScroll: { mouseWheel: false, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: true },
       handleScale: { mouseWheel: false, pinch: true, axisPressedMouseMove: true }
@@ -59,7 +64,7 @@
 
     const volume = chart.addSeries(HistogramSeries, { priceScaleId: "volume", priceFormat: { type: "volume" } });
     volume.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
-    volume.setData(candles.map((c) => ({ time: toTimestamp(c.time), value: c.volume, color: c.close >= c.open ? "rgba(0,200,83,0.45)" : "rgba(255,61,61,0.45)" })));
+    volume.setData(candles.map((c) => ({ time: toTimestamp(c.time), value: c.volume, color: c.close >= c.open ? `${colors.up}99` : `${colors.down}99` })));
 
     const overlay = (points: Point[], color: string) => chart?.addSeries(LineSeries, { color, lineWidth: 1, priceLineVisible: false, lastValueVisible: false }).setData(points.map((p) => ({ time: toTimestamp(p.time), value: p.value })));
     if (active.has("SMA20")) overlay(sma(candles, 20), colors.sma20);
@@ -91,8 +96,17 @@
 
   $: if (symbol && timeframe) loadCandles();
 
-  onMount(() => renderChart());
-  onDestroy(() => chart?.remove());
+  onMount(() => {
+    readThemeColors();
+    document.addEventListener("ledgerline-theme-change", readThemeColors);
+    document.addEventListener("ledgerline-theme-change", renderChart);
+    renderChart();
+  });
+  onDestroy(() => {
+    document.removeEventListener("ledgerline-theme-change", readThemeColors);
+    document.removeEventListener("ledgerline-theme-change", renderChart);
+    chart?.remove();
+  });
 </script>
 
 <div class="chart-widget">

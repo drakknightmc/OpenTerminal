@@ -6,14 +6,12 @@
   // intentionally touches none of it.
   import Sidebar from "../../components/Sidebar.svelte";
   import WorkspaceGrid from "../../widgets/WorkspaceGrid.svelte";
-  import CommandPalette from "../../widgets/CommandPalette.svelte";
 </script>
 
 <div class="markets-page">
   <Sidebar />
   <WorkspaceGrid />
 </div>
-<CommandPalette />
 
 <style>
   .markets-page {

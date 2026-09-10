@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { createChart, ColorType, CandlestickSeries, type IChartApi } from "lightweight-charts";
 
   type CryptoAsset = {
@@ -28,6 +28,10 @@
   let selectedTimeframe = "1W";
   let chartContainer: HTMLDivElement;
   let chartInstance: IChartApi | null = null;
+
+  function themeColor(name: string, fallback: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+  }
 
   const timeframes = ["1D", "5D", "1W", "1M", "3M", "6M", "YTD", "1Y", "5Y", "MAX"];
 
@@ -112,8 +116,8 @@
       // Create new chart
       chartInstance = createChart(chartContainer, {
         layout: {
-          background: { type: ColorType.Solid, color: "#161826" },
-          textColor: "#e9e9ed",
+          background: { type: ColorType.Solid, color: themeColor("--color-bg", "#161826") },
+          textColor: themeColor("--color-text", "#e9e9ed"),
         },
         width: chartContainer.clientWidth,
         height: 300,
@@ -121,12 +125,12 @@
       });
 
       const candleSeries = chartInstance.addSeries(CandlestickSeries, {
-        upColor: "#57c98c",
-        downColor: "#e0736c",
-        borderUpColor: "#57c98c",
-        borderDownColor: "#e0736c",
-        wickUpColor: "#57c98c",
-        wickDownColor: "#e0736c",
+        upColor: themeColor("--color-gain", "#57c98c"),
+        downColor: themeColor("--color-loss", "#e0736c"),
+        borderUpColor: themeColor("--color-gain", "#57c98c"),
+        borderDownColor: themeColor("--color-loss", "#e0736c"),
+        wickUpColor: themeColor("--color-gain", "#57c98c"),
+        wickDownColor: themeColor("--color-loss", "#e0736c"),
       });
 
       candleSeries.setData(candleData);
@@ -148,6 +152,8 @@
   }
 
   onMount(async () => {
+    const refreshChartForTheme = () => { void loadChart(); };
+    document.addEventListener("ledgerline-theme-change", refreshChartForTheme);
     try {
       [assets, global] = await Promise.all([fetchTopAssets(20), fetchDominance()]);
     } catch (e) {
@@ -163,8 +169,13 @@
       }
     };
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("ledgerline-theme-change", refreshChartForTheme);
+    };
   });
+
+  onDestroy(() => chartInstance?.remove());
 </script>
 
 <div class="crypto-widget">

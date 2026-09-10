@@ -78,12 +78,19 @@
     }
   }
 
+  function openFromShell() {
+    isOpen = true;
+    setTimeout(() => inputEl?.focus(), 0);
+  }
+
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("ledgerline-open-command-palette", openFromShell);
   });
 
   onDestroy(() => {
     window.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("ledgerline-open-command-palette", openFromShell);
     clearTimeout(searchTimer);
   });
 
