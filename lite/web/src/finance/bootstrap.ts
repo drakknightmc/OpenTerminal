@@ -9,7 +9,7 @@ RegisterSection({ id: "overview", label: "Overview", group: "Position", routes: 
 RegisterSection({ id: "investments", label: "Investments", group: "Position", routes: ["/investments"] });
 RegisterSection({ id: "networth", label: "Net worth", group: "Position", routes: ["/networth"] });
 RegisterSection({ id: "markets", label: "Markets", group: "Markets", routes: ["/markets"] });
-RegisterSection({ id: "inbox", label: "Inbox", group: "System", routes: ["/inbox"] });
+RegisterSection({ id: "inbox", label: "Review queue", group: "System", routes: ["/inbox"] });
 
 const widget = (type: WidgetType, label: string, provider: string, shortcut?: string, symbolAware = false) =>
   RegisterWidget({ type, label, provider, shortcut, symbolAware, defaultSize: { w: 6, h: 8 } });
