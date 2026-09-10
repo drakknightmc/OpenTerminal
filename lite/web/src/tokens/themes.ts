@@ -40,8 +40,9 @@ const TOKEN_VARS: Record<keyof ThemeTokens, string> = {
 
 export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): void {
   if (typeof document === "undefined") return;
+  const hasPreset = Object.prototype.hasOwnProperty.call(THEME_PRESETS, name);
   const preset = THEME_PRESETS[name] ?? THEME_PRESETS.nocturne;
-  document.documentElement.dataset.theme = name in THEME_PRESETS ? name : "custom";
+  document.documentElement.dataset.theme = hasPreset ? name : "custom";
   for (const key of Object.keys(TOKEN_VARS) as Array<keyof ThemeTokens>) {
     document.documentElement.style.setProperty(TOKEN_VARS[key], overrides[key] ?? preset.tokens[key]);
   }
@@ -60,7 +61,7 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   root.setProperty("--color-border", "color-mix(in srgb, var(--color-text) 24%, transparent)");
   root.setProperty("--color-border-strong", "color-mix(in srgb, var(--color-text) 38%, transparent)");
   document.dispatchEvent(new CustomEvent("ledgerline-theme-change"));
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, overrides }));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, overrides })); } catch { /* preferences are optional when storage is unavailable */ }
 }
 
 export function restoreTheme(): { name: string; overrides: Partial<ThemeTokens> } {
