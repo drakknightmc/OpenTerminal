@@ -2,6 +2,7 @@
   import { fetchAPI } from "../../lib/api";
   import TabBar from "../../components/TabBar.svelte";
   import ProposalCard from "../../components/ProposalCard.svelte";
+  import { refreshPendingReviewCount } from "../reviewStore";
   import type { Proposal } from "../types";
 
   let proposals: Proposal[] = [];
@@ -32,6 +33,7 @@
     try {
       await fetchAPI(`/api/proposals/${id}/${action}`, { method: "POST" });
       await load();
+      await refreshPendingReviewCount();
     } catch (err) {
       error = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : `Failed to ${action}`;
     }
@@ -41,8 +43,10 @@
     approving = true;
     const candidates = visible.filter((proposal) => proposal.status === "pending" && proposal.confidence >= 0.9);
     try {
-      await Promise.all(candidates.map((proposal) => fetchAPI(`/api/proposals/${proposal.id}/approve`, { method: "POST" })));
+      const results = await Promise.allSettled(candidates.map((proposal) => fetchAPI(`/api/proposals/${proposal.id}/approve`, { method: "POST" })));
       await load();
+      await refreshPendingReviewCount();
+      if (results.some((result) => result.status === "rejected")) throw new Error("Some proposals could not be approved");
     } catch (err) {
       error = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : "Failed to approve proposals";
     } finally { approving = false; }
