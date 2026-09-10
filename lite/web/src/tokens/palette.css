@@ -1,0 +1,15 @@
+:root {
+  --palette-bg-0: #080b0a;
+  --palette-bg-1: #0d1210;
+  --palette-bg-2: #131b17;
+  --palette-bg-3: #1a2520;
+  --palette-green: #54d68a;
+  --palette-red: #f07878;
+  --palette-accent: #d8b36a;
+  --palette-text-0: #f1f5f2;
+  --palette-text-1: #c1ccc5;
+  --palette-text-2: #87958c;
+  --palette-text-3: #5d6a62;
+  --palette-border-0: #26342d;
+  --palette-border-1: #34443b;
+}
