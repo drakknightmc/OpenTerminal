@@ -38,21 +38,29 @@
     .filter((p) => !filter.trim() || `${p.label} ${p.symbol}`.toLowerCase().includes(filter.trim().toLowerCase()));
 
   const columns = [
-    { key: "label", label: "Symbol" },
-    { key: "class", label: "Class" },
+    { key: "label", label: "Instrument" },
+    { key: "account", label: "Account" },
     { key: "quantity", label: "Qty", align: "right" as const },
-    { key: "native", label: "Native", align: "right" as const },
-    { key: "valueINR", label: "Value (₹)", align: "right" as const },
+    { key: "avgCost", label: "Avg cost", align: "right" as const },
+    { key: "last", label: "Last", align: "right" as const },
     { key: "day", label: "Day", align: "right" as const },
+    { key: "value", label: "Value", align: "right" as const },
+    { key: "unrealised", label: "Unrealised", align: "right" as const },
+    { key: "xirr", label: "XIRR", align: "right" as const },
+    { key: "weight", label: "Wt", align: "right" as const },
   ];
 
   $: rows = visible.map((p) => ({
     label: p.label,
-    class: ASSET_CLASS_LABELS[p.class],
+    account: p.account ?? ASSET_CLASS_LABELS[p.class],
     quantity: p.quantity ? p.quantity.toLocaleString() : "—",
-    native: p.nativeValue !== 0 ? money(p.nativeValue, p.currency) : "—",
-    valueINR: money(p.valueINR, "INR"),
+    avgCost: p.avgCost !== null && p.avgCost !== undefined ? money(p.avgCost, p.currency) : "—",
+    last: p.lastPrice !== null && p.lastPrice !== undefined && p.lastPrice !== 0 ? money(p.lastPrice, p.currency) : "—",
     day: p.dayPct === null ? "—" : formatPercent(p.dayPct),
+    value: money(p.valueINR, "INR"),
+    unrealised: p.unrealisedINR !== null && p.unrealisedINR !== undefined ? money(p.unrealisedINR, "INR") : "—",
+    xirr: "—",
+    weight: p.weight ? formatPercent(p.weight * 100, 1) : "—",
     __symbol: p.symbol,
   }));
 
@@ -102,6 +110,6 @@
   .muted { color: var(--color-text-muted); }
   .error { color: var(--color-loss); }
   footer { display: flex; gap: 20px; padding: 9px 0; border-top: 1px solid var(--color-divider); color: var(--color-text-muted); font-size: 11px; } footer span:nth-child(2) { margin-left: auto; } footer b { color: var(--color-text); font: 11px var(--font-mono); font-weight: 400; }
-  :global(.investments .table) { min-width: 700px; }
+  :global(.investments .table) { min-width: 1080px; }
   @media (max-width: 560px) { footer { gap: 10px; font-size: 10px; } }
 </style>

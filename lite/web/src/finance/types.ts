@@ -9,13 +9,20 @@ export interface Position {
   class: AssetClass;
   symbol: string;
   label: string;
+  account?: string;
   quantity: number;
   currency: string;
+  avgCost?: number | null;
+  lastPrice?: number | null;
+  costINR?: number | null;
   nativeValue: number;
   valueINR: number;
+  unrealisedINR?: number | null;
+  weight?: number;
   dayPct: number | null;
   dayAbsINR: number;
   live: boolean;
+  updatedAt?: string;
 }
 
 export interface Sleeve {
