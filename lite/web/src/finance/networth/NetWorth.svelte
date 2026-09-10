@@ -11,6 +11,11 @@
   let loading = true;
   let range = "1Y";
 
+  const classLabels: Record<string, string> = {
+    us_equity: "US equity", india_equity: "Indian equity", mutual_funds: "Mutual funds",
+    crypto: "Crypto", fixed_income: "Fixed income", cash: "Cash",
+  };
+
   async function load() {
     loading = true;
     error = null;
@@ -27,10 +32,28 @@
 
   $: points = snapshots.map((s) => s.totalINR);
 
+  $: latest = snapshots[snapshots.length - 1] ?? null;
+  $: balanceRows = latest ? (() => {
+    try {
+      const breakdown = JSON.parse(latest.breakdownJson) as Record<string, number>;
+      return Object.entries(classLabels).map(([key, label]) => ({
+        line: label,
+        class: "Asset",
+        closing: money(breakdown[key] ?? 0, "INR"),
+        share: latest.totalINR ? `${((breakdown[key] ?? 0) / latest.totalINR * 100).toFixed(1)}%` : "—",
+      }));
+    } catch { return []; }
+  })() : [];
+
   const columns = [
     { key: "date", label: "Date" },
     { key: "totalINR", label: "Net worth (₹)" },
     { key: "totalUSD", label: "Net worth ($)" },
+  ];
+
+  const balanceColumns = [
+    { key: "line", label: "Line" }, { key: "class", label: "Class" },
+    { key: "closing", label: "Closing" }, { key: "share", label: "Share" },
   ];
 
   $: rows = [...snapshots]
@@ -51,6 +74,9 @@
   {:else}
     <SectionPanel title="Net worth curve" actions={`${snapshots.length} closes`}>
       <div class="chart"><AreaChart {points} width={720} height={220} /></div>
+    </SectionPanel>
+    <SectionPanel title="Balance sheet" actions={`as of ${latest?.snapshotDate ?? "—"}`}>
+      {#if balanceRows.length}<DataTable columns={balanceColumns} rows={balanceRows} totals={{ line: "Net worth", class: "Total", closing: money(latest?.totalINR ?? 0, "INR"), share: "100%" }} />{:else}<p class="muted">This snapshot has no class breakdown.</p>{/if}
     </SectionPanel>
     <SectionPanel title="Daily snapshots">
       <DataTable {columns} {rows} />

@@ -48,6 +48,8 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   // Derive the supporting scale from the user's semantic colors so custom
   // themes recolor tags, focus rings, hover states, and progress bars too.
   const root = document.documentElement.style;
+  root.setProperty("--color-text-dim", "color-mix(in srgb, var(--color-text) 82%, var(--color-text-muted) 18%)");
+  root.setProperty("--color-surface-raised", "var(--color-raised)");
   root.setProperty("--color-surface-hover", "color-mix(in srgb, var(--color-surface) 78%, var(--color-text) 22%)");
   root.setProperty("--color-border", "color-mix(in srgb, var(--color-text) 24%, transparent)");
   root.setProperty("--color-border-strong", "color-mix(in srgb, var(--color-text) 38%, transparent)");
@@ -56,6 +58,8 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   root.setProperty("--color-accent-600", "color-mix(in srgb, var(--color-bg) 30%, var(--color-accent) 70%)");
   root.setProperty("--color-accent-2-100", "color-mix(in srgb, var(--color-text) 88%, var(--color-accent-2) 12%)");
   root.setProperty("--color-accent-2-800", "color-mix(in srgb, var(--color-bg) 72%, var(--color-accent-2) 28%)");
+  root.setProperty("--color-border", "color-mix(in srgb, var(--color-text) 24%, transparent)");
+  root.setProperty("--color-border-strong", "color-mix(in srgb, var(--color-text) 38%, transparent)");
   document.dispatchEvent(new CustomEvent("ledgerline-theme-change"));
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, overrides }));
 }
