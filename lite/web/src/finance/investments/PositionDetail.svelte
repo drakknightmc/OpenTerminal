@@ -29,10 +29,15 @@
 
   $: items = position
     ? [
+        { k: "Account", v: position.account ?? "—" },
         { k: "Class", v: ASSET_CLASS_LABELS[position.class] },
         { k: "Quantity", v: position.quantity ? position.quantity.toLocaleString() : "—" },
+        { k: "Average cost", v: position.avgCost !== null && position.avgCost !== undefined ? money(position.avgCost, position.currency) : "—" },
+        { k: "Last price", v: position.lastPrice !== null && position.lastPrice !== undefined && position.lastPrice !== 0 ? money(position.lastPrice, position.currency) : "—" },
         { k: "Native value", v: money(position.nativeValue, position.currency) },
         { k: "Value (₹)", v: money(position.valueINR, "INR") },
+        { k: "Unrealised", v: position.unrealisedINR !== null && position.unrealisedINR !== undefined ? money(position.unrealisedINR, "INR") : "—", tone: position.unrealisedINR === undefined || position.unrealisedINR === null ? "muted" : position.unrealisedINR >= 0 ? "gain" : "loss" },
+        { k: "Portfolio weight", v: position.weight ? formatPercent(position.weight * 100, 1) : "—" },
         {
           k: "Day change",
           v: position.dayPct === null ? "—" : `${formatPercent(position.dayPct)} (${money(position.dayAbsINR, "INR")})`,
@@ -54,10 +59,7 @@
     <h2>{position.label}</h2>
     <SectionPanel title="Position">
       <StatList {items} />
-      <p class="note">
-        Average-cost only for now — no lot-level purchase history is tracked yet by either the broker import or manual
-        crypto entries.
-      </p>
+      <p class="note">XIRR and lot-level tax data remain unavailable until purchase lots are imported. Values above use the latest available aggregate cost and price marks.</p>
     </SectionPanel>
   {/if}
 </div>
