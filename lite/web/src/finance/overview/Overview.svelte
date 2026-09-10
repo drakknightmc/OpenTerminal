@@ -60,13 +60,13 @@
         <span class:gain={overview.dayChangeINR > 0} class:loss={overview.dayChangeINR < 0}>
           {overview.dayChangeINR >= 0 ? "+" : ""}{money(overview.dayChangeINR, "INR")} today · {formatPercent(overview.dayChangePct)}
         </span>
-        <span class="muted">{money(overview.netWorthUSD, "USD")}</span>
+        <span class="muted">30d —</span>
         <span class="muted">XIRR —</span>
       </div>
       </div>
       <div class="curve" aria-label="Net worth history">
         {#if snapshots.length > 1}<AreaChart points={snapshots.map((snapshot) => snapshot.totalINR)} width={560} height={76} />{:else}<div class="curve-empty">{snapshots.length ? "One close recorded · trend starts with the next close" : "No closing snapshots yet"}</div>{/if}
-        <div class="curve-labels"><span>1Y ago</span><span>6M</span><span>3M</span><span>today</span></div>
+        <div class="curve-labels"><span>1Y ago</span><span>9M</span><span>6M</span><span>3M</span><span>today</span></div>
       </div>
     </section>
 
