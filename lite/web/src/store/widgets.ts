@@ -16,6 +16,8 @@ export type WidgetType =
   | "mutualfund"
   | "indiamarket";
 
+export type PortfolioSection = "total" | "icici_direct" | "ibkr" | "groww_mf";
+
 export interface WidgetInstance {
   id: string;
   type: WidgetType;
@@ -25,6 +27,7 @@ export interface WidgetInstance {
   h: number;
   symbol?: string;
   linked?: boolean;
+  section?: PortfolioSection;
 }
 
 interface WidgetStore {
@@ -34,10 +37,28 @@ interface WidgetStore {
 
 const STORAGE_KEY = "openterminal-layout";
 const DEFAULT_WIDGETS: WidgetInstance[] = [
-  { id: "w-chart-1", type: "chart", x: 0, y: 0, w: 6, h: 8, symbol: "AAPL", linked: true },
-  { id: "w-quote-1", type: "quote", x: 6, y: 0, w: 6, h: 10, symbol: "AAPL", linked: true },
-  { id: "w-watchlist-1", type: "watchlist", x: 6, y: 10, w: 6, h: 6 },
+  { id: "w-portfolio-total", type: "portfolio", x: 0, y: 0, w: 12, h: 5, linked: false, section: "total" },
+  { id: "w-portfolio-icici", type: "portfolio", x: 0, y: 5, w: 6, h: 13, linked: false, section: "icici_direct" },
+  { id: "w-portfolio-ibkr", type: "portfolio", x: 6, y: 5, w: 6, h: 10, linked: false, section: "ibkr" },
+  { id: "w-portfolio-groww", type: "portfolio", x: 6, y: 15, w: 6, h: 7, linked: false, section: "groww_mf" },
 ];
+
+/**
+ * Safe localStorage operations with graceful degradation.
+ * If quota is exceeded or storage is unavailable, state remains in-memory only.
+ */
+function safeSave(key: string, value: unknown): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    // Quota exceeded, private browsing, or storage unavailable
+    // Silently fail; state remains in Svelte store (session-only)
+    if (err instanceof Error && err.name === "QuotaExceededError") {
+      console.warn("localStorage quota exceeded; layout changes will not persist");
+    }
+  }
+}
 
 function loadState(): WidgetStore {
   if (typeof window === "undefined") {
@@ -59,7 +80,7 @@ function createWidgetStore() {
 
   return {
     subscribe,
-    addWidget: (type: WidgetType) => {
+    addWidget: (type: WidgetType, section?: PortfolioSection) => {
       update((state) => {
         const id = `w-${type}-${Date.now()}`;
         // Stack new widgets below everything else — avoids spawning on top of
@@ -73,46 +94,37 @@ function createWidgetStore() {
           w: 6,
           h: 8,
           linked: ["chart", "quote", "news", "options"].includes(type),
+          ...(section ? { section } : {}),
         };
         const newState = { ...state, widgets: [...state.widgets, newWidget] };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     removeWidget: (id: string) => {
       update((state) => {
         const newState = { ...state, widgets: state.widgets.filter((w) => w.id !== id) };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     updateLayout: (widgets: WidgetInstance[]) => {
       update((state) => {
         const newState = { ...state, widgets };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     setActiveSymbol: (symbol: string) => {
       update((state) => {
         const newState = { ...state, activeSymbol: symbol };
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        }
+        safeSave(STORAGE_KEY, newState);
         return newState;
       });
     },
     resetWorkspace: () => {
       const newState = { widgets: DEFAULT_WIDGETS, activeSymbol: "AAPL" };
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      }
+      safeSave(STORAGE_KEY, newState);
       set(newState);
     },
   };

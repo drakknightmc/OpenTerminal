@@ -13,6 +13,10 @@ export interface Holding {
   avg_cost: number;
   created_at: string;
   updated_at: string;
+  source?: string;
+  sourceLabel?: string;
+  last_price?: number | null;
+  market_value?: number | null;
 }
 
 export interface Transaction {
@@ -78,16 +82,26 @@ export function addTransaction(db: Database, tx: TransactionInput): Transaction 
   let newAvgCost = currentHolding.avg_cost;
 
   if (tx.type === "buy") {
+    // Weighted-average cost: (old_total_cost + new_cost) / new_qty
+    // Example: 100 shares @ $10 avg, buy 50 @ $15:
+    //   total_cost = (10 * 100) + (15 * 50) = 1000 + 750 = 1750
+    //   new_qty = 100 + 50 = 150
+    //   avg_cost = 1750 / 150 = 11.67 (new average cost per share)
     const totalCost = newAvgCost * newQty + tx.price * tx.quantity;
     newQty += tx.quantity;
     newAvgCost = newQty > 0 ? totalCost / newQty : 0;
   } else {
-    // Sell: reduce quantity, keep avg_cost for unrealized P&L calculations
+    // Sell: reduce quantity, keep avg_cost for unrealized P&L calculations on remaining holdings
+    // Example: 150 shares @ $11.67 avg, sell 50:
+    //   Realized P&L = (sell_price - avg_cost) * qty_sold (calculated by computeRealizedPnlForHolding)
+    //   Remaining: 100 shares @ $11.67 avg (unchanged)
     const sold = Math.min(tx.quantity, newQty);
     newQty -= sold;
     if (newQty === 0) {
+      // Fully liquidated: reset avg_cost to 0 to keep state clean
       newAvgCost = 0;
     }
+    // Note: avg_cost is NOT updated on partial sells, it persists for P&L calculation
   }
 
   // Update holding
@@ -170,6 +184,19 @@ export function getRealizedPnl(db: Database, holdingId?: number): number {
 
 /**
  * Helper: compute realized P&L for a single holding by replaying transactions.
+ *
+ * We can't store avg_cost per transaction, so we replay the transaction log
+ * to recompute the cost basis at each sell. This is expensive but correct.
+ *
+ * Real example:
+ *   T1: Buy 100 @ $10  → qty=100, avgCost=$10
+ *   T2: Buy 50 @ $20   → qty=150, avgCost=$13.33 (weighted)
+ *   T3: Sell 75 @ $25  → realizedPnl = (25 - 13.33) * 75 = $875, qty=75
+ *   T4: Sell 75 @ $30  → realizedPnl += (30 - 13.33) * 75 = $1250, qty=0
+ *   Total realized = $875 + $1250 = $2125
+ *
+ * The holding's current avg_cost ($13.33 above) is used to calculate
+ * unrealized P&L on the remaining holdings.
  */
 function computeRealizedPnlForHolding(db: Database, holdingId: number): number {
   const transactions = db
@@ -182,10 +209,12 @@ function computeRealizedPnlForHolding(db: Database, holdingId: number): number {
 
   for (const tx of transactions) {
     if (tx.type === "buy") {
+      // Replay the weighted-average cost calculation at this point in history
       const totalCost = avgCost * qty + tx.price * tx.quantity;
       qty += tx.quantity;
       avgCost = qty > 0 ? totalCost / qty : 0;
     } else {
+      // On sell: realized P&L = (sell_price - avg_cost_at_time) * qty_sold
       const sold = Math.min(tx.quantity, qty);
       realizedPnl += (tx.price - avgCost) * sold;
       qty -= sold;

@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite";
 import { Holding, Currency, getHoldings } from "./store.js";
+import { getExternalHoldings } from "./externalDb.js";
 
 export type FxConvert = (amount: number, from: Currency, to: Currency) => Promise<number>;
 
@@ -12,6 +13,8 @@ export interface HoldingWithValue extends Holding {
 
 export interface MarketSummary {
   market: string;
+  source: string;
+  sourceLabel: string;
   nativeCurrency: Currency;
   nativeTotal: number; // sum of holdings in native currency for this market
   inrValue: number; // total converted to INR
@@ -36,11 +39,15 @@ export async function computeNetWorth(
   db: Database,
   fxConvert: FxConvert
 ): Promise<NetWorthSummary> {
-  const holdings = getHoldings(db);
+  const holdings = [...getHoldings(db), ...getExternalHoldings()];
 
   // Get the last transaction price for each holding (for unrealized P&L calculation)
   const lastPrices: Record<number, number> = {};
   for (const holding of holdings) {
+    if (holding.last_price != null) {
+      lastPrices[holding.id] = holding.last_price;
+      continue;
+    }
     const lastTx = db
       .prepare(`SELECT price FROM transactions WHERE holding_id = ? ORDER BY date DESC, id DESC LIMIT 1`)
       .get(holding.id) as { price: number } | undefined;
@@ -50,7 +57,7 @@ export async function computeNetWorth(
   // Compute holdings with values
   const holdingsWithValue: HoldingWithValue[] = await Promise.all(
     holdings.map(async (h) => {
-      const nativeValue = h.quantity * lastPrices[h.id];
+      const nativeValue = h.market_value ?? h.quantity * lastPrices[h.id];
       const lastPrice = lastPrices[h.id];
       const unrealizedPnl = (lastPrice - h.avg_cost) * h.quantity;
       const unrealizedPnlPercent =
@@ -72,13 +79,19 @@ export async function computeNetWorth(
 
   // Group by market
   const marketMap = new Map<
-    string,
-    { nativeCurrency: Currency; nativeTotal: number; inrValue: number; usdValue: number; count: number }
+     string,
+     { market: string; source: string; sourceLabel: string; nativeCurrency: Currency; nativeTotal: number; inrValue: number; usdValue: number; count: number }
   >();
 
   for (const h of holdingsWithValue) {
-    if (!marketMap.has(h.market)) {
-      marketMap.set(h.market, {
+    const source = h.source ?? "manual";
+    const sourceLabel = h.sourceLabel ?? "Manual";
+    const groupKey = `${source}:${h.market}`;
+    if (!marketMap.has(groupKey)) {
+      marketMap.set(groupKey, {
+        market: h.market,
+        source,
+        sourceLabel,
         nativeCurrency: h.currency,
         nativeTotal: 0,
         inrValue: 0,
@@ -87,7 +100,7 @@ export async function computeNetWorth(
       });
     }
 
-    const summary = marketMap.get(h.market)!;
+    const summary = marketMap.get(groupKey)!;
     summary.nativeTotal += h.nativeValue;
     summary.count += 1;
 
@@ -114,7 +127,9 @@ export async function computeNetWorth(
           : await fxConvert(summary.nativeTotal, "INR", "USD");
 
       return {
-        market,
+        market: summary.market,
+        source: summary.source,
+        sourceLabel: summary.sourceLabel,
         nativeCurrency: summary.nativeCurrency,
         nativeTotal: summary.nativeTotal,
         inrValue,

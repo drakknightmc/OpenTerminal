@@ -1,12 +1,13 @@
 <script lang="ts">
   import { widgets } from "../store/widgets";
-  import type { WidgetType } from "../store/widgets";
+  import type { PortfolioSection, WidgetType } from "../store/widgets";
   import { onMount } from "svelte";
 
   interface SidebarItem {
     type: WidgetType;
     label: string;
     key: string;
+    section?: PortfolioSection;
   }
 
   const ITEMS: SidebarItem[] = [
@@ -18,6 +19,10 @@
     { type: "crypto", label: "CRYPTO", key: "⌥6" },
     { type: "options", label: "OPTIONS", key: "⌥7" },
     { type: "portfolio", label: "PORTFOLIO", key: "⌥8" },
+    { type: "portfolio", label: "PORTFOLIO: TOTAL", key: "", section: "total" },
+    { type: "portfolio", label: "PORTFOLIO: ICICI", key: "", section: "icici_direct" },
+    { type: "portfolio", label: "PORTFOLIO: IBKR", key: "", section: "ibkr" },
+    { type: "portfolio", label: "PORTFOLIO: GROWW MF", key: "", section: "groww_mf" },
     { type: "ai", label: "AI ASSIST", key: "⌥9" },
     { type: "watchlist", label: "WATCHLIST", key: "" },
     { type: "macro", label: "MACRO", key: "" },
@@ -53,8 +58,8 @@
 <nav class="sidebar">
   <div class="sidebar-header">Add widget</div>
   <div class="sidebar-items">
-    {#each ITEMS as item (item.type)}
-      <button class="sidebar-item" on:click={() => widgets.addWidget(item.type)}>
+    {#each ITEMS as item (item.section ?? item.type)}
+      <button class="sidebar-item" on:click={() => widgets.addWidget(item.type, item.section)}>
         <span class="label">{item.label}</span>
         {#if item.key}
           <span class="key">{item.key}</span>

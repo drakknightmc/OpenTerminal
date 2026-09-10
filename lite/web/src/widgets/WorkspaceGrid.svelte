@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { onDestroy, onMount } from "svelte";
+  import { GridStack, type GridStackNode, type GridStackWidget } from "gridstack";
+  import "gridstack/dist/gridstack.min.css";
+  import "gridstack/dist/gridstack-extra.min.css";
+
   import { widgets } from "../store/widgets";
-  import type { WidgetInstance } from "../store/widgets";
+  import type { WidgetInstance, WidgetType } from "../store/widgets";
   import Chart from "./Chart.svelte";
   import Quote from "./Quote.svelte";
   import Watchlist from "./Watchlist.svelte";
@@ -15,8 +20,8 @@
   import Portfolio from "./Portfolio.svelte";
   import AiAssistant from "./AiAssistant.svelte";
 
-  let dragging: { id: string; startX: number; startY: number; startX0: number; startY0: number } | null = null;
-  let resizing: { id: string; startX: number; startY: number; startW: number; startH: number } | null = null;
+  const CELL_HEIGHT = 56;
+  const COLUMNS = 12;
 
   const WIDGET_LABELS: Record<string, string> = {
     chart: "Chart",
@@ -28,6 +33,10 @@
     crypto: "Crypto",
     options: "Options",
     portfolio: "Portfolio",
+    "portfolio:total": "Portfolio: Total",
+    "portfolio:icici_direct": "Portfolio: ICICI",
+    "portfolio:ibkr": "Portfolio: IBKR",
+    "portfolio:groww_mf": "Portfolio: Groww MF",
     ai: "AI Assistant",
     macro: "Macro",
     mutualfunds: "Mutual Funds",
@@ -35,108 +44,185 @@
     indiamarket: "India Market",
   };
 
-  function startDrag(e: MouseEvent, id: string) {
-    if ((e.target as HTMLElement).classList.contains("resize-handle")) return;
-    dragging = { id, startX: e.clientX, startY: e.clientY, startX0: 0, startY0: 0 };
+  type Component = { $set: (props: Record<string, unknown>) => void; $destroy: () => void };
+  type MountedWidget = { element: HTMLElement; component: Component };
+
+  let gridElement: HTMLElement;
+  let grid: GridStack | null = null;
+  let mounted: Record<string, MountedWidget> = {};
+
+  $: if (grid && $widgets.widgets) syncWidgets();
+
+  function layoutOf(widget: WidgetInstance): GridStackWidget {
+    return {
+      id: widget.id,
+      x: Number.isInteger(widget.x) ? widget.x : 0,
+      y: Number.isInteger(widget.y) ? widget.y : 0,
+      w: Number.isInteger(widget.w) ? widget.w : 4,
+      h: Number.isInteger(widget.h) ? widget.h : 3,
+    };
   }
 
-  function startResize(e: MouseEvent, id: string) {
-    e.stopPropagation();
-    resizing = { id, startX: e.clientX, startY: e.clientY, startW: 0, startH: 0 };
+  function symbolFor(widget: WidgetInstance): string {
+    return widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL");
   }
 
-  function onMouseMove(e: MouseEvent) {
-    if (dragging) {
-      const dx = e.clientX - dragging.startX;
-      const dy = e.clientY - dragging.startY;
-      // TODO: implement drag positioning if needed
+  function propsFor(widget: WidgetInstance): Record<string, unknown> {
+    if (widget.type === "chart" || widget.type === "quote" || widget.type === "options") {
+      return { symbol: symbolFor(widget) };
     }
-    if (resizing) {
-      const dx = e.clientX - resizing.startX;
-      const dy = e.clientY - resizing.startY;
-      // TODO: implement resize if needed
+    if (widget.type === "news" || widget.type === "ai") {
+      return { symbol: widget.linked ? $widgets.activeSymbol : widget.symbol };
+    }
+    if (widget.type === "indiamarket") return { symbol: widget.symbol || "RELIANCE" };
+    if (widget.type === "portfolio") return widget.section ? { section: widget.section } : {};
+    return {};
+  }
+
+  function labelFor(widget: WidgetInstance): string {
+    return WIDGET_LABELS[widget.section ? `${widget.type}:${widget.section}` : widget.type] || widget.type;
+  }
+
+  function createComponent(type: WidgetType, target: HTMLElement, widget: WidgetInstance): Component {
+    const props = propsFor(widget);
+    if (type === "chart") return new Chart({ target, props }) as unknown as Component;
+    if (type === "quote") return new Quote({ target, props }) as unknown as Component;
+    if (type === "watchlist") return new Watchlist({ target }) as unknown as Component;
+    if (type === "news") return new News({ target, props }) as unknown as Component;
+    if (type === "macro") return new Macro({ target }) as unknown as Component;
+    if (type === "screener") return new Screener({ target }) as unknown as Component;
+    if (type === "heatmap") return new Heatmap({ target }) as unknown as Component;
+    if (type === "crypto") return new Crypto({ target }) as unknown as Component;
+    if (type === "options") return new Options({ target, props }) as unknown as Component;
+    if (type === "indiamarket") return new IndiaMarket({ target, props }) as unknown as Component;
+    if (type === "mutualfund") return new MutualFund({ target }) as unknown as Component;
+    if (type === "portfolio") return new Portfolio({ target, props }) as unknown as Component;
+    return new AiAssistant({ target, props }) as unknown as Component;
+  }
+
+  function mountWidget(widget: WidgetInstance): MountedWidget {
+    const item = grid!.addWidget(layoutOf(widget));
+    const content = item.querySelector<HTMLElement>(".grid-stack-item-content")!;
+    const panel = document.createElement("div");
+    panel.className = "terminal-panel";
+
+    const title = document.createElement("div");
+    title.className = "panel-title";
+    const label = document.createElement("span");
+    label.className = "drag-handle";
+    label.textContent = labelFor(widget);
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "close-btn";
+    close.textContent = "✕";
+    close.addEventListener("mousedown", (e) => e.stopPropagation());
+    close.addEventListener("pointerdown", (e) => e.stopPropagation());
+    close.addEventListener("touchstart", (e) => e.stopPropagation());
+    close.addEventListener("click", () => widgets.removeWidget(widget.id));
+    title.append(label, close);
+
+    const body = document.createElement("div");
+    body.className = "widget-body";
+    const resizeHandle = document.createElement("div");
+    resizeHandle.className = "resize-handle";
+    panel.append(title, body, resizeHandle);
+    content.replaceChildren(panel);
+
+    const component = createComponent(widget.type, body, widget);
+    const result = { element: item, component };
+    mounted[widget.id] = result;
+    return result;
+  }
+
+  function unmountWidget(id: string) {
+    const entry = mounted[id];
+    if (!entry) return;
+    entry.component.$destroy();
+    if (entry.element.isConnected) grid?.removeWidget(entry.element, true, false);
+    delete mounted[id];
+  }
+
+  function syncWidgets() {
+    for (const widget of $widgets.widgets) {
+      const entry = mounted[widget.id] || mountWidget(widget);
+      entry.component.$set(propsFor(widget));
+    }
+    for (const id of Object.keys(mounted)) {
+      if (!$widgets.widgets.some((widget) => widget.id === id)) unmountWidget(id);
+    }
+    syncLayouts();
+  }
+
+  function syncLayouts() {
+    if (!grid || grid.getColumn() !== COLUMNS) return;
+    for (const widget of $widgets.widgets) {
+      const entry = mounted[widget.id];
+      const node = entry?.element.gridstackNode;
+      const layout = layoutOf(widget);
+      if (node && (node.x !== layout.x || node.y !== layout.y || node.w !== layout.w || node.h !== layout.h)) {
+        grid.update(entry.element, layout);
+      }
     }
   }
 
-  function onMouseUp() {
-    dragging = null;
-    resizing = null;
+  function persistFromNode(node: GridStackNode | undefined) {
+    if (!grid || grid.getColumn() !== COLUMNS || !node?.id) return;
+    const id = String(node.id);
+    const layout = { x: node.x || 0, y: node.y || 0, w: node.w || 1, h: node.h || 1 };
+    widgets.updateLayout($widgets.widgets.map((widget) => (widget.id === id ? { ...widget, ...layout } : widget)));
   }
+
+  onMount(() => {
+    grid = GridStack.init(
+      {
+        column: COLUMNS,
+        cellHeight: CELL_HEIGHT,
+        margin: 6,
+        float: false,
+        animate: false,
+        handle: ".drag-handle",
+        columnOpts: {
+          breakpointForWindow: true,
+          breakpoints: [
+            { w: 1200, c: 12 },
+            { w: 860, c: 6 },
+            { w: 520, c: 4 },
+          ],
+        },
+      },
+      gridElement,
+    );
+    grid.on("dragstop", (_event, element) => persistFromNode(element.gridstackNode));
+    grid.on("resizestop", (_event, element) => persistFromNode(element.gridstackNode));
+  });
+
+  onDestroy(() => {
+    for (const id of Object.keys(mounted)) mounted[id].component.$destroy();
+    mounted = {};
+    grid?.destroy(true);
+    grid = null;
+  });
 </script>
 
-<svelte:window on:mousemove={onMouseMove} on:mouseup={onMouseUp} />
-
-<div class="workspace-grid">
-  {#each $widgets.widgets as widget (widget.id)}
-    <div
-      class="widget-container"
-      style={`grid-column: ${widget.x + 1} / span ${widget.w}; grid-row: ${widget.y + 1} / span ${widget.h};`}
-      on:mousedown={(e) => startDrag(e, widget.id)}
-    >
-      <div class="terminal-panel">
-        <div class="panel-title">
-          <span>{WIDGET_LABELS[widget.type]}</span>
-          <button
-            on:click={() => widgets.removeWidget(widget.id)}
-            class="close-btn"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="widget-body">
-          {#if widget.type === "chart"}
-            <Chart symbol={widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL")} />
-          {:else if widget.type === "quote"}
-            <Quote symbol={widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL")} />
-          {:else if widget.type === "watchlist"}
-            <Watchlist />
-          {:else if widget.type === "news"}
-            <News symbol={widget.linked ? $widgets.activeSymbol : widget.symbol} />
-          {:else if widget.type === "macro"}
-            <Macro />
-          {:else if widget.type === "screener"}
-            <Screener />
-          {:else if widget.type === "heatmap"}
-            <Heatmap />
-          {:else if widget.type === "crypto"}
-            <Crypto />
-          {:else if widget.type === "options"}
-            <Options symbol={widget.linked ? ($widgets.activeSymbol || widget.symbol || "AAPL") : (widget.symbol || "AAPL")} />
-          {:else if widget.type === "indiamarket"}
-            <IndiaMarket symbol={widget.symbol || "RELIANCE"} />
-          {:else if widget.type === "mutualfund"}
-            <MutualFund />
-          {:else if widget.type === "portfolio"}
-            <Portfolio />
-          {:else if widget.type === "ai"}
-            <AiAssistant symbol={widget.linked ? $widgets.activeSymbol : widget.symbol} />
-          {/if}
-        </div>
-        <div class="resize-handle" on:mousedown={(e) => startResize(e, widget.id)}></div>
-      </div>
-    </div>
-  {/each}
+<div class="workspace-scroll">
+  <div class="grid-stack" bind:this={gridElement}></div>
 </div>
 
 <style>
-  .workspace-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: 30px;
-    gap: 4px;
-    padding: 4px;
+  .workspace-scroll {
     flex: 1;
+    min-height: 0;
     overflow: auto;
+    padding: 12px;
     background: #0a0a0a;
   }
 
-  .widget-container {
-    min-height: 0;
-    display: flex;
-    user-select: none;
+  :global(.grid-stack > .grid-stack-item > .grid-stack-item-content) {
+    overflow: hidden;
+    background: transparent;
   }
 
-  .terminal-panel {
+  :global(.terminal-panel) {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -145,14 +231,10 @@
     border: 1px solid #333;
     border-radius: 4px;
     overflow: hidden;
-    cursor: grab;
+    position: relative;
   }
 
-  .terminal-panel:active {
-    cursor: grabbing;
-  }
-
-  .panel-title {
+  :global(.panel-title) {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -166,7 +248,16 @@
     flex-shrink: 0;
   }
 
-  .close-btn {
+  :global(.drag-handle) {
+    cursor: grab;
+    flex: 1;
+  }
+
+  :global(.drag-handle:active) {
+    cursor: grabbing;
+  }
+
+  :global(.close-btn) {
     background: none;
     border: none;
     color: #666;
@@ -176,22 +267,29 @@
     margin-left: 8px;
   }
 
-  .close-btn:hover {
+  :global(.close-btn:hover) {
     color: #ff6b6b;
   }
 
-  .widget-body {
+  :global(.widget-body) {
     flex: 1;
     overflow: auto;
   }
 
-  .resize-handle {
+  :global(.resize-handle) {
     position: absolute;
     bottom: 0;
     right: 0;
     width: 16px;
     height: 16px;
-    cursor: nwse-resize;
+    pointer-events: none;
     background: linear-gradient(135deg, transparent 50%, #333 50%);
+  }
+
+  :global(.grid-stack > .grid-stack-item > .ui-resizable-se) {
+    width: 16px;
+    height: 16px;
+    right: 0;
+    bottom: 0;
   }
 </style>

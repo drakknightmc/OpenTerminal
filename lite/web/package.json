@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "gridstack": "11.3.0",
     "lightweight-charts": "^5.2.1"
   },
   "devDependencies": {
