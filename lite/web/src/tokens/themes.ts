@@ -53,11 +53,24 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   root.setProperty("--color-surface-hover", "color-mix(in srgb, var(--color-surface) 78%, var(--color-text) 22%)");
   root.setProperty("--color-border", "color-mix(in srgb, var(--color-text) 24%, transparent)");
   root.setProperty("--color-border-strong", "color-mix(in srgb, var(--color-text) 38%, transparent)");
+  root.setProperty("--color-neutral-100", "color-mix(in srgb, var(--color-text) 96%, var(--color-bg) 4%)");
+  root.setProperty("--color-neutral-200", "color-mix(in srgb, var(--color-text) 88%, var(--color-bg) 12%)");
+  root.setProperty("--color-neutral-300", "color-mix(in srgb, var(--color-text) 76%, var(--color-bg) 24%)");
+  root.setProperty("--color-neutral-400", "color-mix(in srgb, var(--color-text) 64%, var(--color-bg) 36%)");
+  root.setProperty("--color-neutral-500", "var(--color-text-muted)");
+  root.setProperty("--color-neutral-600", "color-mix(in srgb, var(--color-text-muted) 78%, var(--color-bg) 22%)");
+  root.setProperty("--color-neutral-700", "var(--color-text-faint)");
+  root.setProperty("--color-neutral-800", "color-mix(in srgb, var(--color-text) 24%, var(--color-bg) 76%)");
+  root.setProperty("--color-neutral-900", "var(--color-surface-raised)");
   root.setProperty("--color-accent-100", "color-mix(in srgb, var(--color-text) 88%, var(--color-accent) 12%)");
   root.setProperty("--color-accent-800", "color-mix(in srgb, var(--color-bg) 72%, var(--color-accent) 28%)");
   root.setProperty("--color-accent-600", "color-mix(in srgb, var(--color-bg) 30%, var(--color-accent) 70%)");
   root.setProperty("--color-accent-2-100", "color-mix(in srgb, var(--color-text) 88%, var(--color-accent-2) 12%)");
   root.setProperty("--color-accent-2-800", "color-mix(in srgb, var(--color-bg) 72%, var(--color-accent-2) 28%)");
+  root.setProperty("--shadow-sm", "0 0 0 1px var(--color-border)");
+  root.setProperty("--shadow-md", "0 0 0 1px var(--color-border-strong), 0 6px 18px color-mix(in srgb, var(--color-bg) 55%, transparent)");
+  root.setProperty("--shadow-lg", "0 0 0 1px var(--color-text-muted), 0 16px 40px color-mix(in srgb, var(--color-bg) 65%, transparent)");
+  root.setProperty("--scrollbar-thumb", "var(--color-border)");
   document.dispatchEvent(new CustomEvent("ledgerline-theme-change"));
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, overrides })); } catch { /* preferences are optional when storage is unavailable */ }
 }
