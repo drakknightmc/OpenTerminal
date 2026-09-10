@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getSections, type Section } from "../finance/registry";
+  import { getSections } from "../finance/registry";
 
   const sections = getSections();
   const groups = Array.from(new Set(sections.map((section) => section.group)));
@@ -10,7 +10,7 @@
   {#each groups as group}
     <div class="group">
       <span class="group-label">{group}</span>
-      {#each sections.filter((section: Section) => section.group === group) as section (section.id)}
+      {#each sections.filter((section) => section.group === group) as section (section.id)}
         <a href={section.routes?.[0] ?? "#"}>{section.label}</a>
       {/each}
     </div>
