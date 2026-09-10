@@ -58,8 +58,6 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   root.setProperty("--color-accent-600", "color-mix(in srgb, var(--color-bg) 30%, var(--color-accent) 70%)");
   root.setProperty("--color-accent-2-100", "color-mix(in srgb, var(--color-text) 88%, var(--color-accent-2) 12%)");
   root.setProperty("--color-accent-2-800", "color-mix(in srgb, var(--color-bg) 72%, var(--color-accent-2) 28%)");
-  root.setProperty("--color-border", "color-mix(in srgb, var(--color-text) 24%, transparent)");
-  root.setProperty("--color-border-strong", "color-mix(in srgb, var(--color-text) 38%, transparent)");
   document.dispatchEvent(new CustomEvent("ledgerline-theme-change"));
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, overrides })); } catch { /* preferences are optional when storage is unavailable */ }
 }
