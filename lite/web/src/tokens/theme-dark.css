@@ -1,0 +1,27 @@
+:root,
+:root[data-theme="dark"] {
+  --color-bg: var(--palette-bg-0);
+  --color-surface: var(--palette-bg-1);
+  --color-surface-raised: var(--palette-bg-2);
+  --color-surface-hover: var(--palette-bg-3);
+  --color-text: var(--palette-text-0);
+  --color-text-dim: var(--palette-text-1);
+  --color-text-muted: var(--palette-text-2);
+  --color-text-faint: var(--palette-text-3);
+  --color-gain: var(--palette-green);
+  --color-loss: var(--palette-red);
+  --color-accent: var(--palette-accent);
+  --color-border: var(--palette-border-0);
+  --color-border-strong: var(--palette-border-1);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 3rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
