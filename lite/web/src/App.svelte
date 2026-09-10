@@ -23,7 +23,7 @@
     "/investments": "Investments",
     "/networth": "Net worth",
     "/markets": "Markets",
-    "/inbox": "Inbox",
+    "/inbox": "Review queue",
   };
 
   $: positionSymbol = $path.startsWith("/investments/") ? decodeURIComponent($path.slice("/investments/".length)) : null;

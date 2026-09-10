@@ -3,11 +3,12 @@
   export let baseCurrency = "USD";
   export let fxStatus = "FX pending";
   export let reviewCount = 0;
+  import ThemePicker from "./ThemePicker.svelte";
 </script>
 
 <header class="topbar">
   <h1>{title}</h1>
-  <div class="meta"><span>{baseCurrency}</span><span>{fxStatus}</span><span class="review">Review queue <b>{reviewCount}</b></span></div>
+  <div class="meta"><span>{baseCurrency}</span><span>{fxStatus}</span><span class="review">Review queue <b>{reviewCount}</b></span><ThemePicker /></div>
 </header>
 
 <style>
@@ -16,4 +17,6 @@
   .meta { display: flex; align-items: center; gap: var(--space-4); color: var(--color-text-muted); font-size: 0.75rem; }
   .review { color: var(--color-text-dim); }
   b { display: inline-grid; min-width: 1.25rem; height: 1.25rem; place-items: center; margin-left: var(--space-1); border-radius: 99px; background: var(--color-accent); color: var(--color-bg); font-size: 0.7rem; }
+  @media (max-width: 700px) { .topbar { padding-inline: 10px; } .meta > span:not(.review) { display: none; } .meta { gap: 8px; } }
+  @media (max-width: 460px) { h1 { font-size: 13px; } .review { font-size: 0; } .review b { font-size: 10px; } }
 </style>

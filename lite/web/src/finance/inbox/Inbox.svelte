@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { fetchAPI } from "../../lib/api";
   import TabBar from "../../components/TabBar.svelte";
   import ProposalCard from "../../components/ProposalCard.svelte";
@@ -9,6 +8,7 @@
   let error: string | null = null;
   let loading = true;
   let status: "pending" | "applied" | "rejected" | "" = "pending";
+  let approving = false;
 
   async function load() {
     loading = true;
@@ -23,7 +23,6 @@
     }
   }
 
-  onMount(load);
   $: status, load();
 
   async function decide(id: number, action: "approve" | "reject") {
@@ -33,6 +32,17 @@
     } catch (err) {
       error = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : `Failed to ${action}`;
     }
+  }
+
+  async function approveHighConfidence() {
+    approving = true;
+    const candidates = proposals.filter((proposal) => proposal.status === "pending" && proposal.confidence >= 0.9);
+    try {
+      await Promise.all(candidates.map((proposal) => fetchAPI(`/api/proposals/${proposal.id}/approve`, { method: "POST" })));
+      await load();
+    } catch (err) {
+      error = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : "Failed to approve proposals";
+    } finally { approving = false; }
   }
 
   function selectStatus(value: string) {
@@ -56,7 +66,8 @@
 </script>
 
 <div class="inbox">
-  <TabBar {tabs} value={status} onChange={selectStatus} />
+  <div class="heading"><div><span class="eyebrow">CONTROL PLANE</span><h2>Review queue</h2><p>Every agent write lands here before it touches the ledger.</p></div><button class="btn btn-secondary" disabled={approving || !proposals.some((proposal) => proposal.confidence >= .9)} on:click={approveHighConfidence}>{approving ? "Approving…" : "Approve high-confidence"}</button></div>
+  <div class="filters"><TabBar {tabs} value={status} onChange={selectStatus} /><span class="filter-spacer"></span><span class="tag tag-accent">{status || "all"} {proposals.length}</span></div>
 
   {#if loading}
     <p class="muted">Loading…</p>
@@ -79,7 +90,11 @@
 </div>
 
 <style>
-  .inbox { display: grid; gap: var(--space-4); }
+  .inbox { display: grid; gap: 0; max-width: 1000px; }
+  .heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 4px 0 14px; flex-wrap: wrap; }
+  .eyebrow { color: var(--color-accent); font-size: 10px; letter-spacing: .1em; } h2 { margin: 3px 0 2px; font-size: 24px; } p { margin: 0; color: var(--color-text-muted); font-size: 12px; }
+  .btn { min-height: 28px; padding: 4px 10px; } .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .filters { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 12px; } .filter-spacer { flex: 1; } .tag { padding: 3px 9px; border-radius: 6px; font-size: 10px; } .tag-accent { background: var(--color-accent-800, color-mix(in srgb, var(--color-accent) 25%, transparent)); color: var(--color-accent-100, var(--color-accent)); }
   .list { display: grid; gap: var(--space-3); }
   .muted { color: var(--color-text-muted); }
   .error { color: var(--color-loss); }
