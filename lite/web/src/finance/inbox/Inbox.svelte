@@ -8,7 +8,9 @@
   let proposals: Proposal[] = [];
   let error: string | null = null;
   let loading = true;
-  let status: "pending" | "applied" | "rejected" | "" = "pending";
+  // The design opens on the complete audit queue; source/status filters then
+  // narrow it without hiding already-applied writes by default.
+  let status: "pending" | "applied" | "rejected" | "" = "";
   let source = "all";
   let approving = false;
 
@@ -57,10 +59,10 @@
   }
 
   const tabs = [
+    { label: "All", value: "" },
     { label: "Pending", value: "pending" },
     { label: "Applied", value: "applied" },
     { label: "Rejected", value: "rejected" },
-    { label: "All", value: "" },
   ];
 
   function describe(p: Proposal): { title: string; description: string } {
@@ -73,7 +75,7 @@
 </script>
 
 <div class="inbox">
-  <div class="heading"><div><span class="eyebrow">CONTROL PLANE</span><h2>Review queue</h2><p>Every agent write lands here before it touches the ledger.</p></div><button class="btn btn-secondary" disabled={approving || !visible.some((proposal) => proposal.confidence >= .9)} on:click={approveHighConfidence}>{approving ? "Approving…" : "Approve high-confidence"}</button></div>
+  <div class="heading"><div><span class="eyebrow">CONTROL PLANE</span><h2>Review queue</h2><p>Every agent write lands here before it touches the ledger.</p></div><button class="btn btn-secondary" disabled={approving || !visible.some((proposal) => proposal.status === "pending" && proposal.confidence >= .9)} on:click={approveHighConfidence}>{approving ? "Approving…" : "Approve all high-confidence"}</button></div>
   <div class="filters"><TabBar {tabs} value={status} onChange={selectStatus} /><div class="sources"><button class:active={source === "all"} on:click={() => (source = "all")}>All sources <small>{proposals.length}</small></button>{#each sources as connector}<button class:active={source === connector} on:click={() => (source = connector)}>{connector} <small>{proposals.filter((proposal) => proposal.source === connector).length}</small></button>{/each}</div><span class="filter-spacer"></span><span class="tag tag-accent">{status || "all"} {visible.length}</span></div>
 
   {#if loading}
