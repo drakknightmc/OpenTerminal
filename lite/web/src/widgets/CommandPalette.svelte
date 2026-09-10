@@ -2,27 +2,14 @@
   import { onMount, onDestroy } from "svelte";
   import { widgets } from "../store/widgets";
   import type { WidgetType } from "../store/widgets";
+  import { getWidgets } from "../finance/registry";
 
   let isOpen = false;
   let query = "";
   let selectedIndex = 0;
   let inputEl: HTMLInputElement;
 
-  const WIDGET_LIST: { type: WidgetType; label: string }[] = [
-    { type: "chart", label: "Chart" },
-    { type: "quote", label: "Quote" },
-    { type: "watchlist", label: "Watchlist" },
-    { type: "news", label: "News" },
-    { type: "macro", label: "Macro" },
-    { type: "screener", label: "Screener" },
-    { type: "heatmap", label: "Heatmap" },
-    { type: "crypto", label: "Crypto" },
-    { type: "options", label: "Options" },
-    { type: "indiamarket", label: "India Market" },
-    { type: "mutualfund", label: "Mutual Fund" },
-    { type: "portfolio", label: "Portfolio" },
-    { type: "ai", label: "AI Assistant" },
-  ];
+  const WIDGET_LIST: { type: WidgetType; label: string }[] = getWidgets().map(({ type, label }) => ({ type, label }));
 
   let symbolResults: { symbol: string; name: string; exchange: string; type: string }[] = [];
 
@@ -106,8 +93,8 @@
 </script>
 
 {#if isOpen}
-  <div class="command-palette-overlay" on:click={() => (isOpen = false)}>
-    <div class="command-palette-box" on:click={(e) => e.stopPropagation()}>
+  <div class="command-palette-overlay" role="presentation" on:click={() => (isOpen = false)} on:keydown={(e) => e.key === "Escape" && (isOpen = false)}>
+    <div class="command-palette-box" role="presentation" on:click={(e) => e.stopPropagation()} on:keydown={(e) => e.stopPropagation()}>
       <input
         bind:this={inputEl}
         type="text"
@@ -121,11 +108,14 @@
         {#each symbolResults as result, i}
           <div
             class="result-item"
+            role="button"
+            tabindex="0"
             class:selected={i === selectedIndex}
             on:click={() => {
               selectedIndex = i;
               selectItem();
             }}
+            on:keydown={(e) => e.key === "Enter" && (selectedIndex = i, selectItem())}
           >
             <span class="symbol">{result.symbol}</span>
             <span class="name">{result.name}</span>
@@ -135,11 +125,14 @@
         {#each WIDGET_LIST as widget, i}
           <div
             class="widget-item"
+            role="button"
+            tabindex="0"
             class:selected={i + symbolResults.length === selectedIndex}
             on:click={() => {
               selectedIndex = i + symbolResults.length;
               selectItem();
             }}
+            on:keydown={(e) => e.key === "Enter" && (selectedIndex = i + symbolResults.length, selectItem())}
           >
             <span class="widget-label">{widget.label}</span>
           </div>
@@ -166,9 +159,9 @@
 
   .command-palette-box {
     width: 560px;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
   }
@@ -176,17 +169,17 @@
   .search-input {
     width: 100%;
     padding: 12px;
-    background: #1a1a1a;
+    background: var(--color-surface);
     border: none;
-    border-bottom: 1px solid #333;
-    color: #e0e0e0;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
     font-size: 13px;
     font-family: "Courier New", monospace;
     outline: none;
   }
 
   .search-input::placeholder {
-    color: #666;
+    color: var(--color-text-muted);
   }
 
   .results-list {
@@ -202,28 +195,28 @@
     gap: 12px;
     align-items: center;
     font-size: 12px;
-    color: #ccc;
+    color: var(--color-text-dim);
   }
 
   .result-item:hover,
   .widget-item:hover {
-    background: #2a2a2a;
+    background: var(--color-surface-hover);
   }
 
   .result-item.selected,
   .widget-item.selected {
-    background: #2a1a0a;
-    color: #f0a000;
+    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    color: var(--color-accent);
   }
 
   .symbol {
     font-weight: 600;
-    color: #e0e0e0;
+    color: var(--color-text);
     min-width: 60px;
   }
 
   .result-item.selected .symbol {
-    color: #f0a000;
+    color: var(--color-accent);
   }
 
   .name {
@@ -244,7 +237,7 @@
   .no-results {
     padding: 16px 12px;
     text-align: center;
-    color: #666;
+    color: var(--color-text-muted);
     font-size: 12px;
   }
 </style>

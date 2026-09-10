@@ -153,8 +153,8 @@
     padding: 1.25rem;
     border: 1px solid #303030;
     border-radius: 10px;
-    background: #1a1a1a;
-    color: #e0e0e0;
+    background: var(--color-surface);
+    color: var(--color-text);
     font-family: system-ui, sans-serif;
   }
 
@@ -174,7 +174,7 @@
   }
 
   .symbol {
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -218,14 +218,14 @@
 
   .label {
     overflow: hidden;
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 0.78rem;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .metric strong {
-    color: #e0e0e0;
+    color: var(--color-text);
     font-size: 0.9rem;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -237,7 +237,7 @@
 
   .message {
     padding: 2rem 1rem;
-    color: #888;
+    color: var(--color-text-muted);
     text-align: center;
   }
 

@@ -161,32 +161,32 @@
 <style>
   .options-widget {
     padding: 1rem;
-    color: #e0e0e0;
+    color: var(--color-text);
     font-family: "Courier New", monospace;
   }
 
   .loading {
-    color: #888;
+    color: var(--color-text-muted);
     padding: 1rem;
     text-align: center;
   }
 
   .error-box {
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     padding: 1.5rem;
     margin-bottom: 1rem;
   }
 
   .error-title {
-    color: #ff6b6b;
+    color: var(--color-loss);
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
 
   .error-detail {
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 0.9rem;
   }
 
@@ -202,20 +202,20 @@
   }
 
   .label {
-    color: #888;
+    color: var(--color-text-muted);
     font-weight: 500;
     font-size: 0.9rem;
   }
 
   .value {
-    color: #ffc107;
+    color: var(--color-accent);
     font-weight: 600;
   }
 
   .expiry-select {
-    background: #1a1a1a;
-    color: #e0e0e0;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     padding: 0.4rem 0.6rem;
     border-radius: 4px;
     font-family: "Courier New", monospace;
@@ -224,13 +224,13 @@
   }
 
   .expiry-select:hover {
-    border-color: #555;
+    border-color: var(--color-text-faint);
   }
 
   .options-table {
     width: 100%;
     border-collapse: collapse;
-    background: #0a0a0a;
+    background: var(--color-bg);
     margin-top: 0.5rem;
   }
 
@@ -243,8 +243,8 @@
   }
 
   .options-table th {
-    background: #1a1a1a;
-    color: #aaa;
+    background: var(--color-surface);
+    color: var(--color-text-dim);
     font-weight: 600;
     padding: 0.75rem 0.8rem;
   }
@@ -261,22 +261,22 @@
   }
 
   .calls-header {
-    color: #51cf66;
+    color: var(--color-gain);
   }
 
   .puts-header {
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 
   .strike-header {
-    color: #ffc107;
+    color: var(--color-accent);
     text-align: center;
   }
 
   .col-header-row th {
     padding: 0.5rem 0.8rem;
     font-size: 0.75rem;
-    color: #666;
+    color: var(--color-text-faint);
   }
 
   .options-table tbody tr:hover {
@@ -284,7 +284,7 @@
   }
 
   .options-table tbody td {
-    color: #e0e0e0;
+    color: var(--color-text);
   }
 
   td:last-child {
@@ -298,10 +298,10 @@
   .strike-cell {
     text-align: center;
     font-weight: 600;
-    color: #ffc107;
+    color: var(--color-accent);
     background: #111 !important;
-    border-left: 1px solid #333 !important;
-    border-right: 1px solid #333 !important;
+    border-left: 1px solid var(--color-border) !important;
+    border-right: 1px solid var(--color-border) !important;
   }
 
   /* ITM highlighting for calls (green) */

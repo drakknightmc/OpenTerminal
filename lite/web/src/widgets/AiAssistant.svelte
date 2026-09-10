@@ -154,8 +154,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: #0a0a0a;
-    color: #e0e0e0;
+    background: var(--color-bg);
+    color: var(--color-text);
   }
 
   .loading-state,
@@ -175,8 +175,8 @@
   }
 
   .unavailable-banner {
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     flex-direction: row;
     justify-content: space-between;
@@ -197,14 +197,14 @@
   }
 
   .subtitle {
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 0.9rem;
   }
 
   .dismiss-btn {
     background: none;
     border: none;
-    color: #888;
+    color: var(--color-text-muted);
     cursor: pointer;
     padding: 0.5rem;
     font-size: 1.2rem;
@@ -212,7 +212,7 @@
   }
 
   .dismiss-btn:hover {
-    color: #e0e0e0;
+    color: var(--color-text);
   }
 
   .chat-container {
@@ -231,19 +231,19 @@
   }
 
   .empty-state {
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 0.95rem;
     text-align: center;
     padding: 2rem;
   }
 
   .muted {
-    color: #555;
+    color: var(--color-text-faint);
     font-size: 0.85rem;
   }
 
   .symbol {
-    color: #888;
+    color: var(--color-text-muted);
     font-family: "Courier New", monospace;
   }
 
@@ -278,7 +278,7 @@
 
   .message.loading .role-label,
   .message.error .role-label {
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .content {
@@ -289,11 +289,11 @@
   }
 
   .message.error .content {
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 
   .message.loading .content {
-    color: #888;
+    color: var(--color-text-muted);
     font-style: italic;
   }
 
@@ -301,16 +301,16 @@
     display: flex;
     gap: 0.5rem;
     padding: 1rem;
-    border-top: 1px solid #333;
-    background: #0a0a0a;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
   }
 
   input {
     flex: 1;
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
-    color: #e0e0e0;
+    color: var(--color-text);
     padding: 0.75rem;
     font-family: "Courier New", monospace;
     font-size: 0.9rem;
@@ -318,7 +318,7 @@
 
   input:focus {
     outline: none;
-    border-color: #555;
+    border-color: var(--color-text-faint);
   }
 
   input:disabled {
@@ -327,15 +327,15 @@
   }
 
   input::placeholder {
-    color: #555;
+    color: var(--color-text-faint);
   }
 
   button {
     padding: 0.75rem 1rem;
-    background: #333;
-    border: 1px solid #555;
+    background: var(--color-border);
+    border: 1px solid var(--color-text-faint);
     border-radius: 4px;
-    color: #e0e0e0;
+    color: var(--color-text);
     font-weight: 600;
     cursor: pointer;
     font-family: "Courier New", monospace;
@@ -345,7 +345,7 @@
 
   button:hover:not(:disabled) {
     background: #444;
-    border-color: #666;
+    border-color: var(--color-text-faint);
   }
 
   button:disabled {

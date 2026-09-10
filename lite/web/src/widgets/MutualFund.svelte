@@ -202,37 +202,37 @@
 </section>
 
 <style>
-  :global(body) { background: #0a0a0a; color: #e0e0e0; }
-  .widget { max-width: 760px; padding: 1.25rem; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; font-family: "Courier New", monospace; }
+  :global(body) { background: var(--color-bg); color: var(--color-text); }
+  .widget { max-width: 760px; padding: 1.25rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; font-family: "Courier New", monospace; }
   .widget-header, .chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-  .eyebrow, .label, .search-status { color: #888; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .eyebrow, .label, .search-status { color: var(--color-text-muted); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
   .eyebrow { margin: 0 0 0.35rem; }
   h2, h3 { margin: 0; font-weight: 600; }
   h2 { font-size: 1.25rem; }
   h3 { margin-top: 0.35rem; font-size: 0.95rem; line-height: 1.5; }
-  .currency { color: #51cf66; font-size: 0.8rem; }
+  .currency { color: var(--color-gain); font-size: 0.8rem; }
   .search-wrap { position: relative; margin-top: 1.5rem; }
-  label { display: block; margin-bottom: 0.45rem; color: #888; font-size: 0.78rem; }
-  input { box-sizing: border-box; width: 100%; padding: 0.75rem; border: 1px solid #333; border-radius: 4px; outline: none; background: #0a0a0a; color: #e0e0e0; font: inherit; }
-  input:focus { border-color: #888; }
+  label { display: block; margin-bottom: 0.45rem; color: var(--color-text-muted); font-size: 0.78rem; }
+  input { box-sizing: border-box; width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; outline: none; background: var(--color-bg); color: var(--color-text); font: inherit; }
+  input:focus { border-color: var(--color-text-muted); }
   .search-status { position: absolute; right: 0.75rem; bottom: 0.8rem; letter-spacing: normal; text-transform: none; }
-  .results { position: absolute; z-index: 2; top: 100%; right: 0; left: 0; overflow: hidden; border: 1px solid #333; background: #1a1a1a; }
-  .results button { display: flex; width: 100%; justify-content: space-between; gap: 1rem; padding: 0.7rem 0.75rem; border: 0; border-bottom: 1px solid #333; background: transparent; color: #e0e0e0; text-align: left; font: inherit; cursor: pointer; }
+  .results { position: absolute; z-index: 2; top: 100%; right: 0; left: 0; overflow: hidden; border: 1px solid var(--color-border); background: var(--color-surface); }
+  .results button { display: flex; width: 100%; justify-content: space-between; gap: 1rem; padding: 0.7rem 0.75rem; border: 0; border-bottom: 1px solid var(--color-border); background: transparent; color: var(--color-text); text-align: left; font: inherit; cursor: pointer; }
   .results button:last-child { border-bottom: 0; }
-  .results button:hover { background: #262626; }
-  .results small { color: #888; }
-  .fund-summary { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #333; }
+  .results button:hover { background: var(--color-border); }
+  .results small { color: var(--color-text-muted); }
+  .fund-summary { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
   .details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem; }
   .details div { min-width: 0; }
   .details .label { display: block; margin-bottom: 0.35rem; letter-spacing: normal; text-transform: none; }
-  strong { display: block; overflow: hidden; color: #e0e0e0; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
-  .chart-panel { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #333; }
-  .chart-heading { color: #e0e0e0; font-size: 0.8rem; }
+  strong { display: block; overflow: hidden; color: var(--color-text); font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+  .chart-panel { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
+  .chart-heading { color: var(--color-text); font-size: 0.8rem; }
   svg { display: block; width: 100%; height: auto; margin-top: 0.75rem; overflow: visible; }
-  .axis { stroke: #333; stroke-width: 1; }
-  .line { fill: none; stroke: #51cf66; stroke-width: 2; vector-effect: non-scaling-stroke; }
-  text { fill: #888; font: 10px "Courier New", monospace; }
-  .empty, .error { margin: 1.5rem 0 0; color: #888; font-size: 0.85rem; }
-  .error { color: #ff6b6b; }
+  .axis { stroke: var(--color-border); stroke-width: 1; }
+  .line { fill: none; stroke: var(--color-gain); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  text { fill: var(--color-text-muted); font: 10px "Courier New", monospace; }
+  .empty, .error { margin: 1.5rem 0 0; color: var(--color-text-muted); font-size: 0.85rem; }
+  .error { color: var(--color-loss); }
   @media (max-width: 600px) { .details { grid-template-columns: repeat(2, 1fr); } .widget { padding: 1rem; } }
 </style>

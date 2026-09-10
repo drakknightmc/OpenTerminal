@@ -112,8 +112,8 @@
       // Create new chart
       chartInstance = createChart(chartContainer, {
         layout: {
-          background: { type: ColorType.Solid, color: "#0a0a0a" },
-          textColor: "#e0e0e0",
+          background: { type: ColorType.Solid, color: "#161826" },
+          textColor: "#e9e9ed",
         },
         width: chartContainer.clientWidth,
         height: 300,
@@ -121,12 +121,12 @@
       });
 
       const candleSeries = chartInstance.addSeries(CandlestickSeries, {
-        upColor: "#51cf66",
-        downColor: "#ff3d3d",
-        borderUpColor: "#51cf66",
-        borderDownColor: "#ff3d3d",
-        wickUpColor: "#51cf66",
-        wickDownColor: "#ff3d3d",
+        upColor: "#57c98c",
+        downColor: "#e0736c",
+        borderUpColor: "#57c98c",
+        borderDownColor: "#e0736c",
+        wickUpColor: "#57c98c",
+        wickDownColor: "#e0736c",
       });
 
       candleSeries.setData(candleData);
@@ -230,7 +230,7 @@
                   <polyline
                     points={renderSparkline(asset.sparkline)}
                     fill="none"
-                    stroke={asset.sparkline[asset.sparkline.length - 1] >= asset.sparkline[0] ? "#51cf66" : "#ff3d3d"}
+                    stroke={asset.sparkline[asset.sparkline.length - 1] >= asset.sparkline[0] ? "var(--color-gain)" : "var(--color-loss)"}
                     stroke-width="1"
                   />
                 </svg>
@@ -274,33 +274,33 @@
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    background: #0a0a0a;
-    color: #e0e0e0;
+    background: var(--color-bg);
+    color: var(--color-text);
     font-family: monospace;
   }
 
   .error-banner {
     padding: 0.75rem;
     background: #1a0a0a;
-    border: 1px solid #ff3d3d;
+    border: 1px solid var(--color-loss);
     border-radius: 4px;
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 
   .loading {
     text-align: center;
     padding: 2rem;
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .dominance-header {
     display: flex;
     gap: 2rem;
     padding: 1rem;
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .stat {
@@ -311,35 +311,35 @@
 
   .stat .label {
     font-size: 0.75rem;
-    color: #888;
+    color: var(--color-text-muted);
     text-transform: uppercase;
   }
 
   .stat .value {
     font-size: 1rem;
     font-weight: bold;
-    color: #51cf66;
+    color: var(--color-gain);
   }
 
   .assets-table {
     width: 100%;
     border-collapse: collapse;
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     overflow: hidden;
   }
 
   .assets-table thead {
-    background: #0f0f0f;
-    border-bottom: 1px solid #333;
+    background: var(--color-surface-raised);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .assets-table th {
     padding: 0.75rem;
     text-align: left;
     font-size: 0.85rem;
-    color: #888;
+    color: var(--color-text-muted);
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -367,7 +367,7 @@
 
   .asset-row.selected {
     background: #1f2f1f;
-    border-left: 3px solid #51cf66;
+    border-left: 3px solid var(--color-gain);
   }
 
   .asset-name {
@@ -378,12 +378,12 @@
 
   .asset-name .symbol {
     font-weight: bold;
-    color: #e0e0e0;
+    color: var(--color-text);
   }
 
   .asset-name .name {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .price {
@@ -395,11 +395,11 @@
   }
 
   .change.text-green {
-    color: #51cf66;
+    color: var(--color-gain);
   }
 
   .change.text-red {
-    color: #ff3d3d;
+    color: var(--color-loss);
   }
 
   .sparkline-cell {
@@ -417,8 +417,8 @@
   .chart-panel {
     margin-top: 1.5rem;
     padding: 1rem;
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
   }
 
@@ -440,15 +440,15 @@
 
   .chart-title .symbol {
     font-weight: bold;
-    color: #e0e0e0;
+    color: var(--color-text);
   }
 
   .chart-title .name {
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .chart-title .price {
-    color: #51cf66;
+    color: var(--color-gain);
     font-weight: 500;
   }
 
@@ -460,9 +460,9 @@
 
   .tf-btn {
     padding: 0.5rem 0.75rem;
-    background: #0f0f0f;
-    border: 1px solid #333;
-    color: #888;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
     font-family: monospace;
     font-size: 0.85rem;
     cursor: pointer;
@@ -471,21 +471,21 @@
   }
 
   .tf-btn:hover {
-    background: #1a1a1a;
-    color: #e0e0e0;
+    background: var(--color-surface);
+    color: var(--color-text);
   }
 
   .tf-btn.active {
-    background: #51cf66;
-    border-color: #51cf66;
-    color: #0a0a0a;
+    background: var(--color-gain);
+    border-color: var(--color-gain);
+    color: var(--color-bg);
     font-weight: bold;
   }
 
   .chart-container {
     width: 100%;
     height: 300px;
-    border: 1px solid #333;
+    border: 1px solid var(--color-border);
     border-radius: 3px;
     overflow: hidden;
   }

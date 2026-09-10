@@ -2,6 +2,7 @@
   import { widgets } from "../store/widgets";
   import type { PortfolioSection, WidgetType } from "../store/widgets";
   import { onMount } from "svelte";
+  import { getWidgets } from "../finance/registry";
 
   interface SidebarItem {
     type: WidgetType;
@@ -10,25 +11,15 @@
     section?: PortfolioSection;
   }
 
-  const ITEMS: SidebarItem[] = [
-    { type: "chart", label: "CHART", key: "⌥1" },
-    { type: "quote", label: "QUOTE", key: "⌥2" },
-    { type: "news", label: "NEWS", key: "⌥3" },
-    { type: "screener", label: "SCREENER", key: "⌥4" },
-    { type: "heatmap", label: "HEATMAP", key: "⌥5" },
-    { type: "crypto", label: "CRYPTO", key: "⌥6" },
-    { type: "options", label: "OPTIONS", key: "⌥7" },
-    { type: "portfolio", label: "PORTFOLIO", key: "⌥8" },
+  const ITEMS: SidebarItem[] = getWidgets().flatMap((definition) => [
+    { type: definition.type, label: definition.label.toUpperCase(), key: definition.shortcut ?? "" },
+    ...(definition.type === "portfolio" ? [
     { type: "portfolio", label: "PORTFOLIO: TOTAL", key: "", section: "total" },
     { type: "portfolio", label: "PORTFOLIO: ICICI", key: "", section: "icici_direct" },
     { type: "portfolio", label: "PORTFOLIO: IBKR", key: "", section: "ibkr" },
     { type: "portfolio", label: "PORTFOLIO: GROWW MF", key: "", section: "groww_mf" },
-    { type: "ai", label: "AI ASSIST", key: "⌥9" },
-    { type: "watchlist", label: "WATCHLIST", key: "" },
-    { type: "macro", label: "MACRO", key: "" },
-    { type: "mutualfund", label: "MUTUAL FUND", key: "" },
-    { type: "indiamarket", label: "INDIA MARKET", key: "" },
-  ];
+    ] : []),
+  ]);
 
   const KEY_MAP: Record<string, WidgetType> = {
     "1": "chart",
@@ -75,8 +66,8 @@
 <style>
   .sidebar {
     width: 128px;
-    background: #1a1a1a;
-    border-right: 1px solid #333;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -85,8 +76,8 @@
 
   .sidebar-header {
     padding: 6px 8px;
-    border-bottom: 1px solid #333;
-    color: #666;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-muted);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -104,7 +95,7 @@
     border: none;
     padding: 8px;
     text-align: left;
-    color: #ccc;
+    color: var(--color-text-dim);
     font-size: 10px;
     cursor: pointer;
     display: flex;
@@ -116,8 +107,8 @@
   }
 
   .sidebar-item:hover {
-    background: #0f0f0f;
-    color: #f0a000;
+    background: var(--color-surface-hover);
+    color: var(--color-accent);
   }
 
   .label {
@@ -125,7 +116,7 @@
   }
 
   .key {
-    color: #666;
+    color: var(--color-text-muted);
     font-size: 9px;
     white-space: nowrap;
   }
@@ -133,10 +124,10 @@
   .reset-btn {
     background: none;
     border: none;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--color-border);
     padding: 8px;
     text-align: left;
-    color: #666;
+    color: var(--color-text-muted);
     font-size: 10px;
     cursor: pointer;
     text-transform: uppercase;
@@ -144,6 +135,6 @@
   }
 
   .reset-btn:hover {
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 </style>

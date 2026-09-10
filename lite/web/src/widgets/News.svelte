@@ -82,9 +82,9 @@
 <style>
   .news-card {
     overflow: hidden;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #e0e0e0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
   }
 
   .news-list {
@@ -95,7 +95,7 @@
   .news-item {
     display: block;
     padding: 0.7rem 0.8rem;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--color-border);
     color: inherit;
     text-decoration: none;
     transition: background 120ms ease;
@@ -125,7 +125,7 @@
   .metadata,
   .muted,
   .error {
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 0.75rem;
   }
 
@@ -136,7 +136,7 @@
   }
 
   .error {
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 
   .muted,
@@ -158,5 +158,5 @@
   .badge.us { color: #5dd8e8; }
   .badge.india { color: #ffad5c; }
   .badge.crypto { color: #c28cff; }
-  .badge.global { color: #aaa; }
+  .badge.global { color: var(--color-text-dim); }
 </style>

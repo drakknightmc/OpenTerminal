@@ -1,6 +1,7 @@
 <script lang="ts">
   import "./tokens/palette.css";
   import "./tokens/theme-dark.css";
+  import "./tokens/nocturne.css";
   import "./finance/bootstrap";
 
   import Rail from "./shell/Rail.svelte";
@@ -29,7 +30,7 @@
   $: title = positionSymbol ? positionSymbol : titles[$path] ?? "LedgerLine";
 </script>
 
-<main>
+<main class="nocturne">
   <div class="layout">
     <Rail />
     <div class="workspace">
@@ -60,7 +61,7 @@
     padding: 0;
     background: var(--color-bg);
     color: var(--color-text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: var(--font-body);
     font-size: 13px;
   }
 

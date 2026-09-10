@@ -1,15 +1,16 @@
 :root {
-  --palette-bg-0: #080b0a;
-  --palette-bg-1: #0d1210;
-  --palette-bg-2: #131b17;
-  --palette-bg-3: #1a2520;
-  --palette-green: #54d68a;
-  --palette-red: #f07878;
-  --palette-accent: #d8b36a;
-  --palette-text-0: #f1f5f2;
-  --palette-text-1: #c1ccc5;
-  --palette-text-2: #87958c;
-  --palette-text-3: #5d6a62;
-  --palette-border-0: #26342d;
-  --palette-border-1: #34443b;
+  /* Nocturne palette — source: design/_ds/nocturne-*/
+  --palette-bg-0: #161826;
+  --palette-bg-1: #232532;
+  --palette-bg-2: #292b31;
+  --palette-bg-3: #3f424d;
+  --palette-green: #57c98c;
+  --palette-red: #e0736c;
+  --palette-accent: #9184d9;
+  --palette-text-0: #e9e9ed;
+  --palette-text-1: #cfd3e5;
+  --palette-text-2: #9397ab;
+  --palette-text-3: #595d6c;
+  --palette-border-0: #3f424d;
+  --palette-border-1: #595d6c;
 }

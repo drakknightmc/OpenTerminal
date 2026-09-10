@@ -9,7 +9,8 @@
   type Timeframe = (typeof TIMEFRAMES)[number];
   type Indicator = "SMA20" | "SMA50" | "RSI";
 
-  const colors = { up: "#00c853", down: "#ff3d3d", sma20: "#ffd966", sma50: "#4fc3f7", rsi: "#ff9900" };
+  // lightweight-charts needs resolved colors rather than CSS var() strings.
+  const colors = { up: "#57c98c", down: "#e0736c", sma20: "#a7a1db", sma50: "#9184d9", rsi: "#b5abfc" };
   const toTimestamp = (time: number) => time as UTCTimestamp;
   const formatNumber = (value: number, digits = 2) => value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
   const formatVolume = (value: number) => value >= 1_000_000 ? `${(value / 1_000_000).toFixed(1)}M` : value >= 1_000 ? `${(value / 1_000).toFixed(1)}K` : value.toFixed(0);
@@ -42,10 +43,10 @@
     chart?.remove();
     chart = createChart(chartHost, {
       autoSize: true,
-      layout: { background: { color: "#0a0a0a" }, textColor: "#e0e0e0", fontSize: 11, attributionLogo: false },
-      grid: { vertLines: { color: "#1a1a1a" }, horzLines: { color: "#1a1a1a" } },
-      rightPriceScale: { borderColor: "#262626" },
-      timeScale: { borderColor: "#262626", timeVisible: timeframe === "1D" || timeframe === "1W" },
+      layout: { background: { color: "#161826" }, textColor: "#e9e9ed", fontSize: 11, attributionLogo: false },
+      grid: { vertLines: { color: "#232532" }, horzLines: { color: "#232532" } },
+      rightPriceScale: { borderColor: "#3f424d" },
+      timeScale: { borderColor: "#3f424d", timeVisible: timeframe === "1D" || timeframe === "1W" },
       crosshair: { mode: 0 },
       handleScroll: { mouseWheel: false, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: true },
       handleScale: { mouseWheel: false, pinch: true, axisPressedMouseMove: true }
@@ -120,18 +121,18 @@
 </div>
 
 <style>
-  .chart-widget { display: flex; flex-direction: column; height: 100%; min-height: 320px; background: #0a0a0a; color: #e0e0e0; font: 11px monospace; }
-  .toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-bottom: 1px solid #262626; }
-  button { padding: 3px 7px; border: 1px solid #262626; border-radius: 2px; background: #0a0a0a; color: #888; cursor: pointer; font: inherit; }
-  button:hover, button.active { border-color: #666; color: #e0e0e0; background: #1a1a1a; }
+  .chart-widget { display: flex; flex-direction: column; height: 100%; min-height: 320px; background: var(--color-bg); color: var(--color-text); font: 11px monospace; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-bottom: 1px solid var(--color-border); }
+  button { padding: 3px 7px; border: 1px solid var(--color-border); border-radius: 2px; background: var(--color-bg); color: var(--color-text-muted); cursor: pointer; font: inherit; }
+  button:hover, button.active { border-color: var(--color-text-faint); color: var(--color-text); background: var(--color-surface); }
   .separator { width: 8px; }
-  .message { padding: 8px; color: #888; }
+  .message { padding: 8px; color: var(--color-text-muted); }
   .plot-wrap { position: relative; flex: 1; min-height: 0; }
   .chart { width: 100%; height: 100%; }
   .legend { position: absolute; z-index: 1; top: 7px; left: 8px; display: flex; flex-wrap: wrap; gap: 12px; padding: 4px 6px; background: rgba(10, 10, 10, 0.78); pointer-events: none; }
-  .legend span { color: #888; }
-  .legend b { color: #e0e0e0; font-weight: normal; }
-  .legend .high b { color: #00c853; }
-  .legend .low b { color: #ff3d3d; }
+  .legend span { color: var(--color-text-muted); }
+  .legend b { color: var(--color-text); font-weight: normal; }
+  .legend .high b { color: var(--color-gain); }
+  .legend .low b { color: var(--color-loss); }
   @media (max-width: 520px) { .separator { display: none; } .legend { gap: 7px; } }
 </style>

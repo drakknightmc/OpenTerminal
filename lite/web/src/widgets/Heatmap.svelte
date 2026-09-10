@@ -113,9 +113,9 @@
     width: 100%;
     box-sizing: border-box;
     padding: 1.25rem;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #e0e0e0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   }
 
@@ -158,7 +158,7 @@
   .sector {
     min-width: 0;
     padding: 0.8rem;
-    border: 1px solid #333;
+    border: 1px solid var(--color-border);
     background: #161616;
   }
 
@@ -225,7 +225,7 @@
   .empty {
     margin: 0;
     padding: 2rem 1rem;
-    border: 1px solid #333;
+    border: 1px solid var(--color-border);
     color: var(--muted);
     text-align: center;
     font: 0.85rem "Courier New", monospace;

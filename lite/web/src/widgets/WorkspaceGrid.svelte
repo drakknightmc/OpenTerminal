@@ -214,7 +214,7 @@
     min-height: 0;
     overflow: auto;
     padding: 12px;
-    background: #0a0a0a;
+    background: var(--color-bg);
   }
 
   :global(.grid-stack > .grid-stack-item > .grid-stack-item-content) {
@@ -227,9 +227,9 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 4px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     overflow: hidden;
     position: relative;
   }
@@ -239,11 +239,11 @@
     justify-content: space-between;
     align-items: center;
     padding: 4px 8px;
-    background: #0f0f0f;
-    border-bottom: 1px solid #333;
+    background: var(--color-surface-raised);
+    border-bottom: 1px solid var(--color-border);
     font-size: 11px;
     font-weight: 600;
-    color: #e0e0e0;
+    color: var(--color-text);
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -260,7 +260,7 @@
   :global(.close-btn) {
     background: none;
     border: none;
-    color: #666;
+    color: var(--color-text-muted);
     cursor: pointer;
     font-size: 12px;
     padding: 0 4px;
@@ -268,7 +268,7 @@
   }
 
   :global(.close-btn:hover) {
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 
   :global(.widget-body) {
@@ -283,7 +283,7 @@
     width: 16px;
     height: 16px;
     pointer-events: none;
-    background: linear-gradient(135deg, transparent 50%, #333 50%);
+    background: linear-gradient(135deg, transparent 50%, var(--color-border) 50%);
   }
 
   :global(.grid-stack > .grid-stack-item > .ui-resizable-se) {

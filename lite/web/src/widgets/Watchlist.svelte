@@ -168,23 +168,23 @@
 </section>
 
 <style>
-  .watchlist { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 1.25rem; }
+  .watchlist { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1.25rem; }
   header, .add-form { align-items: center; display: flex; gap: 0.75rem; }
   header { justify-content: space-between; margin-bottom: 1rem; }
   h2 { font-size: 1.25rem; margin: 0; }
-  label, th, .empty { color: #888; }
+  label, th, .empty { color: var(--color-text-muted); }
   label { font-size: 0.8rem; }
-  input { background: #111; border: 1px solid #444; border-radius: 4px; color: #e0e0e0; min-width: 0; padding: 0.55rem 0.7rem; width: 8rem; }
-  button { background: #303030; border: 1px solid #555; border-radius: 4px; color: #e0e0e0; cursor: pointer; padding: 0.55rem 0.8rem; }
+  input { background: #111; border: 1px solid #444; border-radius: 4px; color: var(--color-text); min-width: 0; padding: 0.55rem 0.7rem; width: 8rem; }
+  button { background: #303030; border: 1px solid var(--color-text-faint); border-radius: 4px; color: var(--color-text); cursor: pointer; padding: 0.55rem 0.8rem; }
   button:hover:not(:disabled) { background: #414141; }
   button:disabled { cursor: not-allowed; opacity: 0.45; }
-  .clear-button, .delete-button { color: #aaa; font-size: 0.8rem; }
+  .clear-button, .delete-button { color: var(--color-text-dim); font-size: 0.8rem; }
   .table-wrap { margin-top: 1.25rem; overflow-x: auto; }
   table { border-collapse: collapse; min-width: 560px; text-align: right; width: 100%; }
-  th, td { border-bottom: 1px solid #333; padding: 0.8rem 0.6rem; white-space: nowrap; }
+  th, td { border-bottom: 1px solid var(--color-border); padding: 0.8rem 0.6rem; white-space: nowrap; }
   th:first-child, td:first-child { text-align: left; }
   thead th { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; }
-  tbody th { color: #e0e0e0; font-family: monospace; font-weight: 600; }
+  tbody th { color: var(--color-text); font-family: monospace; font-weight: 600; }
   .positive { color: #63d297; }
   .negative { color: #ff7777; }
   .flash { animation: quote-flash 700ms ease-out; }

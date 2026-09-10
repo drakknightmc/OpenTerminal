@@ -145,33 +145,33 @@
 </section>
 
 <style>
-  :global(body) { background: #0a0a0a; color: #e0e0e0; }
+  :global(body) { background: var(--color-bg); color: var(--color-text); }
   .market-widget { max-width: 720px; margin: 0 auto; font-family: system-ui, sans-serif; }
   .widget-header, .quote-heading, .search-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .widget-header { margin-bottom: 1rem; }
-  .eyebrow, .label { color: #888; font-size: 0.75rem; letter-spacing: 0.08em; }
+  .eyebrow, .label { color: var(--color-text-muted); font-size: 0.75rem; letter-spacing: 0.08em; }
   .eyebrow { margin: 0 0 0.25rem; }
   h2 { margin: 0; font-size: 1.35rem; }
-  .currency { color: #51cf66; font: 0.85rem "Courier New", monospace; }
+  .currency { color: var(--color-gain); font: 0.85rem "Courier New", monospace; }
   .indices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin-bottom: 0.75rem; }
-  .panel, .index-card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; }
+  .panel, .index-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; }
   .index-card { padding: 1rem; display: grid; gap: 0.4rem; }
   .value, .price, .positive, .negative { font-family: "Courier New", monospace; }
-  .value { color: #e0e0e0; }
-  .positive { color: #51cf66; }
-  .negative { color: #ff6b6b; }
+  .value { color: var(--color-text); }
+  .positive { color: var(--color-gain); }
+  .negative { color: var(--color-loss); }
   .quote-panel { padding: 1.25rem; min-height: 150px; }
   .price { display: block; font-size: 1.8rem; margin-top: 0.35rem; }
   .quote-change { display: grid; gap: 0.4rem; text-align: right; }
-  .ohlc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; border-top: 1px solid #333; margin-top: 1.25rem; padding-top: 1rem; }
+  .ohlc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; border-top: 1px solid var(--color-border); margin-top: 1.25rem; padding-top: 1rem; }
   .ohlc-grid div { display: grid; gap: 0.35rem; }
   .search { margin-top: 1rem; }
   .search-row { margin-top: 0.4rem; }
-  input, button { border: 1px solid #333; border-radius: 6px; background: #1a1a1a; color: #e0e0e0; font: 0.95rem "Courier New", monospace; padding: 0.7rem 0.8rem; }
+  input, button { border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-surface); color: var(--color-text); font: 0.95rem "Courier New", monospace; padding: 0.7rem 0.8rem; }
   input { min-width: 0; flex: 1; text-transform: uppercase; }
-  button { cursor: pointer; color: #51cf66; }
-  button:hover { border-color: #51cf66; }
-  .loading { color: #888; }
-  .error { color: #ff6b6b; }
+  button { cursor: pointer; color: var(--color-gain); }
+  button:hover { border-color: var(--color-gain); }
+  .loading { color: var(--color-text-muted); }
+  .error { color: var(--color-loss); }
   @media (max-width: 520px) { .indices, .ohlc-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>

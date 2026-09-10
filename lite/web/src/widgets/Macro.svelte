@@ -82,9 +82,9 @@
 
 <style>
   .macro-card {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #e0e0e0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
     padding: 0.8rem;
   }
 
@@ -100,24 +100,24 @@
     min-height: 180px;
   }
 
-  .axis { stroke: #555; stroke-width: 1; }
+  .axis { stroke: var(--color-text-faint); stroke-width: 1; }
   .curve { fill: none; stroke: #ff9900; stroke-width: 2; }
   .point { fill: #ff9900; }
-  .axis-label, .x-label, .y-label { fill: #888; font-size: 11px; }
-  .y-label { fill: #aaa; }
+  .axis-label, .x-label, .y-label { fill: var(--color-text-muted); font-size: 11px; }
+  .y-label { fill: var(--color-text-dim); }
 
   .vix-row {
     display: flex;
     align-items: baseline;
     gap: 0.55rem;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--color-border);
     padding-top: 0.65rem;
     font-family: "Courier New", monospace;
   }
 
-  .vix-label, .muted { color: #888; }
+  .vix-label, .muted { color: var(--color-text-muted); }
   .vix-value { font-size: 1.15rem; }
-  .positive { color: #51cf66; }
-  .negative { color: #ff6b6b; }
+  .positive { color: var(--color-gain); }
+  .negative { color: var(--color-loss); }
   .muted { font-size: 0.8rem; }
 </style>

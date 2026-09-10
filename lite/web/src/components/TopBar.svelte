@@ -66,28 +66,28 @@
     gap: 12px;
     padding: 0 12px;
     height: 32px;
-    background: #1a1a1a;
-    border-bottom: 1px solid #333;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
     font-size: 11px;
-    color: #e0e0e0;
+    color: var(--color-text);
     flex-shrink: 0;
   }
 
   .logo {
     font-weight: 700;
     letter-spacing: 2px;
-    color: #f0a000;
+    color: var(--color-accent);
   }
 
   .market-status {
     display: flex;
     align-items: center;
     gap: 4px;
-    color: #ff6b6b;
+    color: var(--color-loss);
   }
 
   .market-status.open {
-    color: #51cf66;
+    color: var(--color-gain);
   }
 
   .indicator {
@@ -95,11 +95,11 @@
   }
 
   .search-button {
-    background: #0f0f0f;
-    border: 1px solid #333;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     padding: 4px 8px;
-    color: #888;
+    color: var(--color-text-muted);
     font-size: 10px;
     cursor: pointer;
     display: flex;
@@ -109,8 +109,8 @@
   }
 
   .search-button:hover {
-    border-color: #555;
-    color: #aaa;
+    border-color: var(--color-text-faint);
+    color: var(--color-text-dim);
   }
 
   .search-text {
@@ -126,7 +126,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    color: #51cf66;
+    color: var(--color-gain);
   }
 
   .status-text {
