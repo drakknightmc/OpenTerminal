@@ -122,7 +122,7 @@
   .curve { flex: 1 1 360px; max-width: 560px; min-width: 260px; }
   .curve :global(svg) { display: block; width: 100%; height: 76px; }
   .curve-labels { display: flex; justify-content: space-between; color: var(--color-text-faint); font: 9.5px var(--font-mono); }
-  .curve-empty { display: grid; place-items: center; height: 76px; border-bottom: 1px solid var(--color-border); color: var(--color-text-faint); font-size: 11px; }
+  .curve-empty { display: grid; place-items: center; height: 76px; padding: 0 8px; box-sizing: border-box; border-bottom: 1px solid var(--color-border); color: var(--color-text-faint); font-size: 10px; line-height: 1.35; text-align: center; }
   .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 10px; }
   .lower { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 14px; align-items: start; }
   .proposals { display: grid; gap: var(--space-3); }
