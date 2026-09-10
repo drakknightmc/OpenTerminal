@@ -49,7 +49,6 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   // themes recolor tags, focus rings, hover states, and progress bars too.
   const root = document.documentElement.style;
   root.setProperty("--color-text-dim", "color-mix(in srgb, var(--color-text) 82%, var(--color-text-muted) 18%)");
-  root.setProperty("--color-surface-raised", "var(--color-raised)");
   root.setProperty("--color-surface-hover", "color-mix(in srgb, var(--color-surface) 78%, var(--color-text) 22%)");
   root.setProperty("--color-border", "color-mix(in srgb, var(--color-text) 24%, transparent)");
   root.setProperty("--color-border-strong", "color-mix(in srgb, var(--color-text) 38%, transparent)");

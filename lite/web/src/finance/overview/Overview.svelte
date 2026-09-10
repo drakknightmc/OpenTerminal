@@ -36,7 +36,7 @@
   const moverColumns = [
     { key: "symbol", label: "Symbol" },
     { key: "day", label: "Day" },
-    { key: "contribution", label: "Contribution" },
+    { key: "contribution", label: "Contribution", align: "right" as const },
   ];
 
   $: moverRows = (overview?.movers ?? []).map((m) => ({
@@ -81,7 +81,7 @@
     </div>
 
     <div class="lower">
-      <SectionPanel title="Today's movers">
+          <SectionPanel title="Today's movers" actions="by contribution to net worth">
         {#if moverRows.length === 0}
           <p class="muted">No marked positions yet.</p>
         {:else}
