@@ -42,8 +42,8 @@
   $: moverRows = (overview?.movers ?? []).map((m) => ({
     symbol: m.label || m.symbol,
     name: m.label || m.symbol,
-    day: formatPercent(m.dayPct),
-    contribution: money(m.dayAbsINR, "INR"),
+    day: { text: formatPercent(m.dayPct), tone: m.dayPct >= 0 ? "gain" : "loss" },
+    contribution: { text: money(m.dayAbsINR, "INR"), tone: m.dayAbsINR >= 0 ? "gain" : "loss" },
   }));
 </script>
 
