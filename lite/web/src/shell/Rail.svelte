@@ -2,14 +2,12 @@
   import { onMount } from "svelte";
   import { getSections } from "../finance/registry";
   import { path } from "../lib/router";
-  import { fetchAPI } from "../lib/api";
+  import { pendingReviewCount, refreshPendingReviewCount } from "../finance/reviewStore";
 
   const sections = getSections();
   const groups = Array.from(new Set(sections.map((section) => section.group)));
-  let pending = 0;
-  onMount(async () => {
-    try { pending = (await fetchAPI<{ proposals: unknown[] }>("/api/proposals?status=pending")).proposals.length; } catch { /* the badge is supplementary */ }
-  });
+  $: pending = $pendingReviewCount;
+  onMount(() => { void refreshPendingReviewCount(); });
   function isActive(route: string): boolean {
     return route === "/" ? $path === "/" : $path === route || $path.startsWith(`${route}/`);
   }

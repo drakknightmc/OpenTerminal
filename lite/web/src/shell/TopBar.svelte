@@ -1,17 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { fetchAPI } from "../lib/api";
+  import { pendingReviewCount, refreshPendingReviewCount } from "../finance/reviewStore";
   import ThemePicker from "./ThemePicker.svelte";
 
   export let title = "Overview";
   export let baseCurrency = "USD";
   export let fxStatus = "FX pending";
   export let reviewCount = 0;
-  let pending = reviewCount;
+  $: pending = $pendingReviewCount || reviewCount;
   function openPalette() { document.dispatchEvent(new Event("ledgerline-open-command-palette")); }
-  onMount(async () => {
-    try { pending = (await fetchAPI<{ proposals: unknown[] }>("/api/proposals?status=pending")).proposals.length; } catch { /* header remains usable if the API is unavailable */ }
-  });
+  onMount(() => { void refreshPendingReviewCount(); });
 </script>
 
 <header class="topbar">
