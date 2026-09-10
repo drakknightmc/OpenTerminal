@@ -76,7 +76,7 @@
     </p>
   {:else}
     <SectionPanel title="Net worth curve" actions={`${snapshots.length} closes`}>
-      <div class="chart"><AreaChart {points} width={720} height={220} /></div>
+      <div class="chart">{#if points.length > 1}<AreaChart {points} width={720} height={220} />{:else}<div class="chart-empty">One close recorded · trend starts with the next close</div>{/if}</div>
     </SectionPanel>
     <SectionPanel title="Balance sheet" actions={`as of ${latest?.snapshotDate ?? "—"}`}>
       {#if balanceRows.length}<DataTable columns={balanceColumns} rows={balanceRows} totals={{ line: "Net worth", class: "Total", closing: money(latest?.totalINR ?? 0, "INR"), share: "100%" }} />{:else}<p class="muted">This snapshot has no class breakdown.</p>{/if}
@@ -93,7 +93,7 @@
   .eyebrow { color: var(--color-accent); font-size: 10px; letter-spacing: .1em; }
   h2 { margin: 3px 0 2px; font-size: 24px; } p { margin: 0; color: var(--color-text-muted); font-size: 12px; }
   .ranges { display: flex; gap: 3px; } .ranges button { padding: 5px 8px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--color-text-muted); cursor: pointer; font: 11px var(--font-mono); } .ranges button.active { border-color: var(--color-accent); color: var(--color-text); }
-  .chart { overflow-x: auto; } .chart :global(svg) { display: block; width: 100%; min-width: 560px; }
+  .chart { overflow-x: auto; } .chart :global(svg) { display: block; width: 100%; min-width: 560px; } .chart-empty { display: grid; min-width: 560px; height: 220px; place-items: center; border-bottom: 1px solid var(--color-border); color: var(--color-text-faint); font: 11px var(--font-mono); }
   .empty { padding: 24px 0; } .loading-state { display: flex; align-items: center; gap: 8px; padding: 12px 0; color: var(--color-text-muted); font: 12px var(--font-mono); } .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); }
   .muted { color: var(--color-text-muted); }
   .error { color: var(--color-loss); }

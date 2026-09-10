@@ -65,7 +65,7 @@
       </div>
       </div>
       <div class="curve" aria-label="Net worth history">
-        {#if snapshots.length}<AreaChart points={snapshots.map((snapshot) => snapshot.totalINR)} width={560} height={76} />{:else}<div class="curve-empty">No closing snapshots yet</div>{/if}
+        {#if snapshots.length > 1}<AreaChart points={snapshots.map((snapshot) => snapshot.totalINR)} width={560} height={76} />{:else}<div class="curve-empty">{snapshots.length ? "One close recorded · trend starts with the next close" : "No closing snapshots yet"}</div>{/if}
         <div class="curve-labels"><span>1Y ago</span><span>6M</span><span>3M</span><span>today</span></div>
       </div>
     </section>

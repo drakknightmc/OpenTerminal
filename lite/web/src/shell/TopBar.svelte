@@ -4,7 +4,7 @@
   import ThemePicker from "./ThemePicker.svelte";
 
   export let title = "Overview";
-  export let baseCurrency = "USD";
+  export let baseCurrency = "INR";
   export let fxStatus = "FX pending";
   export let reviewCount = 0;
   $: pending = $pendingReviewCount || reviewCount;
