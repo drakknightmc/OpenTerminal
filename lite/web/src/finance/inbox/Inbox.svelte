@@ -80,7 +80,7 @@
       {#each proposals as proposal (proposal.id)}
         {@const info = describe(proposal)}
         <ProposalCard
-          proposal={{ title: info.title, description: info.description, status: proposal.status }}
+          proposal={{ title: info.title, source: proposal.source, confidence: proposal.confidence, parsed: proposal.parsedJson, raw: proposal.raw, writes: proposal.writesJson, description: info.description, status: proposal.status }}
           onApprove={proposal.status === "pending" ? () => decide(proposal.id, "approve") : undefined}
           onReject={proposal.status === "pending" ? () => decide(proposal.id, "reject") : undefined}
         />

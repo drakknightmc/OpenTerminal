@@ -95,7 +95,7 @@
         {:else}
           <div class="proposals">
             {#each overview.reviewPeek as proposal (proposal.id)}
-              <ProposalCard proposal={{ title: `${proposal.source} → ${proposal.targetSection}`, description: `${Math.round(proposal.confidence * 100)}% confidence · received ${new Date(proposal.receivedAt).toLocaleString()}${proposal.parsedJson ? ` · ${proposal.parsedJson}` : ""}`, status: proposal.status }} />
+              <ProposalCard proposal={{ title: `${proposal.source} → ${proposal.targetSection}`, source: proposal.source, confidence: proposal.confidence, parsed: proposal.parsedJson, raw: proposal.raw, writes: proposal.writesJson, description: `received ${new Date(proposal.receivedAt).toLocaleString()}`, status: proposal.status }} />
             {/each}
           </div>
         {/if}
