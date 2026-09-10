@@ -7,6 +7,7 @@
   import ProposalCard from "../../components/ProposalCard.svelte";
   import SectionPanel from "../../components/SectionPanel.svelte";
   import AreaChart from "../../components/AreaChart.svelte";
+  import { navigate } from "../../lib/router";
   import type { Overview } from "../types";
 
   let overview: Overview | null = null;
@@ -77,6 +78,7 @@
           weight={`${(sleeve.weight * 100).toFixed(1)}%`}
           sub={`${sleeve.dayPct === null ? "—" : formatPercent(sleeve.dayPct)} · ${sleeve.native}`}
           bar={sleeve.weight * 100}
+          onClick={() => navigate("/investments")}
         />
       {/each}
     </div>
