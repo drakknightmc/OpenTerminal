@@ -8,8 +8,8 @@
   const groups = Array.from(new Set(sections.map((section) => section.group)));
   $: pending = $pendingReviewCount;
   onMount(() => { void refreshPendingReviewCount(); });
-  function isActive(route: string): boolean {
-    return route === "/" ? $path === "/" : $path === route || $path.startsWith(`${route}/`);
+  function isActive(route: string, currentPath: string): boolean {
+    return route === "/" ? currentPath === "/" : currentPath === route || currentPath.startsWith(`${route}/`);
   }
 </script>
 
@@ -20,7 +20,7 @@
       <span class="group-label">{group}</span>
       {#each sections.filter((section) => section.group === group) as section (section.id)}
         {@const route = section.routes?.[0] ?? "#"}
-        <a class:active={isActive(route)} data-short={section.label.slice(0, 1)} href={route}>{section.label}{#if section.id === "inbox" && pending > 0}<b>{pending}</b>{/if}</a>
+        <a class:active={isActive(route, $path)} data-short={section.label.slice(0, 1)} href={route}>{section.label}{#if section.id === "inbox" && pending > 0}<b>{pending}</b>{/if}</a>
       {/each}
     </div>
   {/each}
