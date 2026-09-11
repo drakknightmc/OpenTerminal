@@ -109,9 +109,9 @@
 </div>
 
 <style>
-  .overview { display: grid; gap: var(--space-6); max-width: 1180px; }
-  .hero { display: flex; align-items: flex-end; gap: 28px; flex-wrap: wrap; }
-  .hero-copy { min-width: 260px; }
+  .overview { display: grid; gap: 16px; width: 100%; }
+  .hero { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(420px, 1.2fr); align-items: end; gap: 24px; }
+  .hero-copy { min-width: 0; }
   .hero .label { display: block; margin-bottom: 4px; color: var(--color-text-muted); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
   .hero .value { display: block; color: var(--color-text); font: 500 40px/1 var(--font-mono); letter-spacing: -.02em; }
   .hero .sub { display: flex; gap: 16px; margin-top: 9px; color: var(--color-gain); font: 12px var(--font-mono); flex-wrap: wrap; }
@@ -119,7 +119,7 @@
   .loss { color: var(--color-loss); }
   .muted { color: var(--color-text-muted); }
   .error { color: var(--color-loss); }
-  .curve { flex: 1 1 360px; max-width: 560px; min-width: 260px; }
+  .curve { min-width: 0; width: 100%; }
   .curve :global(svg) { display: block; width: 100%; height: 76px; }
   .curve-labels { display: flex; justify-content: space-between; color: var(--color-text-faint); font: 9.5px var(--font-mono); }
   .curve-empty { display: grid; place-items: center; height: 76px; padding: 0 8px; box-sizing: border-box; border-bottom: 1px solid var(--color-border); color: var(--color-text-faint); font-size: 10px; line-height: 1.35; text-align: center; }
@@ -132,6 +132,7 @@
   .loading-state { display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); font: 12px var(--font-mono); }
   .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 16%, transparent); }
   @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 14px; }
     .lower { grid-template-columns: 1fr; }
   }
   @media (max-width: 520px) { .hero .value { font-size: 32px; } .hero .sub { gap: 9px; } }

@@ -88,7 +88,7 @@
 </div>
 
 <style>
-  .networth { display: grid; gap: 0; max-width: 1000px; }
+  .networth { display: grid; gap: 0; width: 100%; }
   .heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 4px 0 16px; flex-wrap: wrap; }
   .eyebrow { color: var(--color-accent); font-size: 10px; letter-spacing: .1em; }
   h2 { margin: 3px 0 2px; font-size: 24px; } p { margin: 0; color: var(--color-text-muted); font-size: 12px; }
