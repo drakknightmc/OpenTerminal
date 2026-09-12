@@ -110,6 +110,5 @@
   .muted { color: var(--color-text-muted); }
   .error { color: var(--color-loss); }
   footer { display: flex; gap: 20px; padding: 9px 0; border-top: 1px solid var(--color-divider); color: var(--color-text-muted); font-size: 11px; } footer span:nth-child(2) { margin-left: auto; } footer b { color: var(--color-text); font: 11px var(--font-mono); font-weight: 400; }
-  :global(.investments .table) { min-width: 1080px; }
   @media (max-width: 560px) { footer { gap: 10px; font-size: 10px; } }
 </style>
