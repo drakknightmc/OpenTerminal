@@ -88,7 +88,7 @@
         {#if moverRows.length === 0}
           <p class="muted">No marked positions yet.</p>
         {:else}
-          <DataTable columns={[...moverColumns.slice(0, 1), { key: "name", label: "Name" }, ...moverColumns.slice(1)]} rows={moverRows} />
+          <DataTable tableKey="overview-movers" columns={[...moverColumns.slice(0, 1), { key: "name", label: "Name" }, ...moverColumns.slice(1)]} rows={moverRows} />
         {/if}
       </SectionPanel>
 

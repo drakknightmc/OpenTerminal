@@ -86,7 +86,7 @@
   {:else if rows.length === 0}
     <p class="muted">No positions in this class yet.</p>
   {:else}
-    <DataTable {columns} rows={rows} onRowClick={rows.some((r) => r.__symbol) ? onRowClick : undefined} />
+    <DataTable {columns} rows={rows} tableKey="investments" onRowClick={rows.some((r) => r.__symbol) ? onRowClick : undefined} />
     <footer><span>{rows.length} positions shown</span><span>Prices <b>{visible.filter((position) => position.live).length ? "live" : "stored"}</b></span><span>Base <b>INR</b></span></footer>
   {/if}
 </div>

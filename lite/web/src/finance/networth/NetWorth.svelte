@@ -79,10 +79,10 @@
       <div class="chart">{#if points.length > 1}<AreaChart {points} width={720} height={220} />{:else}<div class="chart-empty">One close recorded · trend starts with the next close</div>{/if}</div>
     </SectionPanel>
     <SectionPanel title="Balance sheet" actions={`as of ${latest?.snapshotDate ?? "—"}`}>
-      {#if balanceRows.length}<DataTable columns={balanceColumns} rows={balanceRows} totals={{ line: "Net worth", class: "Total", closing: money(latest?.totalINR ?? 0, "INR"), share: "100%" }} />{:else}<p class="muted">This snapshot has no class breakdown.</p>{/if}
+      {#if balanceRows.length}<DataTable columns={balanceColumns} rows={balanceRows} tableKey="net-worth-balance" totals={{ line: "Net worth", class: "Total", closing: money(latest?.totalINR ?? 0, "INR"), share: "100%" }} />{:else}<p class="muted">This snapshot has no class breakdown.</p>{/if}
     </SectionPanel>
     <SectionPanel title="Daily snapshots">
-      <DataTable {columns} {rows} />
+      <DataTable {columns} {rows} tableKey="net-worth-daily" />
     </SectionPanel>
   {/if}
 </div>
