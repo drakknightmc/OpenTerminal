@@ -14,7 +14,7 @@
 </script>
 
 <aside class="rail" aria-label="Primary navigation">
-  <div class="rail-head"><span class="brand">LEDGERLINE</span><span class="version">v0.4</span></div>
+  <div class="rail-head"><span class="brand">OPENTERMINAL</span><span class="version">v0.4</span></div>
   <div class="nav-scroll">
     {#each groups as group}
       <div class="group">

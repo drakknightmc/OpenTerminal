@@ -98,13 +98,13 @@
 
   onMount(() => {
     readThemeColors();
-    document.addEventListener("ledgerline-theme-change", readThemeColors);
-    document.addEventListener("ledgerline-theme-change", renderChart);
+    document.addEventListener("openterminal-theme-change", readThemeColors);
+    document.addEventListener("openterminal-theme-change", renderChart);
     renderChart();
   });
   onDestroy(() => {
-    document.removeEventListener("ledgerline-theme-change", readThemeColors);
-    document.removeEventListener("ledgerline-theme-change", renderChart);
+    document.removeEventListener("openterminal-theme-change", readThemeColors);
+    document.removeEventListener("openterminal-theme-change", renderChart);
     chart?.remove();
   });
 </script>

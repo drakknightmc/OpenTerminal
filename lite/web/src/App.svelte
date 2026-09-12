@@ -28,7 +28,7 @@
   };
 
   $: positionSymbol = $path.startsWith("/investments/") ? decodeURIComponent($path.slice("/investments/".length)) : null;
-  $: title = positionSymbol ? positionSymbol : titles[$path] ?? "LedgerLine";
+  $: title = positionSymbol ? positionSymbol : titles[$path] ?? "OpenTerminal";
 </script>
 
 <main class="nocturne">

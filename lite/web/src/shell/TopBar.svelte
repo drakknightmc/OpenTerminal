@@ -8,8 +8,8 @@
   export let fxStatus = "83.12";
   export let reviewCount = 0;
   $: pending = $pendingReviewCount || reviewCount;
-  function openPalette() { document.dispatchEvent(new Event("ledgerline-open-command-palette")); }
-  function toggleAgent() { document.dispatchEvent(new Event("ledgerline-toggle-agent")); }
+  function openPalette() { document.dispatchEvent(new Event("openterminal-open-command-palette")); }
+  function toggleAgent() { document.dispatchEvent(new Event("openterminal-toggle-agent")); }
   onMount(() => { void refreshPendingReviewCount(); });
 </script>
 

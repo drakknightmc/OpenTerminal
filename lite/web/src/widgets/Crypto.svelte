@@ -153,7 +153,7 @@
 
   onMount(async () => {
     const refreshChartForTheme = () => { void loadChart(); };
-    document.addEventListener("ledgerline-theme-change", refreshChartForTheme);
+    document.addEventListener("openterminal-theme-change", refreshChartForTheme);
     try {
       [assets, global] = await Promise.all([fetchTopAssets(20), fetchDominance()]);
     } catch (e) {
@@ -171,7 +171,7 @@
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
-      document.removeEventListener("ledgerline-theme-change", refreshChartForTheme);
+      document.removeEventListener("openterminal-theme-change", refreshChartForTheme);
     };
   });
 

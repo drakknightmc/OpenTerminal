@@ -31,7 +31,8 @@ export const THEME_PRESETS: Record<string, { label: string; tokens: ThemeTokens 
   },
 };
 
-const STORAGE_KEY = "ledgerline-theme";
+const STORAGE_KEY = "openterminal-theme";
+const LEGACY_STORAGE_KEY = "ledgerline-theme";
 const TOKEN_VARS: Record<keyof ThemeTokens, string> = {
   bg: "--color-bg", surface: "--color-surface", raised: "--color-surface-raised", text: "--color-text",
   muted: "--color-text-muted", faint: "--color-text-faint", accent: "--color-accent", accent2: "--color-accent-2",
@@ -71,14 +72,14 @@ export function applyTheme(name: string, overrides: Partial<ThemeTokens> = {}): 
   root.setProperty("--shadow-md", "0 0 0 1px var(--color-border-strong), 0 6px 18px color-mix(in srgb, var(--color-bg) 55%, transparent)");
   root.setProperty("--shadow-lg", "0 0 0 1px var(--color-text-muted), 0 16px 40px color-mix(in srgb, var(--color-bg) 65%, transparent)");
   root.setProperty("--scrollbar-thumb", "var(--color-border)");
-  document.dispatchEvent(new CustomEvent("ledgerline-theme-change"));
+  document.dispatchEvent(new CustomEvent("openterminal-theme-change"));
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, overrides })); } catch { /* preferences are optional when storage is unavailable */ }
 }
 
 export function restoreTheme(): { name: string; overrides: Partial<ThemeTokens> } {
   if (typeof localStorage === "undefined") return { name: "nocturne", overrides: {} };
   try {
-    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
+    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY) ?? "null");
     if (value && typeof value.name === "string" && value.overrides && typeof value.overrides === "object") {
       applyTheme(value.name, value.overrides);
       return value;

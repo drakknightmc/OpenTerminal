@@ -5,8 +5,8 @@
   let open = true;
   onMount(() => {
     const toggle = () => (open = !open);
-    document.addEventListener("ledgerline-toggle-agent", toggle);
-    return () => document.removeEventListener("ledgerline-toggle-agent", toggle);
+    document.addEventListener("openterminal-toggle-agent", toggle);
+    return () => document.removeEventListener("openterminal-toggle-agent", toggle);
   });
 </script>
 
