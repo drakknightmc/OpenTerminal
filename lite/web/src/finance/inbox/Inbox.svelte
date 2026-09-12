@@ -2,6 +2,7 @@
   import { fetchAPI } from "../../lib/api";
   import TabBar from "../../components/TabBar.svelte";
   import ProposalCard from "../../components/ProposalCard.svelte";
+  import ProposalDetail from "../../components/ProposalDetail.svelte";
   import { refreshPendingReviewCount } from "../reviewStore";
   import type { Proposal } from "../types";
 
@@ -13,6 +14,7 @@
   let status: "pending" | "applied" | "rejected" | "" = "";
   let source = "all";
   let approving = false;
+  let selected: Proposal | null = null;
 
   async function load() {
     loading = true;
@@ -41,6 +43,13 @@
     }
   }
 
+  async function decideSelected(action: "approve" | "reject") {
+    if (!selected) return;
+    const id = selected.id;
+    await decide(id, action);
+    selected = null;
+  }
+
   async function approveHighConfidence() {
     approving = true;
     const candidates = visible.filter((proposal) => proposal.status === "pending" && proposal.confidence >= 0.9);
@@ -67,9 +76,12 @@
 
   function describe(p: Proposal): { title: string; description: string } {
     const confidencePct = `${Math.round(p.confidence * 100)}% confidence`;
+    let parsed: Record<string, unknown> = {};
+    try { parsed = JSON.parse(p.parsedJson || "{}"); } catch { /* detail view shows malformed payloads safely */ }
+    const summary = parsed.parseError ? `PDF parse error: ${String(parsed.parseError)}` : parsed.snippet ? String(parsed.snippet) : "Structured preview available";
     return {
       title: `${p.source} → ${p.targetSection}`,
-      description: `${confidencePct} · received ${new Date(p.receivedAt).toLocaleString()}${p.parsedJson ? ` · ${p.parsedJson}` : ""}`,
+      description: `${confidencePct} · received ${new Date(p.receivedAt).toLocaleString()} · ${summary}`,
     };
   }
 </script>
@@ -89,13 +101,15 @@
       {#each visible as proposal (proposal.id)}
         {@const info = describe(proposal)}
         <ProposalCard
-          proposal={{ title: info.title, source: proposal.source, confidence: proposal.confidence, parsed: proposal.parsedJson, raw: proposal.raw, writes: proposal.writesJson, description: info.description, status: proposal.status }}
+          proposal={{ title: info.title, source: proposal.source, confidence: proposal.confidence, writes: proposal.writesJson ? (proposal.writesJson === "{}" ? "No ledger writes recorded" : "Ledger writes recorded") : undefined, description: info.description, status: proposal.status }}
           onApprove={proposal.status === "pending" ? () => decide(proposal.id, "approve") : undefined}
           onReject={proposal.status === "pending" ? () => decide(proposal.id, "reject") : undefined}
+          onInspect={() => (selected = proposal)}
         />
       {/each}
     </div>
   {/if}
+  <ProposalDetail proposal={selected} onClose={() => (selected = null)} onApprove={() => decideSelected("approve")} onReject={() => decideSelected("reject")} />
 </div>
 
 <style>
